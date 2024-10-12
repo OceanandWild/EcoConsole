@@ -10,18 +10,117 @@ body {
     height: 300vh;
 }
 
+/* Estilo base para el body */
+body2 {
+    height: 100%;
+    display: top;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #00c6ff, #0072ff, #00c6ff); /* Degradado azul */
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+    animation: bgAnimation 8s ease-in-out infinite;
+}
+
+
+/* Fondo animado con gradiente dinámico */
+@keyframes bgAnimation {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+#splash-screen {
+    display: flex;
+    align-items: top;
+    justify-content: center;
+    height: 100vh;
+    background-color: #000000;
+    color: white;
+    text-align: center;
+    flex-direction: column;
+    animation: fadeOut 1s ease-in-out 4s forwards;
+}
+
+.splash-content {
+    display: top;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1); /* Fondo semitransparente */
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); /* Sombra suave para darle profundidad */
+    animation: fadeInOut 5s ease-in-out forwards;
+    backdrop-filter: blur(10px); /* Efecto de desenfoque */
+}
+
+.splash-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+    animation: bounceIn 1s ease-out forwards;
+}
+
+.splash-item img {
+    width: 80px; /* Tamaño del logo similar al estilo de Unity */
+    height: auto;
+    margin-right: 20px;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+.splash-item h1, .splash-item h2, .splash-item h3 {
+    font-size: 1.5rem;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+/* Aquí todos los elementos aparecen juntos */
+.splash-item img, .splash-item h1, .splash-item h2, .splash-item h3 {
+    animation-delay: 0.5s; /* Todos empiezan a aparecer juntos */
+}
+
+/* Animación de desvanecimiento */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
 /* Ajustes para pantallas más pequeñas (móviles) */
 @media (max-width: 768px) {
     body {
         padding: 10px; /* Reducimos el padding para pantallas pequeñas */
-        background-color: #ffffff; /* Cambiamos el fondo para más contraste */
+        background-color: #000000; /* Cambiamos el fondo para más contraste */
     }
 }
 
 @media (max-width: 480px) {
     body {
         padding: 5px; /* Aún menos padding para pantallas muy pequeñas */
-        background-color: #eaeaea; /* Ajuste visual para pantallas de móvil */
+        background-color: #000000; /* Ajuste visual para pantallas de móvil */
     }
 }
 
@@ -34,19 +133,121 @@ body {
     width: 100%;
 }
 
-/* Estilo para el contenedor del chat */
+
+
+
+/* Estilo extremo y personalizado para el contenedor del chat */
 #chat-container {
-    width: 100%;  /* Ajusta al 90% del ancho de la ventana para que no se vea muy pequeño */
-    max-width: 1300px;  /* Máximo tamaño para pantallas más grandes */
-    height: 90vh;  /* Ajusta al 90% de la altura de la ventana */
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    width: 95%;  /* Ajuste ligeramente menor para un mejor margen */
+    max-width: 1400px;  /* Aumentado para aprovechar mejor pantallas más grandes */
+    height: 85vh;  /* Ajuste para evitar que quede demasiado alto */
+    background: linear-gradient(145deg, #ff7e5f, #feb47b, #6a11cb 90%);
+    border-radius: 25px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 5px 15px rgba(255, 255, 255, 0.1);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     position: relative;
-}  
+    border: 5px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    animation: colorShift 5s ease-in-out infinite;  /* Animación de cambio de color */
+}
+
+
+/* Estilos generales para el contenedor principal */
+#main-container {
+    display: flex; /* Para que el contenedor principal tenga elementos flexibles */
+    flex-direction: column; /* Coloca los elementos en columna */
+    height: 100vh; /* Altura completa de la ventana */
+}
+
+
+/* Contenedor para las listas */
+#list-container {
+    display: flex; /* Para que las listas estén en fila */
+    justify-content: space-between; /* Espacio entre los contenedores */
+    margin-top: 20px; /* Espacio superior para separar del área de chat */
+}
+
+/* Estilos para la lista de comandos */
+#command-list-container {
+    width: 300px; /* Ajusta según sea necesario */
+    background-color: #ffffff; /* Mantener el fondo blanco para claridad */
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Sombra más suave */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espaciado reducido para un diseño más compacto */
+}
+
+/* Estilos para la lista de rarezas */
+#rarity-list-container {
+    width: 300px; /* Ajusta según sea necesario */
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+
+/* Hover para animaciones suaves */
+#chat-container:hover {
+    transform: scale(1.02);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 5px 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Efecto de color cíclico para fondo */
+@keyframes colorShift {
+    0% { background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%); }
+    25% { background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); }
+    50% { background: linear-gradient(135deg, #12c2e9 0%, #c471ed 100%); }
+    75% { background: linear-gradient(135deg, #f64f59 0%, #c471ed 100%); }
+    100% { background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%); }
+}
+
+/* Estilo personalizado para los bordes del chat */
+#chat-container::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+    z-index: -1;
+    filter: blur(20px);
+    border-radius: 30px;
+    opacity: 0.8;
+}
+
+/* Brillo suave alrededor del contenedor */
+#chat-container::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+    z-index: -2;
+    filter: blur(15px);
+    border-radius: 25px;
+}
+
+/* Animación de glow para bordes */
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(255, 255, 255, 0.7); }
+}
+
+#chat-container:focus-within {
+    animation: glow 2s infinite ease-in-out;
+}
 
 /* Encabezado del chat */
 #chat-header {
@@ -59,60 +260,122 @@ body {
     flex-shrink: 0;
 }
 
-/* Área de mensajes del chat */
+/* Área de mensajes del chat - Estilo único */
 #chat-log {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    color: #fff;
-    font-size: 16px;  /* Ajusta el tamaño del texto para que no se vea muy pequeño */
-    line-height: 1.5;
-    background-color: #333;
+    flex-grow: 1;  /* Prioriza el crecimiento del área de mensajes */
+    padding: 25px 30px;  /* Espaciado más amplio para mayor comodidad visual */
+    overflow-y: scroll;  /* Siempre mostrar el scroll */
+    color: #e0e0e0;  /* Color de texto más suave */
+    font-size: 17px;  /* Tamaño de texto ligeramente mayor para mejor legibilidad */
+    line-height: 1.7;  /* Espaciado mayor entre líneas */
+    background-color: #1d1f21;  /* Fondo oscuro con un tono gris neutro */
+    font-family: 'Lora', serif;  /* Fuente personalizada de tipo serif para dar un toque único */
+    border: 3px solid rgba(255, 255, 255, 0.1);  /* Borde tenue alrededor del área */
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);  /* Sombra interna para mayor profundidad */
+    border-radius: 20px;  /* Bordes redondeados para suavizar el diseño */
+    transition: all 0.5s ease-in-out;  /* Transiciones suaves para cualquier cambio de estilo */
 }
 
-/* Estilos para el contenedor de entrada del chat */
+/* Hover sobre el área de mensajes */
+#chat-log:hover {
+    background-color: #25292e;  /* Fondo cambia a un gris más intenso */
+    box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.7);  /* Sombra interna se intensifica */
+}
+
+/* Efecto de desplazamiento del scroll */
+#chat-log::-webkit-scrollbar {
+    width: 12px;  /* Scrollbar más ancho */
+}
+
+#chat-log::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #ff6f61, #de425b);  /* Scroll personalizado con gradiente de colores cálidos */
+    border-radius: 6px;  /* Bordes redondeados en el scrollbar */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);  /* Sombra en el thumb para mayor contraste */
+}
+
+#chat-log::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);  /* Track del scrollbar apenas visible */
+    border-radius: 6px;
+}
+
+/* Estilo de los mensajes individuales */
+#chat-log div {
+    margin-bottom: 15px;  /* Espacio entre mensajes */
+    padding: 12px 18px;  /* Espaciado interno para los mensajes */
+    background-color: rgba(255, 255, 255, 0.07);  /* Fondo semitransparente */
+    border-left: 5px solid #ff6f61;  /* Borde izquierdo de color brillante para resaltar */
+    border-radius: 15px;  /* Bordes redondeados */
+    font-family: 'Raleway', sans-serif;  /* Fuente sans-serif distinta para dar contraste con el área de mensajes */
+    font-size: 16px;  /* Tamaño de fuente específico para mensajes */
+    line-height: 1.6;  /* Espaciado de línea adicional */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);  /* Sombra externa para destacar */
+    transition: transform 0.3s ease-in-out;  /* Transición suave al hacer hover */
+}
+
+/* Efecto hover en mensajes */
+#chat-log div:hover {
+    transform: translateX(10px);  /* Desplazamiento lateral ligero al hacer hover */
+    background-color: rgba(255, 255, 255, 0.1);  /* Mayor transparencia en el fondo */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);  /* Sombra más profunda */
+}
+
+
+/* Estilos mejorados para el contenedor de entrada del chat */
 #chat-input-container,
 #respuesta-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #f9f9fb;
-    border: 1px solid #d1d5db;
-    border-radius: 30px;
-    padding: 12px 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+    background-color: #f0f4f8; /* Fondo más suave y claro */
+    border: 1px solid #cfd8e3;
+    border-radius: 25px;
+    padding: 12px 18px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
     transition: all 0.3s ease;
-    margin-top: 20px;
+    margin-top: 15px;
     max-width: 100%;
 }
 
+/* Efecto hover para el contenedor de entrada */
 #chat-input-container:hover {
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
 }
 
+/* Efecto cuando el contenedor de entrada está enfocado */
 #chat-input-container:focus-within {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
 }
 
-/* Estilo para el botón de enviar mensaje */
+/* Estilo mejorado para el botón de enviar mensaje */
 #sendMessageBtn,
 #sendCMDBtn {
-    background-color: #007bff;
+    background-color: #2563eb; /* Azul más moderno */
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
+    padding: 10px 24px;
+    border-radius: 12px; /* Bordes más redondeados */
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s;
+    font-weight: 500;
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
+/* Efecto hover para los botones de enviar mensaje */
 #sendMessageBtn:hover,
 #sendCMDBtn:hover {
-    background-color: #0056b3;
+    background-color: #1d4ed8; /* Azul más oscuro en hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
 }
+
+/* Efecto de focus para los botones */
+#sendMessageBtn:focus,
+#sendCMDBtn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
+}
+
 
 /* Estilos para el modal de autenticación */
 #authModal {
@@ -175,77 +438,98 @@ body {
     text-align: left;
 }
 
-/* Estilos para los contenedores de entrada */
+/* Estilos mejorados para los contenedores de entrada */
 #input-container {
     display: flex;
     padding: 15px;
-    background-color: #282c34;
+    background-color: #2c3037; /* Color de fondo más suave */
     border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Estilo para los campos de entrada de texto */
 #chat-input,
 #cmd-input {
     flex: 1;
-    padding: 10px;
+    padding: 12px; /* Mayor espacio interno */
     border: none;
-    border-radius: 5px;
+    border-radius: 8px; /* Bordes más redondeados */
     margin-right: 10px;
-    background-color: #333;
+    background-color: #444; /* Color de fondo más claro para el input */
     color: #fff;
-}
-
-#send-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: #fff;
-    cursor: pointer;
+    font-size: 16px; /* Tamaño de fuente más grande */
     transition: background-color 0.3s;
 }
 
+/* Efecto focus para los campos de entrada */
+#chat-input:focus,
+#cmd-input:focus {
+    outline: none; /* Quitar el borde predeterminado */
+    background-color: #555; /* Color más claro en focus */
+}
+
+/* Estilo para el botón de enviar */
+#send-button {
+    padding: 12px 24px; /* Mayor espacio interno */
+    border: none;
+    border-radius: 8px; /* Bordes más redondeados */
+    background-color: #007bff; /* Azul atractivo */
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px; /* Tamaño de fuente más grande */
+    font-weight: 500; /* Grosor de fuente más marcado */
+    transition: background-color 0.3s, transform 0.2s; /* Transiciones suaves */
+}
+
+/* Efecto hover para el botón de enviar */
 #send-button:hover {
-    background-color: #0056b3;
+    background-color: #0056b3; /* Azul más oscuro en hover */
+    transform: translateY(-2px); /* Efecto de elevación */
 }
 
-/* Estilos para la lista de comandos */
-#command-list-container {
-    width: 300px;
-    background-color: #ffffff;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    margin-right: 20px;
-    padding: 20px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+/* Efecto focus para el botón de enviar */
+#send-button:focus {
+    outline: none; /* Quitar el borde predeterminado */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.4); /* Sombra al enfocar */
 }
 
+
+
+/* Estilo para el título */
 #command-list-container h3 {
     margin-bottom: 15px;
     color: #333;
-    font-size: 18px;
+    font-size: 20px; /* Aumentar el tamaño del texto para mayor legibilidad */
+    font-weight: 600; /* Hacer el texto más destacado */
 }
 
+/* Estilo para la lista de comandos */
 #command-list {
-    list-style-type: none;
+    list-style-type: none; /* Sin viñetas */
     padding: 0;
     margin: 0;
 }
 
+/* Estilo para cada elemento de la lista */
 #command-list li {
-    padding: 10px;
+    padding: 12px; /* Mayor espacio interno */
     margin-bottom: 10px;
-    border-radius: 8px;
-    background-color: #f7f7f7;
+    border-radius: 10px; /* Bordes más redondeados */
+    background-color: #f7f7f7; /* Fondo ligero para cada ítem */
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 500; /* Grosor de texto ajustado */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s; /* Transición en el hover */
 }
+
+/* Efecto hover para los elementos de la lista */
+#command-list li:hover {
+    background-color: #e9ecef; /* Fondo ligeramente más oscuro en hover */
+    transform: translateY(-2px); /* Efecto de elevación */
+}
+
 
 #command-list li[data-estado="verde"] {
     background-color: #d4edda;
@@ -598,44 +882,74 @@ body {
     color: #ee9572; /* Texto negro */
 }
 
+/* Estilos mejorados para la cuadrícula de conteo de estados */
 .estado-conteo-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 15px;
+    gap: 20px; /* Aumento del espacio entre los elementos */
     padding: 20px;
+    margin: 0 auto; /* Centrado automático para un mejor diseño */
+    max-width: 1200px; /* Ancho máximo para evitar que se estire demasiado en pantallas grandes */
+    background-color: #f9f9fb; /* Color de fondo para destacar la cuadrícula */
+    border-radius: 10px; /* Bordes redondeados para un aspecto moderno */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra sutil para profundidad */
 }
 
+/* Efecto hover para las tarjetas de estado dentro de la cuadrícula */
+.estado-conteo-grid > div:hover {
+    transform: scale(1.02); /* Ligeramente más grande al pasar el ratón */
+    transition: transform 0.3s; /* Transición suave */
+}
+
+
+/* Estilos mejorados para el item de estado */
 .estado-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #f4f4f4;
+    background-color: #f8f9fa; /* Color de fondo más claro */
     border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
+    border-radius: 12px; /* Bordes más redondeados */
+    padding: 12px; /* Aumento del padding para mayor comodidad */
     font-size: 16px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+    transition: background-color 0.3s, transform 0.2s; /* Transición suave para el hover */
 }
 
+/* Efecto hover para el item de estado */
+.estado-item:hover {
+    background-color: #e2e6ea; /* Color de fondo más oscuro en hover */
+    transform: translateY(-1px); /* Efecto de elevación al pasar el ratón */
+}
+
+/* Estilo para el icono del estado */
 .estado-icon {
-    font-size: 24px;
-    margin-right: 10px;
+    font-size: 26px; /* Aumento en el tamaño del icono */
+    margin-right: 12px; /* Espacio ligeramente mayor a la derecha */
+    color: #007bff; /* Color del icono para destacar */
 }
 
+/* Estilo para el texto del estado */
 .estado-text {
     flex-grow: 1;
-    margin-right: 10px;
-    font-weight: bold;
+    margin-right: 12px; /* Espacio a la derecha ajustado */
+    font-weight: 600; /* Mayor grosor del texto */
+    color: #333; /* Color de texto más oscuro para mejor legibilidad */
 }
 
+/* Estilo para el valor del estado */
 .estado-valor {
-    font-size: 16px;
+    font-size: 18px; /* Aumento del tamaño de la fuente para mayor énfasis */
+    font-weight: 500; /* Grosor ajustado */
+    color: #495057; /* Color ligeramente más claro que el texto */
 }
 
+/* Estilo para el título del estado */
 .estado-titulo {
-    margin-left: 10px;
-    font-weight: bold;
+    margin-left: 12px; /* Aumento del margen a la izquierda */
+    font-weight: bold; /* Mantener el texto en negrita */
+    color: #007bff; /* Color del título para hacerlo más atractivo */
 }
+
 
 /* Estilos para las burbujas de mensajes */
 .bubble {
@@ -778,18 +1092,21 @@ button:hover {
     color: #888; /* Texto gris apagado */
 }
 
-
 /* Contenedor principal */
 #main-container {
     display: grid;
     grid-template-areas: 
         "chat chat chat"
-        "commands wildcard wildcard";
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
+        "commands rarity rarity"; /* Ajustado para incluir rarezas correctamente */
+        
+    grid-template-columns: 1fr 1fr 1fr; /* Tres columnas de igual tamaño */
+    gap: 10px; /* Espacio entre los elementos del grid */
     padding: 10px;
     height: 100vh; /* Asegura que el contenedor principal ocupe toda la altura de la pantalla */
 }
+
+
+
 
 /* Estilo del contenedor del chat */
 #chat-container {
@@ -972,19 +1289,60 @@ h4 {
     animation: fadeIn 0.5s ease-in-out;
 }
 
- /* Estilos del modal */
- .modal-container {
+/* Estilos del modal */
+.modal-container {
     display: none; /* Oculto por defecto */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8); /* Fondo oscuro semitransparente */
+    background-color: rgba(0, 0, 0, 0.85); /* Fondo oscuro semitransparente */
     justify-content: center;
     align-items: center;
     z-index: 1000;
 }
+
+/* Estilo para el contenido del modal */
+.modal-content {
+    background-color: #fff; /* Fondo blanco para el contenido */
+    border-radius: 10px; /* Bordes redondeados */
+    padding: 20px; /* Espaciado interno */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Sombra para profundidad */
+    max-width: 500px; /* Ancho máximo */
+    width: 90%; /* Ancho adaptable */
+    animation: slideIn 0.5s ease-out; /* Animación para el contenido del modal */
+}
+
+/* Animación para el contenido del modal */
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px); /* Mueve el modal hacia arriba */
+        opacity: 0; /* Comienza oculto */
+    }
+    to {
+        transform: translateY(0); /* Posición final */
+        opacity: 1; /* Totalmente visible */
+    }
+}
+
+/* Estilo del botón de cierre del modal */
+.modal-close {
+    background: none;
+    border: none;
+    color: #3498db; /* Color del texto */
+    font-size: 18px;
+    cursor: pointer;
+    position: absolute; /* Colocación en la esquina superior derecha */
+    top: 10px;
+    right: 10px;
+    transition: color 0.3s; /* Transición suave para el color */
+}
+
+.modal-close:hover {
+    color: #2980b9; /* Color al pasar el ratón */
+}
+
 
 @keyframes fadeIn {
     from { opacity: 0; }
@@ -1004,3 +1362,46 @@ h4 {
     gap: 10px;
 }
 
+button[disabled] {
+    background-color: #ccc; /* Color de fondo cuando está deshabilitado */
+    color: #666; /* Color del texto cuando está deshabilitado */
+    cursor: not-allowed; /* Cambia el cursor para indicar que no es interactivo */
+    opacity: 0.6; /* Reduce la opacidad para dar efecto visual de estar deshabilitado */
+}
+
+
+.link {
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* Estilos para el highlight circular */
+.cursor-highlight {
+    position: absolute;
+    width: 50px; /* Tamaño del círculo */
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgba(255, 223, 0, 0.5); /* Amarillo semi-transparente */
+    pointer-events: none; /* Para que no interfiera con los clics */
+    transition: transform 0.1s ease-out; /* Transición suave */
+    display: none; /* Oculto por defecto */
+    z-index: 9999; /* Asegurarse de que esté por encima de otros elementos */
+}
+
+/* Estilos para el mensaje de bienvenida */
+.welcome-message {
+    opacity: 0; /* Inicialmente oculto */
+    transform: translateY(-20px); /* Movimiento hacia arriba */
+    transition: opacity 0.5s ease-in, transform 0.5s ease-in; /* Transiciones */
+    font-size: 20px; /* Tamaño del texto */
+    color: #3498db; /* Color del texto */
+    font-weight: bold; /* Negrita */
+    margin: 10px 0; /* Espaciado */
+}
+
+/* Animación de aparición */
+.welcome-message.show {
+    opacity: 1; /* Visibilidad */
+    transform: translateY(0); /* Posición original */
+}

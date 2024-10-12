@@ -1,108 +1,32 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animal AI</title>
+    <title>Splash Screen</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Firebase JavaScript SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
-<body>
-    <div id="app">
-
-        <!-- Modal de Autenticación -->
-<div id="authModal" class="modal hidden">
-            <h2>Crear Cuenta o Iniciar Sesión</h2>
-            <div id="authOptions" class="button-group">
-                <button id="showRegister">Registrarse</button>
-                <button id="showLogin">Iniciar Sesión</button>
+<body2>
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-item">
+                <img src="https://i.pinimg.com/564x/de/6d/51/de6d51395aee9e6d67ed425ce6bfe683.jpg" alt="VSCode Logo" class="splash-logo">
+                <h1>Hecho con Visual Studio Code</h1>
             </div>
-            <div id="registerForm" class="form hidden">
-                <h3>Registrarse</h3>
-                <input type="email" id="registerEmail" placeholder="Correo electrónico" />
-                <input type="password" id="registerPassword" placeholder="Contraseña" />
-                <button id="registerBtn">Registrar</button>
+            <div class="splash-item">
+                <img src="https://i.pinimg.com/564x/09/7e/04/097e04415ab30fb1ddf4d9848e75ddc6.jpg" alt="HTML, JS & CSS Logo" class="splash-logo">
+                <h2>CSS, JavaScript & HTML</h2>
             </div>
-            <div id="loginForm" class="form hidden">
-                <h3>Iniciar Sesión</h3>
-                <input type="email" id="loginEmail" placeholder="Correo electrónico" />
-                <input type="password" id="loginPassword" placeholder="Contraseña" />
-                <button id="loginBtn">Iniciar Sesión</button>
+            <div class="splash-item">
+                <img src="https://i.pinimg.com/564x/0b/f3/5e/0bf35e8a0145d9bc3dcd3c437777301e.jpg" alt="Ocean and Wild Uruguay Logo" class="splash-logo">
+                <h3>Hecho por Ocean and Wild Uruguay</h3>
             </div>
-            <button id="logoutBtn" class="hidden">Cerrar Sesión</button>
         </div>
     </div>
 
-    <div id="main-container">
-        <!-- Contenedor del chat -->
-        <div id="chat-container">
-            <div id="chat-log">
-                <!-- Modal general para comandos -->
-<div id="commandModal" class="modal hidden">
-    <div class="modal-content">
-        <h2 class="modal-header"></h2>
-        <div class="modal-message"></div>
-        <div class="modal-description"></div>
-
-        <div class="button-group">
-            <button class="modal-close" onclick="cerrarModal()">Cerrar</button>
-        </div>
-    </div>
-</div>
-
-                
-                 
-                  <div id="blogLink"></div>
-                <div id="chatLogOrId"></div>
-                <div id="button-container"></div>
-                <div id="eventos">
-                    <div id="inventario-tarjetas"></div>
-                    <div id="message"></div>
-                </div>
-                <div id="chatLog">
-                    <form id="blogForm">
-                        <label for="topic">Enter blog topic:</label>
-                        <input type="text" id="topic" name="topic" required>
-                        <button type="submit">Generate Blog</button>
-                      </form>
-                </div>
-            </div>
-            <div id="chat-input-container">
-                <input type="text" id="chat-input" placeholder="Escribe un mensaje..." />
-                <button id="sendMessageBtn">Enviar</button>
-            </div>
-            <hr>
-            <div id="respuesta-container" class="hidden">
-                <input type="text" id="cmd-input" placeholder="Escribe una respuesta..." />
-                <button id="sendCMDBtn">Enviar Respuesta</button>
-            </div>
-        </div>
-
-        <!-- Contenedor de Comandos a la izquierda -->
-        <div id="command-list-container">
-            <h3>Comandos Disponibles</h3>
-            <ul id="command-list">
-                <!-- Aquí se cargarán los comandos dinámicamente -->
-            </ul>
-            <div class="paginacion">
-                <button id="btn-anterior" disabled>&lt;</button>
-                <span id="pagina-actual">Página 1 de 2</span>
-                <button id="btn-siguiente" disabled>&gt;</button>
-            </div>
-            <div id="estado-conteo">
-                <!-- Aquí se mostrará el conteo de comandos por estado -->
-            </div>
-        </div>
 
 
-
-        <script type="module" src="script.js"></script>
-    <script src="saldo-wildcard.js"></script>
+    <script src="script.js"></script>
 </body>
-
 </html>
+
