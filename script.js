@@ -4930,7 +4930,7 @@ const fobiaLower = fobia.toLowerCase();
     
     
     // Simulación del estado del servidor 
-    let servidorActivo = false; // Inicialmente, los servidores están inactivos
+    let servidorActivo = true; // Inicialmente, los servidores están inactivos
     let intervaloVerificacion; // Guardaremos el intervalo de verificación
     
     // Función para iniciar la app
