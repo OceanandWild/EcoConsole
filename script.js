@@ -5300,21 +5300,118 @@ document.addEventListener("DOMContentLoaded", function() {
     document.head.appendChild(style);
 
     // Datos de versiones con descripción y fecha
-    const versiones = {
-        "1.0.0": {
-            descripcion: "Versión inicial con características básicas.",
-            fecha: "15 de Enero, 2024"
-        },
-        "1.1.0": {
-            descripcion: "Mejoras en la interfaz de usuario y corrección de bugs.",
-            fecha: "22 de Febrero, 2024"
-        },
-        "1.2.0": {
-            descripcion: "Nueva funcionalidad añadida para manejo de usuarios.",
-            fecha: "30 de Marzo, 2024"
-        }
-        // Puedes añadir más versiones aquí
-    };
+const versiones = {
+ "1.0.1": {
+    descripcion: `### Notas de Actualización 1.0.1: ADIOS SEPTIEMBRE 😢  
+**Fecha:** 29/09/2024  
+
+• **Nuevo comando `/lineas`**  
+  - Estado de este comando: Fase de Pruebas (Lila)  
+  - Este comando da a conocer las líneas de ómnibus del usuario, pero se está trabajando en un sistema para que la IA le pueda decir al usuario qué ciudad y país está.
+
+• **Nuevo comando `/generar-blog`**  
+  - Estado de este comando: Herramienta Clave (Azul, tono semi oscuro)  
+  - Por ahora, este comando se maneja de manera manual, pero pronto se convertirá en automático.
+
+• **Nuevo comando `/PPOT`**  
+  - Estado de este comando: Experimental (Cyan)  
+  - Este comando trata sobre el antiguo juego "Piedra, papel o tijera" pero en términos de apuesta.  
+  - Se aplica la restricción a menores de edad por su contenido de apuestas con Animal Tokens; no es tan detonante, pero no se recomienda para menores de 9 años.
+
+• **Nuevo comando `/limpieza`**  
+  - Estado de este comando: Herramienta Clave (Azul, semi-oscuro)  
+  - Limpia el chat (sí, solo eso).
+
+• **Nuevo comando `/proximo-comando`**  
+  - Estado de este comando: Herramienta Clave (Azul, semi-oscuro)  
+  - Te dice una fecha aproximada o directa de un próximo comando.
+
+• **Nuevo comando `/verificacion-final`**  
+  - Estado de este comando: Herramienta Clave (Azul, semi-oscuro)  
+  - Te dice una fecha aproximada o directa de un próximo comando.
+
+• **Nuevo comando `/pase-de-temporada`**  
+  - Estado: Azul-Oscuro  
+  - Descripción: Proporciona información sobre el pase de temporada.
+
+• **Nuevo comando `/comando-existente`**  
+  - Estado: SteelBlue  
+  - Descripción: Permite verificar comandos que ya existen.
+
+• **Nuevo comando `/resumir-texto`**  
+  - Estado: Ámbar  
+  - Descripción: Resume el texto proporcionado por el usuario.
+
+• **Nuevo comando `/gatitos`**  
+  - Estado: Verde  
+  - Descripción: Muestra imágenes o información sobre gatitos.
+
+• **Nuevo comando `/reproductor-de-musica`**  
+  - Estado: SteelBlue  
+  - Descripción: Permite reproducir música dentro de la aplicación.
+
+• **Nuevo comando `/animal-random`**  
+  - Estado: Verde  
+  - Descripción: Muestra información sobre un animal aleatorio.
+
+**Próximo comando:** `/troll`  
+  - Estado: En desarrollo  
+  - Descripción: Comando por venir en una próxima actualización.`,
+    fecha: "29 de Septiembre, 2024"
+},
+"1.0.2": {
+    descripcion: `### Notas de Actualización 1.1.2: ASESINOS + HALLOWEEN 🎃🔪  
+**Fecha:** 05/10/2024  
+**Lanzamiento del evento:** En alguna parte de noviembre
+
+• **Nuevas monedas**  
+  - **Créditos de Fobias**  
+  - **Créditos de Asesino**  
+
+  Estas nuevas monedas están disponibles para los eventos y actividades relacionados con fobias y asesinos.
+
+• **Corrección de errores con el modal**  
+  - Se corrigió un problema por el cual las dimensiones y la posición del modal estaban incorrectamente ajustadas.  
+  - Ahora el modal funciona correctamente, ya que antes no se abría ni operaba adecuadamente.
+
+• **NUEVO EVENTO: Sombra Asesina**  
+  - **Inspirado en Murder Mystery 2 (MM2)**  
+  - Buff a la cantidad de **Créditos de Asesino** obtenidos por ganar o ser el asesino:  
+    - Recompensa aumentada de **10 ➡️ 25 créditos**.  
+  - Este evento **comenzará en noviembre**, una vez que finalice el evento **Fobias PT.2**.  
+  - El comando relacionado con este evento no estará disponible hasta que el evento comience oficialmente.
+
+• **Nuevo comando `/sombra-asesina`**  
+  - Estado de este comando: Evento (Rojo)  
+  - Este comando está ligado al evento "Sombra Asesina". Te permitirá participar y competir en actividades relacionadas con el evento de asesinos.
+
+• **Nuevo highlight al hacer click**  
+  - Se ha implementado un nuevo efecto de resaltado al hacer click en la aplicación, mejorando la interacción del usuario.  
+  - **En desarrollo:** Un efecto de **highlight** cuando pasas el ratón sobre elementos de la app (hover).`,
+    fecha: "5 de Octubre, 2024"
+},
+    "1.0.3": {
+        descripcion: `Notas de Actualización 1.1.3  
+**Fecha:** 12/10/2024  
+
+• **Nuevo sistema de inicio de sesión y registro**  
+  - Se ha añadido un sistema de inicio de sesión y registro diferente pero sencillo de utilizar. Esto facilita el acceso a la aplicación y mejora la experiencia del usuario.
+
+• **Notas de actualización en la app**  
+  - Ahora se pueden consultar las **notas de actualización** directamente dentro de la aplicación. Esto permitirá a los usuarios estar al tanto de los últimos cambios y novedades.
+
+• **Splash Screen agregado**  
+  - Se ha implementado una **pantalla de bienvenida** (splash screen) al iniciar la aplicación, mejorando la presentación inicial y haciendo la transición más fluida.
+
+• **Cambios menores en algunos comandos**  
+  - Se realizaron ajustes menores en algunos comandos para mejorar la funcionalidad y corregir pequeños errores.
+
+`,
+        fecha: "12 de Octubre, 2024"
+    }
+    // Puedes añadir más versiones aquí
+};
+
 
     // Función para mostrar el modal
     function mostrarModal() {
