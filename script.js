@@ -133,7 +133,7 @@ document.body.addEventListener('mouseleave', function () {
     
         let isAwaitingInput = false;
         let currentCommand = null;
-        let animalTokens = 1000;
+        let animalTokens = 100;
         const prestamos = {};
     
         const messageContainer = document.getElementById('message'); // Asegúrate de obtener el elemento 
@@ -420,7 +420,8 @@ const commands = {
     'configuracion': mostrarConfiguracion,
     'enviar-notificaciones': solicitarPermisoNotificaciones,
     'crear-notificaciones': crearNotificacion,
-
+    'unirse': unirse,
+    'acceder': iniciarSesion,
     'sombra-asesina': function() {
         mostrarModalEventoPendiente('eventoX', 'Ups, hubo un error al intentar ejecutar este comando:', 'Este evento aún no ha comenzado.', 'El evento de Asesinos no ha comenzado, comenzara en noviembre.');
     },
@@ -429,6 +430,130 @@ const commands = {
     },
 };
 
+const usuarios = [
+    // Aquí agregarás manualmente los usuarios en formato:
+     { nombreUsuario: "oceanandwild", contrasena: "59901647", verificado: true, fechaVerificacion: "2024-10-12" },
+     { nombreUsuario: "usuario2", contrasena: "contraseña2", verificado: true, fechaVerificacion: "2024-01-01" }
+];
+
+
+
+function unirse() {
+    typeMessage("Por favor, introduce un Nombre de Usuario para registrarte:");
+
+    const inputUsuario = document.createElement('input');
+    inputUsuario.placeholder = "Nombre de Usuario";
+    inputUsuario.id = "input-usuario";
+    chatLog.appendChild(inputUsuario);
+
+    const inputContrasena = document.createElement('input');
+    inputContrasena.placeholder = "Contraseña";
+    inputContrasena.type = "password";
+    inputContrasena.id = "input-contrasena";
+    chatLog.appendChild(inputContrasena);
+
+    const buttonEnviar = document.createElement('button');
+    buttonEnviar.innerText = "Enviar";
+    buttonEnviar.onclick = () => redirigirWhatsApp(inputUsuario.value, inputContrasena.value);
+    chatLog.appendChild(buttonEnviar);
+}
+
+function redirigirWhatsApp(nombreUsuario, contrasena) {
+    if (!nombreUsuario || !contrasena) {
+        typeMessage("Por favor, completa ambos campos.");
+        return;
+    }
+
+    // Mensaje de redirección
+    typeMessage("Redirigiendo a WhatsApp...");
+
+    // Aquí se simula la redirección y la construcción del mensaje
+    const numeroTelefono = "598099685536";
+    const mensajeWhatsApp = `Nombre de Usuario: ${nombreUsuario}, Contraseña: ${contrasena}`;
+    const urlWhatsApp = `https://wa.me/${numeroTelefono}?text=${encodeURIComponent(mensajeWhatsApp)}`;
+    
+    // Simular redirección
+    setTimeout(() => {
+        window.open(urlWhatsApp, "_blank");
+    }, 2000); // Esperar 2 segundos antes de redirigir a WhatsApp
+}
+
+function iniciarSesion() {
+    const container = document.getElementById('container');
+    typeMessage("Introduce tu Nombre de Usuario y Contraseña:", true);
+    
+    const inputUsuario = document.createElement('input');
+    inputUsuario.placeholder = "Nombre de Usuario";
+    inputUsuario.id = "input-usuario";
+    chatLog.appendChild(inputUsuario);
+
+    const inputContrasena = document.createElement('input');
+    inputContrasena.placeholder = "Contraseña";
+    inputContrasena.type = "password";
+    inputContrasena.id = "input-contrasena";
+    chatLog.appendChild(inputContrasena);
+
+    const buttonAcceder = document.createElement('button');
+    buttonAcceder.innerText = "Acceder";
+    buttonAcceder.onclick = () => verificarCredenciales(inputUsuario.value, inputContrasena.value);
+    chatLog.appendChild(buttonAcceder);
+}
+
+function verificarCredenciales(nombreUsuario, contrasena) {
+    const container = document.getElementById('container');
+
+    const usuarioEncontrado = usuarios.find(usuario => usuario.nombreUsuario === nombreUsuario && usuario.contrasena === contrasena);
+    
+    if (usuarioEncontrado) {
+        typeMessage(`¡Inicio de sesión exitoso! Bienvenido, ${nombreUsuario}.`, true);
+        
+        // Botón para verificar cuenta
+        const buttonVerificar = document.createElement('button');
+        buttonVerificar.innerText = "Verificar Cuenta";
+        buttonVerificar.onclick = () => mostrarVerificacion(usuarioEncontrado);
+        chatLog.appendChild(buttonVerificar);
+    } else {
+        typeMessage("Nombre de Usuario o Contraseña incorrectos. Intenta de nuevo.", true);
+    }
+}
+
+function mostrarVerificacion(usuario) {
+    // Mensaje de advertencia sobre la verificación
+    typeMessage("Para poder tener una cuenta verificada, se te redirigirá a WhatsApp para que luego se pueda verificar tu cuenta. Ten en cuenta que se usarán todos los métodos de verificación posibles para comprobar tu edad.");
+
+    // Simular redirección a WhatsApp después del mensaje
+    setTimeout(() => {
+        const numeroTelefono = "59899685536";  // Sin el signo "+" ni espacios
+        const mensajeWhatsApp = `Solicitud de verificación para el usuario: ${usuario.nombreUsuario}`;
+        const urlWhatsApp = `https://wa.me/${numeroTelefono}?text=${encodeURIComponent(mensajeWhatsApp)}`;
+
+        // Mensaje de redirección
+        typeMessage("Redirigiendo a WhatsApp para completar la verificación...");
+
+        // Redirigir a WhatsApp
+        setTimeout(() => {
+            window.open(urlWhatsApp, "_blank");
+        }, 2000); // Esperar 2 segundos antes de redirigir
+    }, 3000); // Esperar 3 segundos después de mostrar el mensaje inicial
+}
+
+
+function typeMessage(container, message, isResponse = false, buttons = []) {
+    const messageElement = document.createElement('div');
+    messageElement.innerText = message;
+    messageElement.className = isResponse ? "response-message" : "user-message";
+    chatLog.appendChild(messageElement);
+
+    // Agregar botones si se proporcionan
+    buttons.forEach(button => {
+        const buttonElement = document.createElement('button');
+        buttonElement.innerText = button.text;
+        buttonElement.onclick = button.callback;
+        chatLog.appendChild(buttonElement);
+    });
+}
+
+// Recuerda agregar estilos CSS para los mensajes y botones
 
 
 
