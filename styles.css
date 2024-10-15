@@ -882,6 +882,19 @@ body2 {
     color: #ee9572; /* Texto negro */
 }
 
+.estado-de-pago {
+    background-color: #006400; /* Color Verde Oscuro */
+    color: lightgreen; /* Texto blanco */
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.estado-de-pago:hover {
+    background-color: #006400; /* Color Light Salmon */
+    color: lightgreen; /* Texto negro */
+}
+
 /* Estilos mejorados para la cuadrícula de conteo de estados */
 .estado-conteo-grid {
     display: grid;
@@ -948,6 +961,35 @@ body2 {
     margin-left: 12px; /* Aumento del margen a la izquierda */
     font-weight: bold; /* Mantener el texto en negrita */
     color: #007bff; /* Color del título para hacerlo más atractivo */
+}
+
+.btn-animal-tokens {
+    background-color: #4CAF50; /* Color verde */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.btn-animal-tokens:hover {
+    background-color: #45a049; /* Color verde más oscuro al pasar el mouse */
+}
+
+.btn-explorar, .btn-alimentar, .btn-entrenar, .btn-conversar, .btn-bioma {
+    padding: 10px;
+    margin: 5px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-explorar:hover, .btn-alimentar:hover, .btn-entrenar:hover, .btn-conversar:hover, .btn-bioma:hover {
+    background-color: #45a049;
 }
 
 
@@ -1450,3 +1492,4 @@ span {
     cursor: pointer;
     margin-left: 5px;
 }
+

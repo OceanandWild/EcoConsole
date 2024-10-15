@@ -146,8 +146,7 @@ document.body.addEventListener('mouseleave', function () {
     const modalContainer = document.getElementById('modalContainer');
     
     
-    // Llamar a la función para mostrar el mensaje de bienvenida al cargar
-showWelcomeMessage();
+
 
     
     // Función para crear botones dinámicos
@@ -377,6 +376,7 @@ function cerrarModal(modal) {
 
 
 
+           
 const commands = {
     'saldo': handleSaldoCommand,
     'localizador': handleEventoActivo,
@@ -422,19 +422,471 @@ const commands = {
     'crear-notificaciones': crearNotificacion,
     'unirse': unirse,
     'acceder': iniciarSesion,
+    'usuarios': mostrarUsuariosVerificados,
+    'boss-battle': handleEnfrentarJefe,
+    'comandos-recomendados': handleComandosRecomendados, // Comando para buscar
     'sombra-asesina': function() {
         mostrarModalEventoPendiente('eventoX', 'Ups, hubo un error al intentar ejecutar este comando:', 'Este evento aún no ha comenzado.', 'El evento de Asesinos no ha comenzado, comenzara en noviembre.');
     },
     'generar-imagenes': function() {
         mostrarModalEstadoComando("Proximamente", "El comando esta indisponible, pero pronto lo estara..", "Podras generar imagenes muy pronto.");
     },
+   'explora-biomas': handleExploraBiomasCommand,
+   't-rex-friend': tRexFriend,
 };
 
+function tRexFriend() {
+    typeMessage('¡Has invocado a tu amigo T-Rex! ¿Qué te gustaría hacer con él hoy?');
+
+    // Crear botones de interacción
+    const btnExplorar = document.createElement('button');
+    btnExplorar.textContent = '🦖 Explorar';
+    btnExplorar.classList.add('btn-explorar');
+
+    const btnAlimentar = document.createElement('button');
+    btnAlimentar.textContent = '🍖 Alimentar';
+    btnAlimentar.classList.add('btn-alimentar');
+
+    const btnEntrenar = document.createElement('button');
+    btnEntrenar.textContent = '⚙️ Entrenar';
+    btnEntrenar.classList.add('btn-entrenar');
+
+    const btnConversar = document.createElement('button');
+    btnConversar.textContent = '💬 Conversar';
+    btnConversar.classList.add('btn-conversar');
+
+    chatLog.appendChild(btnExplorar);
+    chatLog.appendChild(btnAlimentar);
+    chatLog.appendChild(btnEntrenar);
+    chatLog.appendChild(btnConversar);
+
+    // Asignar eventos a cada botón
+    btnExplorar.addEventListener('click', function() {
+        explorarBiomas();
+    });
+
+    btnAlimentar.addEventListener('click', function() {
+        alimentarTRex();
+    });
+
+    btnEntrenar.addEventListener('click', function() {
+        entrenarTRex();
+    });
+
+    btnConversar.addEventListener('click', function() {
+        conversarTRex();
+    });
+}
+
+function explorarBiomas() {
+    typeMessage('Elige un bioma para explorar con tu amigo T-Rex:');
+    
+    const biomas = ['Selva', 'Montaña', 'Desierto'];
+    biomas.forEach(bioma => {
+        const btnBioma = document.createElement('button');
+        btnBioma.textContent = bioma;
+        btnBioma.classList.add('btn-bioma');
+        chatLog.appendChild(btnBioma);
+
+        btnBioma.addEventListener('click', function() {
+            typeMessage(`¡Tú y el T-Rex están explorando el ${bioma}!`);
+            setTimeout(() => {
+                typeMessage('¡Has encontrado un tesoro! Recibes 5 Animal Tokens.');
+                animalTokens += 5; // Premiar con Animal Tokens
+            }, 2000);
+        });
+    });
+}
+
+function alimentarTRex() {
+    const costoAlimento = 10; // Coste de alimentar al T-Rex
+    const saldoActual = animalTokens; // Supongamos que esta es la cantidad actual del jugador
+
+    // Usamos la función animalPayTransaction para gestionar el pago
+    animalPayTransaction(costoAlimento, saldoActual, 0, false, function(success) {
+        if (success) {
+            typeMessage('¡Has alimentado a tu amigo T-Rex! ¡Parece muy feliz!');
+            // Dependiendo del alimento, mostrar diferentes reacciones:
+            setTimeout(() => {
+                typeMessage('El T-Rex ruge de alegría. ¡Te recompensará en la próxima aventura!');
+            }, 2000);
+        } else {
+            typeMessage('❌ No has podido alimentar al T-Rex. ¡Inténtalo de nuevo más tarde!');
+        }
+    });
+}
+
+function entrenarTRex() {
+    const costoEntrenamiento = 15; // Coste para entrenar al T-Rex
+    const saldoActual = animalTokens; // Supongamos que esta es la cantidad actual del jugador
+
+    // Usamos la función animalPayTransaction para gestionar el pago
+    animalPayTransaction(costoEntrenamiento, saldoActual, 0, false, function(success) {
+        if (success) {
+            typeMessage('¡El T-Rex ha completado su entrenamiento!');
+            // Aumentar temporalmente sus habilidades
+            setTimeout(() => {
+                typeMessage('¡El T-Rex ahora es más rápido y fuerte en las próximas aventuras!');
+            }, 2000);
+        } else {
+            typeMessage('❌ No has podido entrenar al T-Rex. ¡Inténtalo de nuevo más tarde!');
+        }
+    });
+}
+
+function conversarTRex() {
+    const frasesTyrannosaurus = [
+        '¿Sabías que soy el dinosaurio más famoso?',
+        '¡Me encanta tener aventuras contigo!',
+        'Mis brazos son cortos, pero mi corazón es grande.',
+        '¿Qué haríamos hoy si tuvieras mi tamaño?'
+    ];
+
+    const frase = frasesTyrannosaurus[Math.floor(Math.random() * frasesTyrannosaurus.length)];
+    typeMessage(`T-Rex dice: "${frase}"`);
+}
+
+
+// Comando para explorar biomas
+function handleExploraBiomasCommand() {
+    const costoExploracion = 10; // Costo en Animal Tokens
+    const saldoActual = animalTokens; // Saldo actual de Animal Tokens
+
+    typeMessage('¿Quieres explorar un nuevo bioma? El costo es de 10 Animal Tokens.');
+
+    // Llamar a la función de transacción
+    animalPayTransaction(costoExploracion, saldoActual, costoExploracion, true, function(success) {
+        if (success) {
+            typeMessage('¡Exploración exitosa! Has desbloqueado un nuevo bioma.');
+            // Aquí puedes agregar la lógica para desbloquear el bioma
+            desbloquearBioma();
+        } else {
+            typeMessage('❌ La transacción ha fallado. No se pudo completar la exploración.');
+        }
+    });
+}
+
+// Función para desbloquear un bioma
+function desbloquearBioma() {
+    // Lógica para desbloquear el bioma (por ejemplo, mostrar un nuevo menú, cambiar la escena, etc.)
+    typeMessage("Bioma desbloqueado. Ahora puedes explorar la nueva área.");
+}
+
+
+// Comando para buscar comandos
+function handleComandosRecomendados() {
+    // Crear contenedor de búsqueda
+    const buscadorContainer = document.createElement('div');
+    buscadorContainer.className = 'buscador-container';
+
+    // Crear input de búsqueda
+    const inputBusqueda = document.createElement('input');
+    inputBusqueda.type = 'text';
+    inputBusqueda.placeholder = 'Buscar comando...';
+    buscadorContainer.appendChild(inputBusqueda);
+
+    // Crear lista para comandos filtrados
+    const listaComandos = document.createElement('ul');
+    buscadorContainer.appendChild(listaComandos);
+
+    chatLog.appendChild(buscadorContainer);
+
+
+    // Actualizar lista de comandos según la búsqueda
+    inputBusqueda.addEventListener('input', () => {
+        const valorBuscado = inputBusqueda.value.toLowerCase();
+        listaComandos.innerHTML = ''; // Limpiar lista anterior
+
+        // Filtrar comandos
+        const comandosFiltrados = Object.keys(commands).filter(comando => 
+            comando.includes(valorBuscado)
+        );
+
+        // Mostrar comandos filtrados
+        comandosFiltrados.forEach(comando => {
+            const item = document.createElement('li');
+            item.textContent = comando;
+
+            // Al hacer clic, insertar el comando en el input
+            item.onclick = () => {
+                inputBusqueda.value = comando;
+                listaComandos.innerHTML = ''; // Limpiar lista
+            };
+
+            listaComandos.appendChild(item);
+        });
+    });
+
+    // Ejecutar comando al presionar Enter
+    inputBusqueda.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const comandoEjecutar = inputBusqueda.value.trim();
+            if (comandoEjecutar in commands) {
+                typeMessage(`Ejecutando comando: ${comandoEjecutar}`);
+                commands[comandoEjecutar](); // Ejecutar el comando
+                chatLog.removeChild(buscadorContainer); // Eliminar el buscador después de usarlo
+            } else {
+                typeMessage(`Comando "${comandoEjecutar}" no encontrado.`);
+            }
+        }
+    });
+}
+
+
+// Comando para contar los comandos
+function handleContarComandos() {
+    // Filtrar los comandos que no son funciones para contar solo los implementados
+    const comandosImplementados = Object.keys(commands).filter(comando => typeof commands[comando] === 'function');
+    const numeroDeComandos = comandosImplementados.length;
+
+    typeMessage(`Actualmente hay ${numeroDeComandos} comandos disponibles.`);
+}
+
+// Definir los jefes
+const jefes = {
+    'Dragón Infernal': {
+        vida: 150,
+        habilidades: {
+            'Aliento de Fuego': 25,
+            'Garras Incendiarias': 15,
+            'Explosión de Lava': 35,
+        },
+    },
+    'Titán de Hielo': {
+        vida: 200,
+        habilidades: {
+            'Ventisca Helada': 20,
+            'Golpe Congelante': 30,
+            'Tormenta de Hielo': 40,
+        },
+    },
+    'Serpiente de las Profundidades': {
+        vida: 180,
+        habilidades: {
+            'Mordida Envenenada': 20,
+            'Golpe de Cola': 10,
+            'Tsunami': 30,
+        },
+    },
+};
+
+// Daño de las habilidades del jugador
+const habilidadesJugador = {
+    'Espada': 20,
+    'Arco': 15,
+    'Hechizo de Fuego': 25,
+};
+
+// Variables para almacenar el estado del juego
+let jefeSeleccionado;
+let vidaJugador2;
+let vidaJefe;
+
+
+// Comando para iniciar el combate y seleccionar el jefe
+function handleEnfrentarJefe() {
+    reiniciarCombate();
+
+    // Mostrar mensaje inicial
+    typeMessage('¿Qué jefe quieres enfrentar?');
+
+    // Mostrar botones para seleccionar el jefe
+    const botonesJefes = document.createElement('div');
+    botonesJefes.className = 'botones-jefes';
+    
+    Object.keys(jefes).forEach(jefe => {
+        const boton = document.createElement('button');
+        boton.textContent = jefe;
+        boton.onclick = () => seleccionarJefe(jefe);
+        botonesJefes.appendChild(boton);
+    });
+    
+    chatLog.appendChild(botonesJefes);
+}
+
+// Función para seleccionar un jefe
+function seleccionarJefe(jefe) {
+    jefeSeleccionado = jefes[jefe];
+    vidaJefe = jefeSeleccionado.vida;
+
+    // Mostrar la información del jefe seleccionado
+    typeMessage(`Te enfrentarás al ${jefe}.`);
+    typeMessage(`Vida: ${jefeSeleccionado.vida}`);
+    typeMessage(`Habilidades: ${Object.keys(jefeSeleccionado.habilidades).join(', ')}`);
+
+    // Iniciar el combate por turnos
+    iniciarCombate();
+}
+
+// Función para iniciar el combate
+function iniciarCombate() {
+    // Turno del jefe
+    setTimeout(() => {
+        turnoJefe();
+    }, 1000);
+}
+
+// Función para manejar el turno del jefe
+function turnoJefe() {
+    // El jefe elige una habilidad aleatoria
+    const habilidadesJefe = Object.keys(jefeSeleccionado.habilidades);
+    const habilidadElegida = habilidadesJefe[Math.floor(Math.random() * habilidadesJefe.length)];
+    const dañoHabilidad = jefeSeleccionado.habilidades[habilidadElegida];
+
+    // Reducir la vida del jugador
+    vidaJugador2 -= dañoHabilidad;
+    typeMessage(`El jefe usó ${habilidadElegida}, causando ${dañoHabilidad} de daño. Te quedan ${vidaJugador2} puntos de vida.`);
+
+    // Verificar si el jugador perdió
+    if (vidaJugador2 <= 0) {
+        typeMessage('Has sido derrotado por el jefe.');
+        reiniciarCombate();
+        return;
+    }
+
+    // Turno del jugador
+    turnoJugador();
+}
+
+// Función para manejar el turno del jugador
+function turnoJugador() {
+    // Mostrar botones para que el jugador seleccione su ataque
+    const botonesAtaques = document.createElement('div');
+    botonesAtaques.className = 'botones-ataques';
+
+    Object.keys(habilidadesJugador).forEach(ataque => {
+        const boton = document.createElement('button');
+        boton.textContent = ataque;
+        boton.onclick = () => {
+            realizarAtaqueJugador(ataque);
+        };
+        botonesAtaques.appendChild(boton);
+    });
+
+    chatLog.appendChild(botonesAtaques);
+}
+
+// Función para realizar el ataque del jugador
+function realizarAtaqueJugador(ataque) {
+    const dañoAtaque = habilidadesJugador[ataque];
+
+    // Reducir la vida del jefe
+    vidaJefe -= dañoAtaque;
+    typeMessage(`Atacas con ${ataque}, causando ${dañoAtaque} de daño. Al jefe le quedan ${vidaJefe} puntos de vida.`);
+
+    // Verificar si el jefe perdió
+    if (vidaJefe <= 0) {
+        typeMessage('¡Has derrotado al jefe!');
+        otorgarRecompensa();
+        reiniciarCombate();
+        return;
+    }
+
+    // Continuar con el siguiente turno del jefe
+    iniciarCombate();
+}
+
+// Función para reiniciar el combate
+function reiniciarCombate() {
+    vidaJugador = 100;
+    jefeSeleccionado = null;
+    vidaJefe = 0;
+    chatLog.innerHTML = ''; // Limpiar el chat
+
+    // Mostrar el mensaje y los botones de selección de jefe nuevamente
+    typeMessage('Combate reiniciado. ¡Selecciona un jefe para comenzar de nuevo!');
+    mostrarBotonesDeJefes();
+}
+
+// Función para mostrar los botones de selección de jefes
+function mostrarBotonesDeJefes() {
+    const botonesJefes = document.createElement('div');
+    botonesJefes.className = 'botones-jefes';
+
+    // Crear los botones para cada jefe
+    Object.keys(jefes).forEach(jefe => {
+        const boton = document.createElement('button');
+        boton.textContent = jefe;
+        boton.onclick = () => seleccionarJefe(jefe);
+        botonesJefes.appendChild(boton);
+    });
+
+    chatLog.appendChild(botonesJefes);
+}
+
+
+// Función para otorgar la recompensa al jugador
+function otorgarRecompensa() {
+    animalTokens += 15;
+    typeMessage(`Has ganado 15 Animal Tokens. Total de Animal Tokens: ${animalTokens}`);
+}
+
+
+
+
+let NombreDeLaApp = "Animal AI";
+
 const usuarios = [
-    // Aquí agregarás manualmente los usuarios en formato:
-     { nombreUsuario: "oceanandwild", contrasena: "59901647", verificado: true, fechaVerificacion: "2024-10-12" },
-     { nombreUsuario: "usuario2", contrasena: "contraseña2", verificado: true, fechaVerificacion: "2024-01-01" }
+    { 
+        nombreUsuario: "oceanandwild", 
+        contrasena: "59901647", 
+        verificado: true, 
+        fechaVerificacion: "2024-10-12", 
+        verificacionEmpresa: true, 
+        fechaVerificacionEmpresa: "2024-10-13",
+        verificacionAdmin: true, 
+        fechaVerificacionAdmin: "2024-10-14" 
+    },
+    { 
+        nombreUsuario: "usuario2", 
+        contrasena: "contraseña2", 
+        verificado: true, 
+        fechaVerificacion: "2024-01-01", 
+        verificacionEmpresa: true, 
+        fechaVerificacionEmpresa: "2024-10-10",
+        verificacionAdmin: true, 
+        fechaVerificacionAdmin: "" 
+    },
 ];
+
+function mostrarUsuariosVerificados() {
+    typeMessage("Lista de usuarios verificados:");
+
+    const listaUsuarios = document.createElement('div');
+    listaUsuarios.style.display = 'flex';
+    listaUsuarios.style.flexDirection = 'column';
+    listaUsuarios.style.gap = '10px';
+
+    usuarios.forEach(usuario => {
+        const usuarioDiv = document.createElement('div');
+        usuarioDiv.style.display = 'flex';
+        usuarioDiv.style.alignItems = 'center';
+        usuarioDiv.style.gap = '10px';
+
+        const nombreUsuario = document.createElement('span');
+        nombreUsuario.innerText = usuario.nombreUsuario;
+        nombreUsuario.style.fontWeight = 'bold';
+
+        const iconoVerificado = usuario.verificado ? 
+            `<img src="https://i.ibb.co/NyC8Y1W/Captura-de-pantalla-2024-10-13-191335.png" alt="Verificado Azul" style="width: 20px; height: 20px;" title="Cuenta verificada desde el ${usuario.fechaVerificacion}">` : '';
+
+        const iconoVerificadoEmpresa = usuario.verificacionEmpresa ? 
+            `<img src="https://i.ibb.co/vkyZVfM/Captura-de-pantalla-2024-10-13-191054.png" alt="Verificado Dorado" style="width: 20px; height: 20px;" title="Cuenta de empresa verificada desde el ${usuario.fechaVerificacionEmpresa}">` : '';
+
+        const iconoVerificadoAdmin = usuario.verificacionAdmin ? 
+            `<img src="https://i.ibb.co/vmJKTpY/Captura-de-pantalla-2024-10-13-195931.png" alt="Verificado Admin" style="width: 20px; height: 20px;" title="Cuenta de Admin verificada desde el ${usuario.fechaVerificacionAdmin}">` : '';
+
+        usuarioDiv.innerHTML = `
+            ${nombreUsuario.outerHTML}
+            ${iconoVerificado} ${iconoVerificadoEmpresa} ${iconoVerificadoAdmin}
+        `;
+
+        listaUsuarios.appendChild(usuarioDiv);
+    });
+
+    chatLog.appendChild(listaUsuarios);
+}
+
 
 
 
@@ -479,7 +931,6 @@ function redirigirWhatsApp(nombreUsuario, contrasena) {
 }
 
 function iniciarSesion() {
-    const container = document.getElementById('container');
     typeMessage("Introduce tu Nombre de Usuario y Contraseña:", true);
     
     const inputUsuario = document.createElement('input');
@@ -500,35 +951,107 @@ function iniciarSesion() {
 }
 
 function verificarCredenciales(nombreUsuario, contrasena) {
-    const container = document.getElementById('container');
-
     const usuarioEncontrado = usuarios.find(usuario => usuario.nombreUsuario === nombreUsuario && usuario.contrasena === contrasena);
     
     if (usuarioEncontrado) {
         typeMessage(`¡Inicio de sesión exitoso! Bienvenido, ${nombreUsuario}.`, true);
-        
-        // Botón para verificar cuenta
-        const buttonVerificar = document.createElement('button');
-        buttonVerificar.innerText = "Verificar Cuenta";
-        buttonVerificar.onclick = () => mostrarVerificacion(usuarioEncontrado);
-        chatLog.appendChild(buttonVerificar);
+
+        // Verificar si el usuario está verificado
+        if (usuarioEncontrado.verificado) {
+            mostrarIconoVerificado(usuarioEncontrado);
+        }
+
+        // Verificar si el usuario es una empresa
+        if (usuarioEncontrado.verificacionEmpresa) {
+            mostrarIconoVerificadoEmpresa(usuarioEncontrado); // Mostrar icono de verificación de empresa
+        } else {
+            const buttonVerificarEmpresa = document.createElement('button');
+            buttonVerificarEmpresa.innerText = "Verificación de Empresa";
+            buttonVerificarEmpresa.onclick = () => mostrarVerificacionEmpresa(usuarioEncontrado);
+            chatLog.appendChild(buttonVerificarEmpresa);
+        }
+
+        // Verificar si el usuario es administrador
+        if (usuarioEncontrado.verificacionAdmin) { // Cambié de usuarioEncontrado.admin a usuarioEncontrado.verificacionAdmin
+            mostrarIconoVerificadoAdmin(usuarioEncontrado); // Mostrar icono de verificación de administrador
+        } else {
+            const buttonVerificarAdmin = document.createElement('button');
+            buttonVerificarAdmin.innerText = "Verificación de Administrador";
+            buttonVerificarAdmin.onclick = () => mostrarVerificacionAdmin(usuarioEncontrado);
+            chatLog.appendChild(buttonVerificarAdmin);
+        }
     } else {
         typeMessage("Nombre de Usuario o Contraseña incorrectos. Intenta de nuevo.", true);
     }
 }
 
-function mostrarVerificacion(usuario) {
-    // Mensaje de advertencia sobre la verificación
-    typeMessage("Para poder tener una cuenta verificada, se te redirigirá a WhatsApp para que luego se pueda verificar tu cuenta. Ten en cuenta que se usarán todos los métodos de verificación posibles para comprobar tu edad.");
+
+
+function mostrarIconoVerificado(usuario) {
+    const divVerificado = document.createElement('div');
+    divVerificado.innerHTML = `<img src="https://i.ibb.co/NyC8Y1W/Captura-de-pantalla-2024-10-13-191335.png" alt="Verificado" style="width: 20px; height: 20px;" /> Verificado en ${NombreDeLaApp} desde el ${usuario.fechaVerificacion}`;
+
+    chatLog.appendChild(divVerificado);
+
+    // Estilo para mostrar detalles al hacer hover en el icono de verificación
+    const hoverPanel = document.createElement('div');
+    hoverPanel.innerText = `Cuenta verificada el ${usuario.fechaVerificacion}`;
+    hoverPanel.style.display = 'none';
+    hoverPanel.style.backgroundColor = '#f0f0f0';
+    hoverPanel.style.border = '1px solid #ccc';
+    hoverPanel.style.padding = '5px';
+    hoverPanel.style.position = 'absolute';
+    hoverPanel.style.zIndex = '1000';
+
+    divVerificado.appendChild(hoverPanel);
+
+    divVerificado.addEventListener('mouseenter', () => {
+        hoverPanel.style.display = 'block';
+    });
+    divVerificado.addEventListener('mouseleave', () => {
+        hoverPanel.style.display = 'none';
+    });
+}
+
+function mostrarIconoVerificadoEmpresa(usuario) {
+    const divVerificadoEmpresa = document.createElement('div');
+    divVerificadoEmpresa.innerHTML = `<img src="https://i.ibb.co/vkyZVfM/Captura-de-pantalla-2024-10-13-191054.png" alt="Verificado Empresa" style="width: 20px; height: 20px;" /> Verificado como Empresa en ${NombreDeLaApp} desde el ${usuario.fechaVerificacionEmpresa}`;
+
+    chatLog.appendChild(divVerificadoEmpresa);
+
+    // Estilo para mostrar detalles al hacer hover en el icono de verificación de empresa
+    const hoverPanel = document.createElement('div');
+    hoverPanel.innerText = `Cuenta verificada como empresa el ${usuario.fechaVerificacionEmpresa}. Este checkmark indica que es una cuenta de empresa.`;
+    hoverPanel.style.display = 'none';
+    hoverPanel.style.backgroundColor = '#f0f0f0';
+    hoverPanel.style.border = '1px solid #ccc';
+    hoverPanel.style.padding = '5px';
+    hoverPanel.style.position = 'absolute';
+    hoverPanel.style.zIndex = '1000';
+
+    divVerificadoEmpresa.appendChild(hoverPanel);
+
+    divVerificadoEmpresa.addEventListener('mouseenter', () => {
+        hoverPanel.style.display = 'block';
+    });
+    divVerificadoEmpresa.addEventListener('mouseleave', () => {
+        hoverPanel.style.display = 'none';
+    });
+}
+
+
+function mostrarVerificacionEmpresa(usuario) {
+    // Mensaje de advertencia sobre la verificación de empresa
+    typeMessage("Para poder tener una cuenta verificada como empresa, se te redirigirá a WhatsApp para que luego se pueda verificar tu cuenta. Ten en cuenta que se usarán todos los métodos de verificación posibles.");
 
     // Simular redirección a WhatsApp después del mensaje
     setTimeout(() => {
         const numeroTelefono = "59899685536";  // Sin el signo "+" ni espacios
-        const mensajeWhatsApp = `Solicitud de verificación para el usuario: ${usuario.nombreUsuario}`;
+        const mensajeWhatsApp = `Solicitud de verificación para el usuario: ${usuario.nombreUsuario} (Empresa)`;
         const urlWhatsApp = `https://wa.me/${numeroTelefono}?text=${encodeURIComponent(mensajeWhatsApp)}`;
 
         // Mensaje de redirección
-        typeMessage("Redirigiendo a WhatsApp para completar la verificación...");
+        typeMessage("Redirigiendo a WhatsApp para completar la verificación de empresa...");
 
         // Redirigir a WhatsApp
         setTimeout(() => {
@@ -537,24 +1060,53 @@ function mostrarVerificacion(usuario) {
     }, 3000); // Esperar 3 segundos después de mostrar el mensaje inicial
 }
 
+// Nueva función para mostrar el icono de verificación de administrador
+function mostrarIconoVerificadoAdmin(usuario) {
+    const divVerificadoAdmin = document.createElement('div');
+    divVerificadoAdmin.innerHTML = `<img src="https://i.ibb.co/vmJKTpY/Captura-de-pantalla-2024-10-13-195931.png" alt="Verificado Admin" style="width: 20px; height: 20px;" /> Verificado como Administrador en ${NombreDeLaApp} desde el ${usuario.fechaVerificacionAdmin}`;
 
-function typeMessage(container, message, isResponse = false, buttons = []) {
-    const messageElement = document.createElement('div');
-    messageElement.innerText = message;
-    messageElement.className = isResponse ? "response-message" : "user-message";
-    chatLog.appendChild(messageElement);
+    chatLog.appendChild(divVerificadoAdmin);
 
-    // Agregar botones si se proporcionan
-    buttons.forEach(button => {
-        const buttonElement = document.createElement('button');
-        buttonElement.innerText = button.text;
-        buttonElement.onclick = button.callback;
-        chatLog.appendChild(buttonElement);
+    // Estilo para mostrar detalles al hacer hover en el icono de verificación de administrador
+    const hoverPanel = document.createElement('div');
+    hoverPanel.innerText = `Cuenta verificada como administrador el ${usuario.fechaVerificacionAdmin}. Este checkmark indica que es una cuenta de administrador.`;
+    hoverPanel.style.display = 'none';
+    hoverPanel.style.backgroundColor = '#f0f0f0';
+    hoverPanel.style.border = '1px solid #ccc';
+    hoverPanel.style.padding = '5px';
+    hoverPanel.style.position = 'absolute';
+    hoverPanel.style.zIndex = '1000';
+
+    divVerificadoAdmin.appendChild(hoverPanel);
+
+    divVerificadoAdmin.addEventListener('mouseenter', () => {
+        hoverPanel.style.display = 'block';
+    });
+    divVerificadoAdmin.addEventListener('mouseleave', () => {
+        hoverPanel.style.display = 'none';
     });
 }
 
-// Recuerda agregar estilos CSS para los mensajes y botones
+// Nueva función para manejar la verificación de administrador
+function mostrarVerificacionAdmin(usuario) {
+    // Mensaje de advertencia sobre la verificación de administrador
+    typeMessage("Para poder tener una cuenta verificada como administrador, se te redirigirá a WhatsApp para que luego se pueda verificar tu cuenta. Ten en cuenta que se usarán todos los métodos de verificación posibles.");
 
+    // Simular redirección a WhatsApp después del mensaje
+    setTimeout(() => {
+        const numeroTelefono = "59899685536";  // Sin el signo "+" ni espacios
+        const mensajeWhatsApp = `Solicitud de verificación para el usuario: ${usuario.nombreUsuario} (Administrador)`;
+        const urlWhatsApp = `https://wa.me/${numeroTelefono}?text=${encodeURIComponent(mensajeWhatsApp)}`;
+
+        // Mensaje de redirección
+        typeMessage("Redirigiendo a WhatsApp para completar la verificación de administrador...");
+
+        // Redirigir a WhatsApp
+        setTimeout(() => {
+            window.open(urlWhatsApp, "_blank");
+        }, 2000); // Esperar 2 segundos antes de redirigir
+    }, 3000); // Esperar 3 segundos después de mostrar el mensaje inicial
+}
 
 
     // Función para mostrar el modal de verificación de edad
@@ -1756,11 +2308,6 @@ function mostrarInputMurderMystery() {
         }
     }
     
-    // Comando para contar los comandos
-    function handleContarComandos() {
-        const numeroDeComandos = Object.keys(commands).length;
-        typeMessage(`Actualmente hay ${numeroDeComandos} comandos disponibles.`);
-    }
 
 
     // Variable global para almacenar la preferencia del usuario (modales o typeMessages)
@@ -2436,7 +2983,7 @@ function cerrarModal(modal) {
         }
     });
     
-    function animalPayTransaction(costo, saldoActual, deduccion, allowWildCard = true, callback) {
+    function animalPayTransaction(costo, saldoActual, deduccion, callback) {
         // Crear el modal
         const modaltransaction = document.createElement('div');
         modaltransaction.classList.add('modal');
@@ -2454,14 +3001,11 @@ function cerrarModal(modal) {
     
         const btnAnimalTokens = document.createElement('button');
         btnAnimalTokens.textContent = 'Pagar con Animal Tokens';
-    
-        const btnWildCard = document.createElement('button');
-        btnWildCard.textContent = 'Pagar con WildCard';
+        btnAnimalTokens.classList.add('btn-animal-tokens'); // Clase para estilos personalizados
     
         modalContent.appendChild(title);
         modalContent.appendChild(emailInput);
         modalContent.appendChild(btnAnimalTokens);
-        modalContent.appendChild(btnWildCard);
         modaltransaction.appendChild(modalContent);
         document.body.appendChild(modaltransaction);
     
@@ -2481,41 +3025,8 @@ function cerrarModal(modal) {
                 callback(false); // Llamar al callback indicando que la transacción falló
             }
         });
-    
-        // Evento para pagar con WildCard
-        btnWildCard.addEventListener('click', function () {
-            const email = emailInput.value.trim();
-            if (!allowWildCard) {
-                alert('❌ La compra no se puede realizar con Tarjeta WildCard.');
-                callback(false);
-            } else {
-                const cardNumberInput = document.createElement('input');
-                cardNumberInput.placeholder = 'Ingresa el número de tu WildCard';
-    
-                const confirmButton = document.createElement('button');
-                confirmButton.textContent = 'Confirmar';
-    
-                modalContent.appendChild(cardNumberInput);
-                modalContent.appendChild(confirmButton);
-    
-                confirmButton.addEventListener('click', function () {
-                    const cardNumber = cardNumberInput.value.trim();
-                    if (wildCardBalances[cardNumber] !== undefined && wildCardBalances[cardNumber] >= deduccion && validateEmail(email)) {
-                        wildCardBalances[cardNumber] -= deduccion;
-    
-                        // Mostrar animación de éxito
-                        showSuccessAnimation(modaltransaction, 'WildCard', deduccion, email, callback);
-                    } else if (wildCardBalances[cardNumber] < deduccion) {
-                        alert('❌ No tienes suficiente saldo en tu Tarjeta WildCard.');
-                        callback(false);
-                    } else {
-                        alert('❌ Número de WildCard o correo electrónico no válido.');
-                        callback(false);
-                    }
-                });
-            }
-        });
     }
+    
     
     function showSuccessAnimation(modal, metodoPago, cantidad, email, callback) {
         // Limpiar contenido del modal
@@ -2660,7 +3171,21 @@ function cerrarModal(modal) {
         }
     }
     
-    
+   .btn-animal-tokens {
+    background-color: #4CAF50; /* Color verde */
+    color: white;
+    padding: 8px 16px; /* Reducido el padding */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px; /* Tamaño de fuente reducido */
+    transition: background-color 0.3s;
+}
+
+.btn-animal-tokens:hover {
+    background-color: #45a049; /* Color verde más oscuro al pasar el mouse */
+}
+
     `;
     document.head.appendChild(styles);
     
@@ -3431,7 +3956,11 @@ document.head.appendChild(style);
         'mantenimiento',
         'proximos-comandos',
         'intercambiador-de-moneda',
-        'sombra-asesina'
+        'sombra-asesina',
+        'configuracion',
+        'acceder',
+        'unirse',
+        'usuarios',
     ];
     
     const listaScripts = [
@@ -3452,7 +3981,8 @@ document.head.appendChild(style);
         'lineCommandUI.js',
         'PPOTHandler.js', 
         'PPOTSimulator.js', 
-        'PPOTUI.js'
+        'PPOTUI.js',
+        'configuration.js'
     ];
 
     // Variables globales
@@ -4137,7 +4667,7 @@ document.addEventListener("DOMContentLoaded", () => {
         { nombre: "/movie-playtime", estado: "azul-oscuro" },
         { nombre: "/enfrentamientos", estado: "plateado" },
         { nombre: "/t-rex-friend", estado: "verde-lima" },
-        { nombre: "/explora-biomas", estado: "turquesa" },
+        { nombre: "/explora-biomas", estado: "de-pago" },
         { nombre: "/conservacion", estado: "plateado" },
         { nombre: "/fenomenos-espaciales", estado: "plateado" },
         { nombre: "/supervivencia", estado: "plateado" },
@@ -4159,6 +4689,10 @@ document.addEventListener("DOMContentLoaded", () => {
         { nombre: "/comprar-moneda", estado: "funcionalverde" },
         { nombre: "/generar-codigo", estado: "administrador" },
         { nombre: "/generar-imagenes", estado: "turquesa" },
+        { nombre: "/configuracion", estado: "funcionalverde" },
+        { nombre: "/acceder", estado: "verde" },
+        { nombre: "/unirse", estado: "verde" },
+        { nombre: "/usuarios", estado: "verde" },
     ];
     
     const estados = {
@@ -4183,7 +4717,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "coral": "Fase Final del Desarrollo",
         "administrador": "Comandos para el usuario con configuraciones solo para administrador",
         "inactivo": "Comando Inactivo Temporalmente",
-        "en-observacion": "Comando en observacion, el comando afectado por este estado suele estar en revision extrema para que su funcionalidad no salga perjudicada."
+        "en-observacion": "Comando en observacion, el comando afectado por este estado suele estar en revision extrema para que su funcionalidad no salga perjudicada.",
+        "de-pago": "Comando con Transacciones"
     };
     
     const descripciones = {
@@ -4208,7 +4743,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "coral": "Este comando está en su fase final de desarrollo y su lanzamiento es inminente.",
         "administrador": "Este comando es exclusivo para usuarios con privilegios administrativos y permite gestionar funciones avanzadas del sistema.",
         "inactivo": "Este comando está inactivo y no puede ser utilizado en este momento.",
-        "en-observacion": "Este comando está bajo revisión y no se puede utilizar. Se evaluará su funcionalidad antes de decidir su futuro."
+        "en-observacion": "Este comando está bajo revisión y no se puede utilizar. Se evaluará su funcionalidad antes de decidir su futuro.",
+        "de-pago": "Este comando requiere una transacción o suscripción para ser utilizado."
     };
     
     const comandosPorPagina = 7;
@@ -4385,6 +4921,12 @@ document.addEventListener("DOMContentLoaded", () => {
     <span class="estado-text">En Observación (No Disponible):</span> 
     <span class="estado-valor">${conteo["en-observacion"] || 0}</span>
 </div>
+<div class="estado-item estado-de-pago">
+    <span class="estado-icon">🏷️</span> 
+    <span class="estado-text">De Pago (Acceso mediante transacción):</span> 
+    <span class="estado-valor">${conteo["de-pago"] || 0}</span>
+</div>
+
                                                                    
             `;
         };
@@ -5299,162 +5841,16 @@ document.addEventListener("DOMContentLoaded", function() {
     `;
     document.head.appendChild(style);
 
-    // Datos de versiones con descripción y fecha
-const versiones = {
- "1.0.1": {
-    descripcion: `### Notas de Actualización 1.0.1: ADIOS SEPTIEMBRE 😢  
-**Fecha:** 29/09/2024  
-
-• **Nuevo comando `/lineas`**  
-  - Estado de este comando: Fase de Pruebas (Lila)  
-  - Este comando da a conocer las líneas de ómnibus del usuario, pero se está trabajando en un sistema para que la IA le pueda decir al usuario qué ciudad y país está.
-
-• **Nuevo comando `/generar-blog`**  
-  - Estado de este comando: Herramienta Clave (Azul, tono semi oscuro)  
-  - Por ahora, este comando se maneja de manera manual, pero pronto se convertirá en automático.
-
-• **Nuevo comando `/PPOT`**  
-  - Estado de este comando: Experimental (Cyan)  
-  - Este comando trata sobre el antiguo juego "Piedra, papel o tijera" pero en términos de apuesta.  
-  - Se aplica la restricción a menores de edad por su contenido de apuestas con Animal Tokens; no es tan detonante, pero no se recomienda para menores de 9 años.
-
-• **Nuevo comando `/limpieza`**  
-  - Estado de este comando: Herramienta Clave (Azul, semi-oscuro)  
-  - Limpia el chat (sí, solo eso).
-
-• **Nuevo comando `/proximo-comando`**  
-  - Estado de este comando: Herramienta Clave (Azul, semi-oscuro)  
-  - Te dice una fecha aproximada o directa de un próximo comando.
-
-• **Nuevo comando `/verificacion-final`**  
-  - Estado de este comando: Herramienta Clave (Azul, semi-oscuro)  
-  - Te dice una fecha aproximada o directa de un próximo comando.
-
-• **Nuevo comando `/pase-de-temporada`**  
-  - Estado: Azul-Oscuro  
-  - Descripción: Proporciona información sobre el pase de temporada.
-
-• **Nuevo comando `/comando-existente`**  
-  - Estado: SteelBlue  
-  - Descripción: Permite verificar comandos que ya existen.
-
-• **Nuevo comando `/resumir-texto`**  
-  - Estado: Ámbar  
-  - Descripción: Resume el texto proporcionado por el usuario.
-
-• **Nuevo comando `/gatitos`**  
-  - Estado: Verde  
-  - Descripción: Muestra imágenes o información sobre gatitos.
-
-• **Nuevo comando `/reproductor-de-musica`**  
-  - Estado: SteelBlue  
-  - Descripción: Permite reproducir música dentro de la aplicación.
-
-• **Nuevo comando `/animal-random`**  
-  - Estado: Verde  
-  - Descripción: Muestra información sobre un animal aleatorio.
-
-**Próximo comando:** `/troll`  
-  - Estado: En desarrollo  
-  - Descripción: Comando por venir en una próxima actualización.`,
-    fecha: "29 de Septiembre, 2024"
-},
-"1.0.2": {
-    descripcion: `### Notas de Actualización 1.1.2: ASESINOS + HALLOWEEN 🎃🔪  
-**Fecha:** 05/10/2024  
-**Lanzamiento del evento:** En alguna parte de noviembre
-
-• **Nuevas monedas**  
-  - **Créditos de Fobias**  
-  - **Créditos de Asesino**  
-
-  Estas nuevas monedas están disponibles para los eventos y actividades relacionados con fobias y asesinos.
-
-• **Corrección de errores con el modal**  
-  - Se corrigió un problema por el cual las dimensiones y la posición del modal estaban incorrectamente ajustadas.  
-  - Ahora el modal funciona correctamente, ya que antes no se abría ni operaba adecuadamente.
-
-• **NUEVO EVENTO: Sombra Asesina**  
-  - **Inspirado en Murder Mystery 2 (MM2)**  
-  - Buff a la cantidad de **Créditos de Asesino** obtenidos por ganar o ser el asesino:  
-    - Recompensa aumentada de **10 ➡️ 25 créditos**.  
-  - Este evento **comenzará en noviembre**, una vez que finalice el evento **Fobias PT.2**.  
-  - El comando relacionado con este evento no estará disponible hasta que el evento comience oficialmente.
-
-• **Nuevo comando `/sombra-asesina`**  
-  - Estado de este comando: Evento (Rojo)  
-  - Este comando está ligado al evento "Sombra Asesina". Te permitirá participar y competir en actividades relacionadas con el evento de asesinos.
-
-• **Nuevo highlight al hacer click**  
-  - Se ha implementado un nuevo efecto de resaltado al hacer click en la aplicación, mejorando la interacción del usuario.  
-  - **En desarrollo:** Un efecto de **highlight** cuando pasas el ratón sobre elementos de la app (hover).`,
-    fecha: "5 de Octubre, 2024"
-},
-    "1.0.3": {
-        descripcion: `Notas de Actualización 1.1.3  
-**Fecha:** 12/10/2024  
-
-• **Nuevo sistema de inicio de sesión y registro**  
-  - Se ha añadido un sistema de inicio de sesión y registro diferente pero sencillo de utilizar. Esto facilita el acceso a la aplicación y mejora la experiencia del usuario.
-
-• **Notas de actualización en la app**  
-  - Ahora se pueden consultar las **notas de actualización** directamente dentro de la aplicación. Esto permitirá a los usuarios estar al tanto de los últimos cambios y novedades.
-
-• **Splash Screen agregado**  
-  - Se ha implementado una **pantalla de bienvenida** (splash screen) al iniciar la aplicación, mejorando la presentación inicial y haciendo la transición más fluida.
-
-• **Cambios menores en algunos comandos**  
-  - Se realizaron ajustes menores en algunos comandos para mejorar la funcionalidad y corregir pequeños errores.
-
-`,
-        fecha: "12 de Octubre, 2024"
-    }
-    // Puedes añadir más versiones aquí
-};
-
-
-    // Función para mostrar el modal
-    function mostrarModal() {
-        modal.style.display = "block";
-    }
-
-    // Función para cerrar el modal
-    function cerrarModal() {
-        modal.style.display = "none";
-    }
-
-    // Función para manejar la selección de versiones
-    function mostrarVersion(versionSeleccionada) {
-        const datosVersion = versiones[versionSeleccionada];
-
-        if (datosVersion) {
-            const contenidoNovedades = document.getElementById("contenido-novedades");
-            contenidoNovedades.innerHTML = `
-                <h3>Versión ${versionSeleccionada}</h3>
-                <p>${datosVersion.descripcion}</p>
-                <p><strong>Fecha de lanzamiento:</strong> ${datosVersion.fecha}</p>
-            `;
-        }
-    }
-
-    // Evento para cerrar el modal
-    document.getElementById("cerrar-modal").addEventListener("click", cerrarModal);
-
-    // Evento para abrir el modal automáticamente al iniciar
-    mostrarModal();
-
-    // Evento para cambiar de versión en el menú lateral
-    document.querySelectorAll("#menu-lateral ul li").forEach(function(item) {
-        item.addEventListener("click", function() {
-            const versionSeleccionada = this.getAttribute("data-version");
-            mostrarVersion(versionSeleccionada);
-        });
-    });
-
+ 
     // Si se hace clic fuera del modal, se cierra
     window.addEventListener("click", function(event) {
         if (event.target == modal) {
             cerrarModal();
         }
+
+            // Llamar a la función para mostrar el mensaje de bienvenida al cargar
+showWelcomeMessage();
+
+
     });
 });
