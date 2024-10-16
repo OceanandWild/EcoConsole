@@ -1493,3 +1493,44 @@ span {
     margin-left: 5px;
 }
 
+.opciones-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-opcion, .btn-sim, .btn-no {
+    padding: 8px 16px;
+    background-color: #008CBA; /* Azul */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.btn-opcion:hover, .btn-sim:hover, .btn-no:hover {
+    background-color: #005f6a;
+}
+
+.btn-sim {
+    background-color: #4CAF50; /* Verde para "Sí" */
+}
+
+.btn-no {
+    background-color: #f44336; /* Rojo para "No" */
+}
+
+/* Estilos para las leyendas miticas */
+.tipoLeyenda {
+    font-style: italic;
+    color: #555;
+    margin-top: 10px;
+}
+
+img {
+    display: block;
+    margin: 20px auto;
+}

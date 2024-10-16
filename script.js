@@ -25,6 +25,7 @@ const tarjetasWildCard = {
     "1122334455": 200.00
 };
 
+
 // Crear el highlight circular y añadirlo al body
 const highlight = document.createElement('div');
 highlight.classList.add('cursor-highlight');
@@ -213,6 +214,10 @@ document.body.addEventListener('mouseleave', function () {
     };
 
 
+ 
+
+
+
 // Función para mostrar el modal con el estado del comando
 function mostrarModalEstadoComando(titulo, mensaje, descripcion) {
     // Crear el modal
@@ -376,6 +381,7 @@ function cerrarModal(modal) {
 
 
 
+
            
 const commands = {
     'saldo': handleSaldoCommand,
@@ -433,7 +439,304 @@ const commands = {
     },
    'explora-biomas': handleExploraBiomasCommand,
    't-rex-friend': tRexFriend,
+   'definiciones': handleDefinicion,
+   'frases-motivacionales': handleFraseMotivacional,
+   'quiz-animal': handleQuizAnimal, // Nuevo comando
+    'leyenda-mitica': handleLeyendaMitica, // Nuevo comando
+   'recompensa-diaria/semanal': handleRecompensaCommand,
 };
+
+// Lista de comandos disponibles
+const listaComandos2 = ['definicion', 'recompensa', 'quiz-animal', 'leyenda-mitica'];
+
+// Función modular para generar la URL del comando
+function generarURLComando(comando) {
+    const dominio = "oceanandwild.com";
+    return `${dominio}/comando/${comando}`;
+}
+
+// Función principal que actúa como un "navegador"
+function navegadorSimulado(url) {
+    const comandoBuscado = url.split('/comando/')[1];
+
+    if (listaComandos2.includes(comandoBuscado)) {
+        return `Navegando a ${url} ... Comando "${comandoBuscado}" encontrado y ejecutado.`;
+    } else {
+        return `Error: El comando "${comandoBuscado}" no existe.`;
+    }
+}
+
+// Ejemplo de uso
+console.log(navegadorSimulado(generarURLComando('recompensa'))); // Comando existente
+console.log(navegadorSimulado('oceanandwild.com/comando/comando-invalido')); // Comando no existente
+
+
+// Función para obtener la fecha actual en formato de solo día o semana
+function obtenerFechaActual(formato) {
+    const fecha = new Date();
+    if (formato === 'diario') {
+        return fecha.toISOString().split('T')[0]; // Fecha solo de día
+    } else if (formato === 'semanal') {
+        const primeraFechaSemana = new Date(fecha.setDate(fecha.getDate() - fecha.getDay()));
+        return primeraFechaSemana.toISOString().split('T')[0]; // Fecha del inicio de la semana
+    }
+}
+
+let ultimaRecompensaDiaria = null;
+let ultimaRecompensaSemanal = null;
+
+// Función para reclamar la recompensa
+function reclamarRecompensa(tipo) {
+    const hoy = obtenerFechaActual(tipo);
+    const tokensDiarios = 50;
+    const tokensSemanales = 120;
+
+    if (tipo === 'diaria' && ultimaRecompensaDiaria !== hoy) {
+        ultimaRecompensaDiaria = hoy;
+        animalTokens += tokensDiarios;
+        return `¡Recompensa diaria reclamada! 🎁 Has recibido ${tokensDiarios} Animal Tokens. Ahora tienes ${animalTokens} tokens.`;
+    } else if (tipo === 'semanal' && ultimaRecompensaSemanal !== hoy) {
+        ultimaRecompensaSemanal = hoy;
+        animalTokens += tokensSemanales;
+        return `¡Recompensa semanal reclamada! 🎁 Has recibido ${tokensSemanales} Animal Tokens. Ahora tienes ${animalTokens} tokens.`;
+    } else {
+        return `Ya has reclamado tu recompensa ${tipo}. ¡Vuelve más tarde!`;
+    }
+}
+
+// Comando /recompensa
+function handleRecompensaCommand(tipoRecompensa) {
+    if (tipoRecompensa === 'diaria' || tipoRecompensa === 'semanal') {
+        const resultado = reclamarRecompensa(tipoRecompensa);
+        console.log(resultado); // Aquí puedes cambiar para enviar el mensaje al jugador
+    } else {
+        console.log('Tipo de recompensa no válido. Usa "diaria" o "semanal".');
+ }
+}
+
+const quizPreguntas = [
+    {
+        pregunta: "¿Cuál es el mamífero más grande del mundo?",
+        opciones: ["Elefante africano", "Ballena azul", "Jirafa", "Hipopótamo"],
+        respuestaCorrecta: "Ballena azul"
+    },
+    {
+        pregunta: "¿Qué animal es conocido por su capacidad de cambiar de color?",
+        opciones: ["Camaleón", "Pollo", "Perro", "Gato"],
+        respuestaCorrecta: "Camaleón"
+    },
+    {
+        pregunta: "¿Cuál es el ave más rápida del mundo?",
+        opciones: ["Águila", "Halcón peregrino", "Gorrión", "Pingüino"],
+        respuestaCorrecta: "Halcón peregrino"
+    },
+    // Añade más preguntas según sea necesario
+];
+
+// Comando para iniciar el quiz de animales
+function handleQuizAnimal() {
+    typeMessage("¡Bienvenido al Quiz de Animales! Responde la siguiente pregunta:");
+
+    // Seleccionar una pregunta aleatoria
+    const preguntaSeleccionada = quizPreguntas[Math.floor(Math.random() * quizPreguntas.length)];
+
+    // Mostrar la pregunta
+    typeMessage(`Pregunta: ${preguntaSeleccionada.pregunta}`);
+
+    // Crear botones para las opciones de respuesta
+    const opcionesContainer = document.createElement('div');
+    opcionesContainer.className = 'opciones-container';
+
+    preguntaSeleccionada.opciones.forEach(opcion => {
+        const botonOpcion = document.createElement('button');
+        botonOpcion.textContent = opcion;
+        botonOpcion.classList.add('btn-opcion');
+        botonOpcion.onclick = () => evaluarRespuesta(preguntaSeleccionada, opcion, opcionesContainer);
+        opcionesContainer.appendChild(botonOpcion);
+    });
+
+    chatLog.appendChild(opcionesContainer);
+}
+
+// Función para evaluar la respuesta del usuario
+function evaluarRespuesta(pregunta, respuestaUsuario, container) {
+    // Deshabilitar todos los botones de opciones
+    const botones = container.querySelectorAll('button');
+    botones.forEach(boton => boton.disabled = true);
+
+    if (respuestaUsuario === pregunta.respuestaCorrecta) {
+        typeMessage("✅ ¡Respuesta correcta!");
+        // Otorgar Animal Tokens
+        const tokensGanados = 10; // Puedes ajustar la cantidad
+        animalTokens += tokensGanados;
+        typeMessage(`¡Has ganado ${tokensGanados} Animal Tokens! Tu saldo actual es: ${animalTokens}`);
+    } else {
+        typeMessage(`❌ Respuesta incorrecta. La respuesta correcta es: "${pregunta.respuestaCorrecta}".`);
+    }
+
+    // Opcional: Ofrecer otra pregunta
+    setTimeout(() => {
+        typeMessage("¿Te gustaría responder otra pregunta?");
+        const btnSi = document.createElement('button');
+        btnSi.textContent = 'Sí';
+        btnSi.classList.add('btn-sim');
+        btnSi.onclick = () => {
+            chatLog.removeChild(container);
+            handleQuizAnimal();
+        };
+
+        const btnNo = document.createElement('button');
+        btnNo.textContent = 'No';
+        btnNo.classList.add('btn-no');
+        btnNo.onclick = () => {
+            chatLog.removeChild(container);
+            typeMessage("¡Gracias por participar en el Quiz de Animales! 🦁🐘🐧");
+        };
+
+        chatLog.appendChild(btnSi);
+        chatLog.appendChild(btnNo);
+    }, 1000);
+}
+
+const leyendasMiticas = [
+    {
+        titulo: "El Guardián del Bosque",
+        narracion: "Hace mucho tiempo, en el corazón de un antiguo bosque, vivía un majestuoso lobo con ojos de zafiro. Este lobo protegía a todas las criaturas del bosque de cualquier peligro. Se decía que quien lograra ganarse su confianza recibiría su bendición y protección eterna."
+    },
+    {
+        titulo: "La Serpiente de la Luna",
+        narracion: "En las noches más oscuras, una serpiente luminosa emerge de los ríos para bailar bajo la luz de la luna. Su baile es tan hermoso que atrae a todos los viajeros perdidos, guiándolos hacia el camino correcto o llevándolos a un lugar mágico donde sus deseos se cumplen."
+    },
+    {
+        titulo: "El Fénix de las Montañas",
+        narracion: "En las cumbres más altas, resplandece el fénix que renace de sus propias cenizas. Cada vez que el fénix renace, trae consigo nuevas esperanzas y renovadas fuerzas a quienes viven en las montañas, simbolizando la eternidad y la renovación."
+    },
+    // Añade más leyendas según sea necesario
+];
+
+// Comando para mostrar una leyenda mítica
+function handleLeyendaMitica() {
+    typeMessage("Aquí tienes una leyenda mítica para disfrutar:");
+
+    // Seleccionar una leyenda aleatoria
+    const leyendaSeleccionada = leyendasMiticas[Math.floor(Math.random() * leyendasMiticas.length)];
+
+    // Mostrar la leyenda
+    typeMessage(`📖 **${leyendaSeleccionada.titulo}**`);
+    typeMessage(`${leyendaSeleccionada.narracion}`);
+
+    // Opcional: Incluir una imagen relacionada (si tienes una URL)
+    /*
+    const imgLeyenda = document.createElement('img');
+    imgLeyenda.src = 'URL_DE_LA_IMAGEN'; // Reemplaza con la URL de la imagen
+    imgLeyenda.alt = leyendaSeleccionada.titulo;
+    imgLeyenda.style.width = '300px';
+    imgLeyenda.style.borderRadius = '10px';
+    chatLog.appendChild(imgLeyenda);
+    */
+
+    // Opcional: Ofrecer otra leyenda
+    setTimeout(() => {
+        typeMessage("¿Te gustaría escuchar otra leyenda mítica?");
+        const btnSi = document.createElement('button');
+        btnSi.textContent = 'Sí';
+        btnSi.classList.add('btn-sim');
+        btnSi.onclick = () => handleLeyendaMitica();
+
+        const btnNo = document.createElement('button');
+        btnNo.textContent = 'No';
+        btnNo.classList.add('btn-no');
+        btnNo.onclick = () => typeMessage("¡Espero que hayas disfrutado la leyenda! 🌟");
+
+        chatLog.appendChild(btnSi);
+        chatLog.appendChild(btnNo);
+    }, 2000);
+}
+
+
+const frasesMotivacionales = [
+    "El éxito no es la clave de la felicidad. La felicidad es la clave del éxito.",
+    "El único modo de hacer un gran trabajo es amar lo que haces.",
+    "No importa lo lento que vayas, siempre y cuando no te detengas.",
+    "La única manera de hacer algo increíble es creer que puedes.",
+    "Las grandes cosas nunca vienen de zonas de confort.",
+    "El fracaso es el camino al éxito. Sigue adelante.",
+    "Cada día es una nueva oportunidad para cambiar tu vida.",
+    "Si puedes soñarlo, puedes hacerlo.",
+    "La persistencia es el secreto del éxito.",
+    "Los desafíos son lo que hacen la vida interesante. Superarlos es lo que la hace significativa."
+];
+
+// Función para manejar el comando /frase-motivacional
+function handleFraseMotivacional() {
+    // Elegir una frase aleatoria del array
+    const fraseAleatoria = frasesMotivacionales[Math.floor(Math.random() * frasesMotivacionales.length)];
+    
+    // Mostrar la frase al usuario
+    typeMessage(`✨ Frase motivacional: "${fraseAleatoria}" ✨`);
+}
+
+// Función para manejar el comando /definicion
+function handleDefinicion() {
+    typeMessage("Por favor, escribe una palabra para buscar su definición:");
+
+    // Crear un input para que el usuario escriba la palabra
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "Ingresa una palabra";
+    input.id = "definicion-input"; // ID para poder acceder al input más tarde
+
+    // Crear un botón para enviar la palabra
+    const button = document.createElement("button");
+    button.textContent = "Buscar Definición";
+    button.onclick = async () => {
+        const palabra = document.getElementById("definicion-input").value;
+        if (palabra) {
+            // Mostrar el mensaje de búsqueda
+            typeMessage(`Buscando la definición de "${palabra}"...`);
+
+            // Buscar la definición (aquí deberías implementar la lógica para buscar la definición)
+            const definicion = await buscarDefinicion(palabra);
+
+            // Mostrar la definición
+            if (definicion) {
+                typeMessage(`Definición de "${palabra}": ${definicion}`);
+            } else {
+                typeMessage(`No se encontró la definición de "${palabra}".`);
+            }
+        } else {
+            typeMessage("Por favor, ingresa una palabra válida.");
+        }
+    };
+
+    // Añadir el input y el botón al documento
+    chatLog.appendChild(input)
+    chatLog.appendChild(button);
+}
+
+async function buscarDefinicion(palabra) {
+    const apiKey = "u5r8vwiysk3zfj8eu00qvng2y9n54qiy0b6rg617aslydcpzo"; // Tu clave de API
+    const url = `https://api.wordnik.com/v4/word.json/${palabra}/definitions?limit=1&api_key=${apiKey}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        if (data.length > 0) {
+            // Retornar la primera definición encontrada
+            return data[0].text;
+        } else {
+            return null; // No se encontró definición
+        }
+    } catch (error) {
+        console.error("Error al buscar la definición:", error);
+        return null; // Manejo de errores
+    }
+}
+
 
 function tRexFriend() {
     typeMessage('¡Has invocado a tu amigo T-Rex! ¿Qué te gustaría hacer con él hoy?');
@@ -835,19 +1138,22 @@ const usuarios = [
         verificacionEmpresa: true, 
         fechaVerificacionEmpresa: "2024-10-13",
         verificacionAdmin: true, 
-        fechaVerificacionAdmin: "2024-10-14" 
+        fechaVerificacionAdmin: "2024-10-14",
+        baneado: false // Nueva propiedad
     },
     { 
-        nombreUsuario: "usuario2", 
-        contrasena: "contraseña2", 
+        nombreUsuario: "JORGE", 
+        contrasena: "Jorge1976", 
         verificado: true, 
-        fechaVerificacion: "2024-01-01", 
-        verificacionEmpresa: true, 
-        fechaVerificacionEmpresa: "2024-10-10",
-        verificacionAdmin: true, 
-        fechaVerificacionAdmin: "" 
+        fechaVerificacion: "15/10/2024", 
+        verificacionEmpresa: false, 
+        fechaVerificacionEmpresa: "",
+        verificacionAdmin: false, 
+        fechaVerificacionAdmin: "", 
+        baneado: false // Usuario baneado
     },
 ];
+
 
 function mostrarUsuariosVerificados() {
     typeMessage("Lista de usuarios verificados:");
@@ -867,6 +1173,10 @@ function mostrarUsuariosVerificados() {
         nombreUsuario.innerText = usuario.nombreUsuario;
         nombreUsuario.style.fontWeight = 'bold';
 
+        // Si el usuario está baneado, agregar la etiqueta de "Baneado"
+        const estatusBaneado = usuario.baneado ? 
+            `<span style="color: red; font-weight: bold;">(Baneado)</span>` : '';
+
         const iconoVerificado = usuario.verificado ? 
             `<img src="https://i.ibb.co/NyC8Y1W/Captura-de-pantalla-2024-10-13-191335.png" alt="Verificado Azul" style="width: 20px; height: 20px;" title="Cuenta verificada desde el ${usuario.fechaVerificacion}">` : '';
 
@@ -877,7 +1187,7 @@ function mostrarUsuariosVerificados() {
             `<img src="https://i.ibb.co/vmJKTpY/Captura-de-pantalla-2024-10-13-195931.png" alt="Verificado Admin" style="width: 20px; height: 20px;" title="Cuenta de Admin verificada desde el ${usuario.fechaVerificacionAdmin}">` : '';
 
         usuarioDiv.innerHTML = `
-            ${nombreUsuario.outerHTML}
+            ${nombreUsuario.outerHTML} ${estatusBaneado}
             ${iconoVerificado} ${iconoVerificadoEmpresa} ${iconoVerificadoAdmin}
         `;
 
@@ -954,6 +1264,21 @@ function verificarCredenciales(nombreUsuario, contrasena) {
     const usuarioEncontrado = usuarios.find(usuario => usuario.nombreUsuario === nombreUsuario && usuario.contrasena === contrasena);
     
     if (usuarioEncontrado) {
+        if (usuarioEncontrado.baneado) {
+            // Mostrar una página personalizada para cuentas baneadas
+            document.body.innerHTML = `
+                <div style="text-align: center; padding: 50px; background-color: #ffdddd; height: 100vh;">
+                    <h1 style="color: #b30000;">Acceso Denegado</h1>
+                    <img src="https://i.pinimg.com/736x/d8/18/ad/d818ad46b5fd6b78b51c981c36d60949.jpg alt="Cuenta baneada" style="width: 150px; height: 150px;">
+                    <h2>Tu cuenta en ${NombreDeLaApp} ha sido <span style="color: red;">baneada</span>.</h2>
+                    <p>Por favor, contacta al soporte para más información.</p>
+                    <button onclick="window.location.href='https://x.com/AnimalAIOficial'" style="padding: 10px 20px; background-color: #ff6666; color: white; border: none; cursor: pointer;">Contactar Soporte</button>
+                </div>
+            `;
+            return; // Detener el flujo si está baneado
+        }
+
+        // Si no está baneado, continuar con la lógica normal
         typeMessage(`¡Inicio de sesión exitoso! Bienvenido, ${nombreUsuario}.`, true);
 
         // Verificar si el usuario está verificado
@@ -961,9 +1286,9 @@ function verificarCredenciales(nombreUsuario, contrasena) {
             mostrarIconoVerificado(usuarioEncontrado);
         }
 
-        // Verificar si el usuario es una empresa
+        // Verificación de Empresa y Admin
         if (usuarioEncontrado.verificacionEmpresa) {
-            mostrarIconoVerificadoEmpresa(usuarioEncontrado); // Mostrar icono de verificación de empresa
+            mostrarIconoVerificadoEmpresa(usuarioEncontrado); 
         } else {
             const buttonVerificarEmpresa = document.createElement('button');
             buttonVerificarEmpresa.innerText = "Verificación de Empresa";
@@ -971,9 +1296,8 @@ function verificarCredenciales(nombreUsuario, contrasena) {
             chatLog.appendChild(buttonVerificarEmpresa);
         }
 
-        // Verificar si el usuario es administrador
-        if (usuarioEncontrado.verificacionAdmin) { // Cambié de usuarioEncontrado.admin a usuarioEncontrado.verificacionAdmin
-            mostrarIconoVerificadoAdmin(usuarioEncontrado); // Mostrar icono de verificación de administrador
+        if (usuarioEncontrado.verificacionAdmin) {
+            mostrarIconoVerificadoAdmin(usuarioEncontrado); 
         } else {
             const buttonVerificarAdmin = document.createElement('button');
             buttonVerificarAdmin.innerText = "Verificación de Administrador";
@@ -2982,7 +3306,7 @@ function cerrarModal(modal) {
             cmdInput.value = '';
         }
     });
-    
+
     function animalPayTransaction(costo, saldoActual, deduccion, callback) {
         // Crear el modal
         const modaltransaction = document.createElement('div');
@@ -3446,8 +3770,8 @@ function cerrarModal(modal) {
             messageContainer.appendChild(img);
         }
     }
-    
-// Estilos CSS actualizados
+
+    // Estilos CSS actualizados
 const style = document.createElement('style');
 style.innerHTML = `
 /* Estilo para el contenedor del mensaje */
@@ -3507,7 +3831,7 @@ style.innerHTML = `
     margin-left: 10px;
 }
 `;
-document.head.appendChild(style);
+document.head.appendChild(style);  
 
     
     
@@ -4098,6 +4422,10 @@ let totalSize = sizePerElement * cantidadTotalElementos; // Tamaño total en MB
             instalarScript();
         }
     }
+
+    
+iniciarInstalacion();
+
 
 // Función para guardar el mensaje de bienvenida en IndexedDB
 function saveWelcomeMessage(message) {
@@ -5596,129 +5924,7 @@ const fobiaLower = fobia.toLowerCase();
     
     
     
-    // Simulación del estado del servidor 
-    let servidorActivo = true; // Inicialmente, los servidores están inactivos
-    let intervaloVerificacion; // Guardaremos el intervalo de verificación
     
-    // Función para iniciar la app
-    function iniciarApp() {
-        if (!servidorActivo) {
-            typeMessage("⚠️ No se ha podido conectar con los servidores de Animal AI.");
-            
-            // Esperar 5 segundos y luego simular el cierre de la aplicación
-            setTimeout(cerrarApp, 5000);
-        } else {
-            typeMessage("Servidores: Activos, Animal AI funcionando correctamente.");
-            
-            // Iniciar verificación periódica del estado del servidor
-          intervaloVerificacion = setInterval(verificarEstadoServidor, 3000); // Verificar cada 3 segundos
-        }
-    }
-    
-    // Simulación de verificación del estado del servidor en tiempo real
-    function verificarEstadoServidor() {
-        // Aquí simulamos el cambio de estado (en una app real se podría hacer una petición AJAX para consultar el servidor)
-        if (!servidorActivo) {
-            // Si los servidores caen mientras los usuarios están conectados
-            typeMessage("⚠️ Los servidores de Animal AI se han desconectado. Cerrando la aplicación...");
-            
-            // Cerrar la app después de 5 segundos
-            setTimeout(cerrarApp, 5000);
-            
-            // Detener el intervalo de verificación
-            clearInterval(intervaloVerificacion);
-        }
-    }
-    
-    // Función para cerrar la aplicación (simulado)
-    function cerrarApp() {
-        typeMessage("Cerrando la aplicación...");
-        
-       // Simulación del cierre de la app
-setTimeout(() => {
-    document.body.innerHTML = `
-        <div class="error-container">
-            <div class="error-content">
-                <h1 class="error-title">Conexión perdida con los servidores de Animal AI</h1>
-                <p class="error-message">
-                    Es posible que los servidores estén inactivos temporalmente debido a problemas técnicos. Te recomendamos seguirnos en nuestras redes sociales para obtener actualizaciones en tiempo real. 
-                </p>
-                <p class="error-info">
-                    Si esta desconexión es permanente, lo anunciaremos oficialmente en este mismo espacio. Lamentamos los inconvenientes causados.
-                </p>
-                <div class="error-links">
-                    <a href="https://x.com/AnimalAIOficial" target="_blank">Twitter</a>
-                </div>
-            </div>
-        </div>
-    `;
-}, 2000); // Mensaje final y simular cierre definitivo
-
-// Estilos CSS para el mensaje de cierre
-const style = document.createElement('style');
-style.textContent = `
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Arial', sans-serif;
-        background-color: #f0f0f0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-
-    .error-container {
-        text-align: center;
-        background-color: white;
-        padding: 50px;
-        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
-        border-radius: 10px;
-        max-width: 600px;
-        width: 90%;
-    }
-
-    .error-title {
-        color: #ff6b6b;
-        font-size: 32px;
-        margin-bottom: 20px;
-    }
-
-    .error-message {
-        font-size: 18px;
-        color: #333;
-        margin-bottom: 20px;
-    }
-
-    .error-info {
-        font-size: 16px;
-        color: #555;
-        margin-bottom: 30px;
-    }
-
-    .error-links {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-    }
-
-    .error-links a {
-        color: #ff6b6b;
-        text-decoration: none;
-        font-size: 18px;
-        font-weight: bold;
-    }
-
-    .error-links a:hover {
-        text-decoration: underline;
-    }
-`;
-document.head.appendChild(style);
-
-    }   
-    iniciarInstalacion();
-    iniciarApp();
-});
 
 
 // Función que maneja el splash screen y redirige a index.html después de la animación
@@ -5727,10 +5933,7 @@ function showSplashScreenAndRedirect() {
         // Ocultar el splash screen después de la animación
         document.getElementById('splash-screen').style.display = 'none';
 
-        // Esperar 1 segundo antes de redirigir a index.html
-        setTimeout(() => {
-            window.location.href = 'animalai.html';
-        }, 3000); // 1 segundo de espera antes de la redirección
+
 
     }, 4000); // 4 segundos para la animación
 }
@@ -5850,7 +6053,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Llamar a la función para mostrar el mensaje de bienvenida al cargar
 showWelcomeMessage();
-
-
+    
+        });
     });
 });

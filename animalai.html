@@ -13,48 +13,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
-
-    <script>
-        async function setup() {
-               try {
-                   const archivos = [
-                       'index.html',
-                       'script.js',
-                       'styles.css'
-                   ];
-                   
-                   let tamañoTotal = 0;
-   
-                   // Descargar cada archivo y calcular su tamaño
-                   for (const archivo of archivos) {
-                       const respuesta = await fetch(archivo);
-                       const texto = await respuesta.text();
-                       const tamañoBytes = new Blob([texto]).size; // Obtener tamaño en bytes
-                       tamañoTotal += tamañoBytes;
-                   }
-   
-                   // Convertir el tamaño total a un formato legible
-                   let tamañoTotalFormato;
-                   if (tamañoTotal < 1024) {
-                       tamañoTotalFormato = `${tamañoTotal.toFixed(2)} B`;
-                   } else if (tamañoTotal < 1048576) {
-                       tamañoTotalFormato = `${(tamañoTotal / 1024).toFixed(2)} KB`;
-                   } else if (tamañoTotal < 1073741824) {
-                       tamañoTotalFormato = `${(tamañoTotal / 1048576).toFixed(2)} MB`;
-                   } else {
-                       tamañoTotalFormato = `${(tamañoTotal / 1073741824).toFixed(2)} GB`;
-                   }
-   
-                   console.log(`Espacio requerido para descargar archivos: ${tamañoTotalFormato}`);
-                   alert(`Espacio requerido para descargar archivos: ${tamañoTotalFormato}`);
-               } catch (error) {
-                   console.error('Error al cargar los archivos:', error);
-               }
-           }
-   
-           // Ejecutar el setup cuando la página esté completamente cargada
-           window.onload = setup;
-       </script>
     <div id="app">
 
         <!-- Modal de Autenticación -->
@@ -80,14 +38,32 @@
         </div>
     </div>
 
+    
    
     <div id="main-container">
-        
+       
         <!-- Contenedor del chat -->
         <div id="chat-container" class="grid-item chat">
+
             <div id="estado-usuario"></div>
-            <div id="chat-log">
-                <!-- Modal general para comandos -->
+            <div id="chatLog">
+                <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-item">
+                <img src="https://i.pinimg.com/564x/de/6d/51/de6d51395aee9e6d67ed425ce6bfe683.jpg" alt="VSCode Logo" class="splash-logo">
+                <h1>Hecho con Visual Studio Code</h1>
+            </div>
+            <div class="splash-item">
+                <img src="https://i.pinimg.com/564x/09/7e/04/097e04415ab30fb1ddf4d9848e75ddc6.jpg" alt="HTML, JS & CSS Logo" class="splash-logo">
+                <h2>CSS, JavaScript & HTML</h2>
+            </div>
+            <div class="splash-item">
+                <img src="https://i.pinimg.com/564x/0b/f3/5e/0bf35e8a0145d9bc3dcd3c437777301e.jpg" alt="Ocean and Wild Uruguay Logo" class="splash-logo">
+                <h3>Hecho por Ocean and Wild Uruguay</h3>
+            </div>
+        </div>
+    </div> 
+    <!-- Modal general para comandos -->
                 <div id="commandModal" class="modal hidden">
                     <div class="modal-content">
                         <h2 class="modal-header"></h2>
@@ -106,7 +82,7 @@
                     <div id="inventario-tarjetas"></div>
                     <div id="message"></div>
                 </div>
-                <div id="chatLog">
+                <div id="chat-log">
                     <form id="blogForm">
                         <label for="topic">Enter blog topic:</label>
                         <input type="text" id="topic" name="topic" required>
@@ -119,15 +95,15 @@
                 <input type="text" id="chat-input" placeholder="Escribe un mensaje..." />
                 <button id="sendMessageBtn">Enviar</button>
             </div>
-    
+            
             <hr>
     
             <div id="respuesta-container" class="display:none">
                 <input type="text" id="cmd-input" placeholder="Escribe una respuesta..." />
                 <button id="sendCMDBtn">Enviar Respuesta</button>
             </div>
-    
-            <h4>Animal AI (V1.1.3)</h4>
+
+            <h4>Animal AI (V1.1.35)</h4>
         </div>
     
         <!-- Contenedor para las listas de comandos y rarezas -->
