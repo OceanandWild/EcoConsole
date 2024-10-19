@@ -8,7 +8,11 @@ body {
     justify-content: center;
     align-items: center;
     height: 300vh;
+    overflow-y: auto; /* Permitir scroll en la página completa */
 }
+
+
+
 
 /* Estilo base para el body */
 body2 {
@@ -895,6 +899,16 @@ body2 {
     color: lightgreen; /* Texto negro */
 }
 
+.estado-recompensas-incluidas {
+    background-color: #FFD700; /* Color Oro */
+    color: #ecc902; /* Texto negro */
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+
+
 /* Estilos mejorados para la cuadrícula de conteo de estados */
 .estado-conteo-grid {
     display: grid;
@@ -1353,8 +1367,23 @@ h4 {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Sombra para profundidad */
     max-width: 500px; /* Ancho máximo */
     width: 90%; /* Ancho adaptable */
-    animation: slideIn 0.5s ease-out; /* Animación para el contenido del modal */
+    animation: slideDown 0.5s ease-out; /* Animación para el contenido del modal */
+    overflow-y: auto; /* Desplazamiento dentro del modal si el contenido es largo */
+    max-height: 80vh; /* Limitar la altura del modal */
 }
+
+/* Animación de deslizar hacia abajo */
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 
 /* Animación para el contenido del modal */
 @keyframes slideIn {
@@ -1533,4 +1562,236 @@ span {
 img {
     display: block;
     margin: 20px auto;
+}
+
+/* Estilos para el modal */
+.modal {
+    display: flex; /* Flex para centrar el contenido */
+    position: absolute; /* Cambiado a absolute para que siga el flujo del body */
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    min-height: 100%; /* Se ajusta al contenido */
+    background-color: rgba(0, 0, 0, 0.8); /* Fondo oscuro semitransparente */
+    backdrop-filter: blur(8px); /* Desenfoque del fondo */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: flex-start; /* Alinea el contenido desde la parte superior */
+    padding-top: 20px; /* Espaciado superior para que no toque el borde superior */
+    overflow-y: auto; /* Permitir que se desplace si el modal es largo */
+}
+
+
+
+.tienda-section {
+    margin-bottom: 30px;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.producto {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #f1f1f1;
+    transition: background-color 0.3s ease;
+}
+
+.producto:hover {
+    background-color: #e0e0e0;
+}
+
+.producto span {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #555;
+}
+
+/* Contenedor del comando */
+.countdown-container {
+    text-align: center;
+    background-color: #282c34;
+    padding: 20px;
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    margin: 0 auto;
+    margin-top: 50px; /* Opcional: Ajustar margen superior */
+}
+
+/* Estilo del título del comando (h1) */
+.comando-titulo {
+    font-size: 32px;
+    font-weight: bold;
+    color: #ffdd57;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+/* Título del lanzamiento (h2) */
+.countdown-container h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #00d1b2;
+}
+
+/* Contenedor de la cuenta regresiva */
+.countdown {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+/* Sección individual de la cuenta (días, horas, minutos, segundos) */
+.time-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 24px;
+}
+
+.time-section span {
+    font-size: 36px;
+    font-weight: bold;
+    color: #00d1b2;
+}
+
+/* Estilo para la fecha de lanzamiento */
+.launch-date {
+    font-size: 16px;
+    margin-top: 10px;
+    color: #f5f5f5;
+}
+
+/* Contenedor del comando */
+.countup-container {
+    text-align: center;
+    background-color: #282c34;
+    padding: 20px;
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    margin: 0 auto;
+    margin-top: 50px; /* Opcional: Ajustar margen superior */
+}
+
+/* Estilo del título del comando (h1) */
+.comando-titulo {
+    font-size: 32px;
+    font-weight: bold;
+    color: #ffdd57;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+/* Título del lanzamiento (h2) */
+.countup-container h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #00d1b2;
+}
+
+/* Contenedor de la cuenta hacia adelante */
+.countup {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+/* Sección individual de la cuenta (días, horas, minutos, segundos) */
+.time-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 24px;
+}
+
+.time-section span {
+    font-size: 36px;
+    font-weight: bold;
+    color: #00d1b2;
+}
+
+/* Estilo para la fecha del último lanzamiento */
+.launch-date {
+    font-size: 16px;
+    margin-top: 10px;
+    color: #f5f5f5;
+}
+
+/* Botón para crear post */
+.crear-post-btn {
+    background-color: #00d1b2;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Contenedor de los posts */
+.posts-container {
+    margin-top: 20px;
+}
+
+/* Cada post creado */
+.post {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.post h3 {
+    margin: 0;
+    color: #333;
+}
+
+.post p {
+    color: #666;
+}
+
+.post small {
+    display: block;
+    margin-top: 10px;
+    color: #999;
+}
+
+/* Estilos del formulario */
+.post-form input, .post-form textarea {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.enviar-post-btn, .cancelar-post-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.enviar-post-btn {
+    background-color: #28a745;
+    color: white;
+    margin-right: 10px;
+}
+
+.cancelar-post-btn {
+    background-color: #dc3545;
+    color: white;
 }

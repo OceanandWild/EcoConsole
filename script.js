@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
         blogForm.style.display = 'none';
     }
     const chatContainer = document.getElementById('chat-container');
+    const modalContainer2 = document.getElementById('modalContainer');
 
 // Definición de la imagen de la moneda
 const coinImage = 'https://i.ibb.co/XLZNVfS/coin.png'; // Asegúrate de que esta URL sea correcta
@@ -444,7 +445,492 @@ const commands = {
    'quiz-animal': handleQuizAnimal, // Nuevo comando
     'leyenda-mitica': handleLeyendaMitica, // Nuevo comando
    'recompensa-diaria/semanal': handleRecompensaCommand,
+   'patch-notes': ejecutarPatchNotes,
+   'tienda': abrirTiendaModal,
+   'proximo-lanzamiento': crearCuentaRegresiva,
+   'ultimo-lanzamiento': crearCuentaHaciaAdelante,
+   'notificar-nuevopost': abrirModalNotificarPost,
+   'enviar-post': abrirModalPosts,
 };
+
+function abrirModalPosts() {
+    // Crear el modal y su contenedor
+    const modal = document.createElement('div');
+    modal.classList.add('modal-posts');
+
+    // Botón de crear post
+    const botonCrearPost = document.createElement('button');
+    botonCrearPost.textContent = 'Crear Post';
+    botonCrearPost.classList.add('crear-post-btn');
+
+    // Contenedor de los posts creados
+    const contenedorPosts = document.createElement('div');
+    contenedorPosts.classList.add('posts-container');
+
+    // Evento del botón crear post
+    botonCrearPost.addEventListener('click', function () {
+        // Crear el formulario para el post
+        const formulario = document.createElement('form');
+        formulario.classList.add('crear-post-form');
+
+        // Input del título
+        const inputTitulo = document.createElement('input');
+        inputTitulo.setAttribute('type', 'text');
+        inputTitulo.setAttribute('placeholder', 'Título del post');
+        inputTitulo.required = true;
+
+        // Input del mensaje
+        const inputMensaje = document.createElement('textarea');
+        inputMensaje.setAttribute('placeholder', 'Escribe tu mensaje');
+        inputMensaje.required = true;
+
+        // Botón para enviar el post
+        const botonEnviar = document.createElement('button');
+        botonEnviar.textContent = 'Enviar Post';
+        botonEnviar.classList.add('enviar-post-btn');
+
+        // Botón para cancelar
+        const botonCancelar = document.createElement('button');
+        botonCancelar.textContent = 'Cancelar';
+        botonCancelar.classList.add('cancelar-post-btn');
+
+        // Función para cancelar el formulario
+        botonCancelar.addEventListener('click', function () {
+            formulario.remove(); // Elimina el formulario si se cancela
+        });
+
+        // Función para enviar el post
+        formulario.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const titulo = inputTitulo.value.trim();
+            const mensaje = inputMensaje.value.trim();
+
+            if (titulo && mensaje) {
+                // Crear el post con título, mensaje y fecha de creación
+                const post = document.createElement('div');
+                post.classList.add('post');
+
+                const postTitulo = document.createElement('h3');
+                postTitulo.textContent = titulo;
+
+                const postMensaje = document.createElement('p');
+                postMensaje.textContent = mensaje;
+
+                const fechaCreacion = new Date();
+                const postFecha = document.createElement('small');
+                postFecha.textContent = `Creado el: ${fechaCreacion.toLocaleString()}`;
+
+                // Agregar título, mensaje y fecha al post
+                post.appendChild(postTitulo);
+                post.appendChild(postMensaje);
+                post.appendChild(postFecha);
+
+                // Agregar el post al contenedor de posts
+                contenedorPosts.appendChild(post);
+
+                // Limpiar el formulario y eliminarlo después de enviar
+                formulario.reset();
+                formulario.remove();
+            }
+        });
+
+        // Agregar elementos al formulario
+        formulario.appendChild(inputTitulo);
+        formulario.appendChild(inputMensaje);
+        formulario.appendChild(botonEnviar);
+        formulario.appendChild(botonCancelar);
+
+        // Agregar el formulario al modal
+        modal.appendChild(formulario);
+    });
+
+    // Agregar los elementos al modal
+    modal.appendChild(botonCrearPost);
+    modal.appendChild(contenedorPosts);
+
+    // Agregar el modal al body o chatLog
+    chatLog.appendChild(modal);
+}
+
+
+
+function abrirModalNotificarPost() {
+    // Crear el modal y su contenedor
+    const modal = document.createElement('div');
+    modal.classList.add('modal-notificar-post');
+
+    // Crear el formulario de notificación
+    const formulario = document.createElement('form');
+    formulario.classList.add('notificar-post-form');
+
+    // Campo para el número de teléfono
+    const inputTelefono = document.createElement('input');
+    inputTelefono.setAttribute('type', 'text');
+    inputTelefono.setAttribute('placeholder', 'Número de Teléfono');
+    inputTelefono.required = true;
+
+    // Campo para el mensaje
+    const inputMensaje = document.createElement('textarea');
+    inputMensaje.setAttribute('placeholder', 'Mensaje');
+    inputMensaje.required = true;
+
+    // Botón de enviar
+    const botonEnviar = document.createElement('button');
+    botonEnviar.textContent = "Enviar Notificación";
+    botonEnviar.classList.add('enviar-notificacion-btn');
+
+    // Agregar campos y botones al formulario
+    formulario.appendChild(inputTelefono);
+    formulario.appendChild(inputMensaje);
+    formulario.appendChild(botonEnviar);
+
+    // Agregar el formulario al modal
+    modal.appendChild(formulario);
+
+    // Agregar el modal al body o chatLog
+    chatLog.appendChild(modal);
+
+    // Acción del botón enviar
+    formulario.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const numeroTelefono = inputTelefono.value.trim();
+        const mensaje = encodeURIComponent(inputMensaje.value.trim());
+
+        // Verifica que el número de teléfono sea válido
+        if (!numeroTelefono) {
+            alert('Por favor, ingrese un número de teléfono válido.');
+            return;
+        }
+
+        // Redireccionar a WhatsApp
+        const whatsappUrl = `https://wa.me/${numeroTelefono}?text=${mensaje}`;
+        window.open(whatsappUrl, '_blank');
+
+        // Limpiar el formulario después de enviar
+        formulario.reset();
+    });
+}
+
+
+
+
+
+function crearCuentaHaciaAdelante() {
+    // Crear elementos dinámicos
+    const contenedor = document.createElement('div');
+    contenedor.classList.add('countup-container');
+
+    // Crear el título del comando (h1)
+    const comandoTitulo = document.createElement('h1');
+    comandoTitulo.textContent = "/ultimo-lanzamiento"; // El nombre del comando
+    comandoTitulo.classList.add('comando-titulo');
+    contenedor.appendChild(comandoTitulo);
+
+    // Crear el subtítulo (h2)
+    const titulo = document.createElement('h2');
+    titulo.textContent = "Último Lanzamiento";
+    contenedor.appendChild(titulo);
+
+    // Crear el contenedor de la cuenta adelante
+    const countup = document.createElement('div');
+    countup.classList.add('countup');
+
+    const timeSections = ['days', 'hours', 'minutes', 'seconds'];
+    const timeLabels = ['Días', 'Horas', 'Minutos', 'Segundos'];
+
+    timeSections.forEach((section, index) => {
+        const timeSection = document.createElement('div');
+        timeSection.classList.add('time-section');
+
+        const timeValue = document.createElement('span');
+        timeValue.id = section;
+        timeValue.textContent = "00"; // Valores iniciales
+
+        const timeLabel = document.createElement('p');
+        timeLabel.textContent = timeLabels[index];
+
+        timeSection.appendChild(timeValue);
+        timeSection.appendChild(timeLabel);
+        countup.appendChild(timeSection);
+    });
+
+    contenedor.appendChild(countup);
+
+    // Crear la fecha exacta del último lanzamiento
+    const launchDateText = document.createElement('p');
+    launchDateText.classList.add('launch-date');
+    launchDateText.innerHTML = 'Fecha del último lanzamiento: <span id="launch-date"></span>';
+    contenedor.appendChild(launchDateText);
+
+    // Agregar el contenedor al body o al chatLog
+    chatLog.appendChild(contenedor);
+
+    // Iniciar la lógica de la cuenta hacia adelante
+    iniciarCuentaHaciaAdelante();
+}
+
+function iniciarCuentaHaciaAdelante() {
+    const lanzamiento = new Date("October 10, 2024 12:00:00").getTime();
+    document.getElementById('launch-date').textContent = new Date(lanzamiento).toLocaleString();
+
+    const interval = setInterval(function() {
+        const ahora = new Date().getTime();
+        const distancia = ahora - lanzamiento; // Cambiamos para contar hacia adelante
+
+        const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
+        const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
+        const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
+
+        document.getElementById("days").textContent = dias < 10 ? `0${dias}` : dias;
+        document.getElementById("hours").textContent = horas < 10 ? `0${horas}` : horas;
+        document.getElementById("minutes").textContent = minutos < 10 ? `0${minutos}` : minutos;
+        document.getElementById("seconds").textContent = segundos < 10 ? `0${segundos}` : segundos;
+
+    }, 1000);
+}
+
+
+function crearCuentaRegresiva() {
+    // Crear elementos dinámicos
+    const contenedor = document.createElement('div');
+    contenedor.classList.add('countdown-container');
+
+    // Crear el título del comando (h1)
+    const comandoTitulo = document.createElement('h1');
+    comandoTitulo.textContent = "/proximo-lanzamiento"; // El nombre del comando
+    comandoTitulo.classList.add('comando-titulo');
+    contenedor.appendChild(comandoTitulo);
+
+    // Crear el subtítulo (h2)
+    const titulo = document.createElement('h2');
+    titulo.textContent = "Próximo Lanzamiento";
+    contenedor.appendChild(titulo);
+
+    // Crear el contenedor de la cuenta regresiva
+    const countdown = document.createElement('div');
+    countdown.classList.add('countdown');
+
+    const timeSections = ['days', 'hours', 'minutes', 'seconds'];
+    const timeLabels = ['Días', 'Horas', 'Minutos', 'Segundos'];
+
+    timeSections.forEach((section, index) => {
+        const timeSection = document.createElement('div');
+        timeSection.classList.add('time-section');
+
+        const timeValue = document.createElement('span');
+        timeValue.id = section;
+        timeValue.textContent = "00"; // Valores iniciales
+
+        const timeLabel = document.createElement('p');
+        timeLabel.textContent = timeLabels[index];
+
+        timeSection.appendChild(timeValue);
+        timeSection.appendChild(timeLabel);
+        countdown.appendChild(timeSection);
+    });
+
+    contenedor.appendChild(countdown);
+
+    // Crear la fecha de lanzamiento
+    const launchDateText = document.createElement('p');
+    launchDateText.classList.add('launch-date');
+    launchDateText.innerHTML = 'Fecha de lanzamiento: <span id="launch-date"></span>';
+    contenedor.appendChild(launchDateText);
+
+    // Agregar el contenedor al chatLog
+    chatLog.appendChild(contenedor);
+
+    // Iniciar la lógica de la cuenta regresiva
+    iniciarCuentaRegresiva();
+}
+
+function iniciarCuentaRegresiva() {
+    const lanzamiento = new Date("October 25, 2024 12:00:00").getTime();
+    document.getElementById('launch-date').textContent = new Date(lanzamiento).toLocaleString();
+
+    const interval = setInterval(function() {
+        const ahora = new Date().getTime();
+        const distancia = lanzamiento - ahora;
+
+        const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
+        const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
+        const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
+
+        document.getElementById("days").textContent = dias < 10 ? `0${dias}` : dias;
+        document.getElementById("hours").textContent = horas < 10 ? `0${horas}` : horas;
+        document.getElementById("minutes").textContent = minutos < 10 ? `0${minutos}` : minutos;
+        document.getElementById("seconds").textContent = segundos < 10 ? `0${segundos}` : segundos;
+
+        if (distancia < 0) {
+            clearInterval(interval);
+            document.querySelector(".countdown").innerHTML = "<p>¡El lanzamiento ha comenzado!</p>";
+        }
+    }, 1000);
+}
+
+
+
+
+function abrirTiendaModal() {
+    const modalTienda = document.createElement('div');
+    modalTienda.classList.add('modal');
+
+    const modalContent = document.createElement('div');
+    modalContent.classList.add('modal-content');
+
+    // Título del modal
+    const title = document.createElement('h2');
+    title.textContent = 'Tienda de AnimalAI';
+
+    // Crear las secciones de la tienda
+    const seccionProductos = crearSeccionTienda('Productos y Comandos', [
+        { nombre: 'Producto 1', costo: 10, comando: '/comando1' },
+        { nombre: 'Producto 2', costo: 15, comando: '/comando2' }
+    ]);
+
+    const seccionAccesoAnticipado = crearSeccionTienda('Acceso Anticipado', [
+        { nombre: 'Patches', costo: 20, comando: 'patch-notes' }  // Cambié "command" a "comando"
+    ]);
+
+    // Añadir secciones al modal
+    modalContent.appendChild(title);
+    modalContent.appendChild(seccionProductos);
+    modalContent.appendChild(seccionAccesoAnticipado);
+
+    // Botón de cierre del modal
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'Cerrar';
+    closeButton.onclick = function () {
+        document.body.removeChild(modalTienda);
+    };
+    modalContent.appendChild(closeButton);
+
+    modalTienda.appendChild(modalContent);
+    document.body.appendChild(modalTienda);
+
+    modalTienda.style.display = 'block';
+}
+
+function crearSeccionTienda(tituloSeccion, productos) {
+    const section = document.createElement('div');
+    section.classList.add('tienda-section');
+
+    const sectionTitle = document.createElement('h3');
+    sectionTitle.textContent = tituloSeccion;
+
+    section.appendChild(sectionTitle);
+
+    // Crear los productos dentro de la sección
+    productos.forEach(producto => {
+        const productoContainer = document.createElement('div');
+        productoContainer.classList.add('producto');
+
+        const productoNombre = document.createElement('span');
+        productoNombre.textContent = `${producto.nombre} - ${producto.costo} Animal Tokens`;
+
+        const botonComprar = document.createElement('button');
+        botonComprar.textContent = 'Comprar';
+        botonComprar.onclick = function () {
+            iniciarCompraProducto(producto.nombre, producto.costo, producto.comando); // Cambié "producto.command" a "producto.comando"
+        };
+
+        productoContainer.appendChild(productoNombre);
+        productoContainer.appendChild(botonComprar);
+        section.appendChild(productoContainer);
+    });
+
+    return section;
+}
+
+
+function iniciarCompraProducto(nombreProducto, costo, comando) {
+    const saldoActual = 100; // Supongamos que el saldo actual es 100 Animal Tokens
+    animalPayTransaction(costo, saldoActual, function(exito) {
+        if (exito) {
+            ejecutarComando(comando);  // Usar el "comando" aquí
+        }
+    });
+}
+
+
+// Función para mostrar el modal con las notas de parche
+function mostrarModalPatchNotes(version, fecha, contenido) {
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+
+    const modalContent = document.createElement('div');
+    modalContent.classList.add('modal-content');
+
+    // Título (Versión de la actualización)
+    const title = document.createElement('h2');
+    title.textContent = `Versión: ${version}`;
+
+    // Subtítulo (Fecha de la actualización)
+    const subtitle = document.createElement('h4');
+    subtitle.textContent = `Fecha: ${fecha}`;
+
+    // Contenedor del contenido (última actualización) con deslizador
+    const contentContainer = document.createElement('div');
+    contentContainer.classList.add('content-container');
+
+    const patchText = document.createElement('p');
+    patchText.textContent = contenido;
+
+    contentContainer.appendChild(patchText);
+
+    // Estilos para el contenedor con deslizador
+    contentContainer.style.maxHeight = '200px'; // Ajusta la altura según sea necesario
+    contentContainer.style.overflowY = 'auto'; // Deslizador vertical
+    contentContainer.style.border = '1px solid #ccc';
+    contentContainer.style.padding = '10px';
+    contentContainer.style.marginTop = '15px';
+
+    // Botón de cierre
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'Cerrar';
+    closeButton.onclick = function () {
+        cerrarModal(modal);
+    };
+
+    // Añadir todos los elementos al modal
+    modalContent.appendChild(title);
+    modalContent.appendChild(subtitle);
+    modalContent.appendChild(contentContainer);
+    modalContent.appendChild(closeButton);
+
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+
+    modal.style.display = 'block';
+}
+
+// Función para cerrar el modal
+function cerrarModal(modal) {
+    if (modal) {
+        document.body.removeChild(modal);
+    }
+}
+
+// Ejemplo de uso del comando /patch-notes
+function ejecutarPatchNotes() {
+    const version = 'v1.0.35';
+    const fecha = '15 de Octubre, 2024';
+    const contenido = `
+        - Se ha añadido el nuevo comando de temporada.
+        - Ajustes en la obtención de EXP.
+        - Corrección de errores menores en la interfaz.
+        - Mejoras en la carga de contenido de recompensas.
+        - Cambios en la estructura del nivel máximo y recompensas finales.
+    `;
+
+    mostrarModalPatchNotes(version, fecha, contenido);
+}
+
+
 
 // Lista de comandos disponibles
 const listaComandos2 = ['definicion', 'recompensa', 'quiz-animal', 'leyenda-mitica'];
@@ -471,7 +957,7 @@ console.log(navegadorSimulado(generarURLComando('recompensa'))); // Comando exis
 console.log(navegadorSimulado('oceanandwild.com/comando/comando-invalido')); // Comando no existente
 
 
-// Función para obtener la fecha actual en formato de solo día o semana
+// Fecha actual en formato de solo día o semana
 function obtenerFechaActual(formato) {
     const fecha = new Date();
     if (formato === 'diario') {
@@ -504,15 +990,29 @@ function reclamarRecompensa(tipo) {
     }
 }
 
-// Comando /recompensa
-function handleRecompensaCommand(tipoRecompensa) {
-    if (tipoRecompensa === 'diaria' || tipoRecompensa === 'semanal') {
-        const resultado = reclamarRecompensa(tipoRecompensa);
-        console.log(resultado); // Aquí puedes cambiar para enviar el mensaje al jugador
-    } else {
-        console.log('Tipo de recompensa no válido. Usa "diaria" o "semanal".');
- }
+// Función para manejar el comando de recompensa y generar los botones
+function handleRecompensaCommand() {
+    // Crear el botón para la recompensa diaria
+    const buttonDiaria = document.createElement('button');
+    buttonDiaria.textContent = 'Reclamar Recompensa Diaria';
+    buttonDiaria.onclick = function() {
+        const resultado = reclamarRecompensa('diaria');
+        typeMessage(resultado); // Mostrar el mensaje al jugador
+    };
+
+    // Crear el botón para la recompensa semanal
+    const buttonSemanal = document.createElement('button');
+    buttonSemanal.textContent = 'Reclamar Recompensa Semanal';
+    buttonSemanal.onclick = function() {
+        const resultado = reclamarRecompensa('semanal');
+        typeMessage(resultado); // Mostrar el mensaje al jugador
+    };
+
+    typeMessage('Selecciona una opción para reclamar tu recompensa:');
+    chatLog.appendChild(buttonDiaria); // Añadir botón diario al documento
+    chatLog.appendChild(buttonSemanal); // Añadir botón semanal al documento
 }
+
 
 const quizPreguntas = [
     {
@@ -1746,11 +2246,13 @@ window.onload = function() {
 // Variables globales
 let nivelActual = 1;
 let expActual = 0;
-let expNecesaria = 100; // Ejemplo: cantidad de EXP necesaria por nivel, puede aumentar por nivel.
+let expNecesaria = 100;
 let contadorExp = 3600; // 1 hora en segundos
 let timerActivo = false;
 let comandoDesbloqueado = false;
 let expText; // Definir expText como variable global para acceder desde cualquier función
+
+
 
 // Función para mostrar el pase de temporada
 function mostrarModalPaseTemporada() {
@@ -1761,7 +2263,7 @@ function mostrarModalPaseTemporada() {
     modalContent.classList.add('modal-content');
 
     const title = document.createElement('h2');
-    title.textContent = 'Pase de Temporada';
+    title.textContent = 'Pase Salvaje';
 
     // Mostrar nivel actual
     const nivelText = document.createElement('p');
@@ -1776,7 +2278,7 @@ function mostrarModalPaseTemporada() {
     ganarExpButton.textContent = 'Ganar EXP';
     if (timerActivo) {
         ganarExpButton.disabled = true;
-        ganarExpButton.textContent = 'Ya has desbloqueado la EXP horaria, vuelva a intentarlo luego.';
+        ganarExpButton.textContent = 'Ya has desbloqueado la EXP horaria, vuelve a intentarlo luego.';
     }
     ganarExpButton.onclick = function () {
         ganarExp();
@@ -1789,8 +2291,8 @@ function mostrarModalPaseTemporada() {
     recompensasTitle.textContent = 'Recompensas del Pase';
     recompensasSection.appendChild(recompensasTitle);
 
-    const recompensaAnimalTokensButton = crearBotonRecompensa('Animal Tokens', 200);
-    const recompensaFobiasButton = crearBotonRecompensa('Créditos de Fobias', 50);
+    const recompensaAnimalTokensButton = crearBotonRecompensa('Animal Tokens', 200, 'comando-secreto');
+    const recompensaFobiasButton = crearBotonRecompensa('Créditos de Fobias', 50, 'comando-extra');
     const recompensaAsesinoButton = crearBotonRecompensa('Créditos de Asesino', 75);
 
     recompensasSection.appendChild(recompensaAnimalTokensButton);
@@ -1852,7 +2354,7 @@ function ganarExp() {
 function iniciarContador(ganarExpButton) {
     timerActivo = true;
     ganarExpButton.disabled = true;
-    ganarExpButton.textContent = 'Ya has desbloqueado la EXP horaria, vuelva a intentarlo luego.';
+    ganarExpButton.textContent = 'Ya has desbloqueado la EXP horaria, vuelve a intentarlo luego.';
     
     let contador = contadorExp;
     const intervalo = setInterval(() => {
@@ -1866,8 +2368,8 @@ function iniciarContador(ganarExpButton) {
     }, 1000);
 }
 
-// Función para crear los botones de recompensa
-function crearBotonRecompensa(tipoRecompensa, cantidad) {
+// Función para crear los botones de recompensa y ejecutar el comando si existe
+function crearBotonRecompensa(tipoRecompensa, cantidad, comando) {
     const boton = document.createElement('button');
     boton.textContent = `Reclamar ${cantidad} ${tipoRecompensa}`;
     
@@ -1875,6 +2377,11 @@ function crearBotonRecompensa(tipoRecompensa, cantidad) {
         if (expActual >= expNecesaria) {
             alert(`Has reclamado ${cantidad} ${tipoRecompensa}.`);
             expActual = 0; // Reiniciar EXP tras reclamar
+
+            // Ejecutar el comando si existe en la lista de comandos
+            if (comando && commands.includes(comando)) {
+                ejecutarComando(comando);
+            }
         } else {
             alert(`Necesitas más EXP. EXP actual: ${expActual}/${expNecesaria}`);
         }
@@ -1885,6 +2392,8 @@ function crearBotonRecompensa(tipoRecompensa, cantidad) {
 
     return boton;
 }
+
+
 
 // Función para desbloquear el comando secreto
 function desbloquearComandoSecreto() {
@@ -1898,6 +2407,8 @@ function cerrarModal(modal) {
         document.body.removeChild(modal);
     }
 }
+
+
 
     // Función para mostrar el modal de compra
 function mostrarModalCompraTokens() {
@@ -2678,6 +3189,35 @@ function mostrarConfiguracion() {
         localStorage.setItem('preferenciaModal', preferenciaModal); // Guardar la preferencia en localStorage
     });
 
+    // Añadir el Filtro de Contenido +18
+    const labelFiltro = document.createElement('label');
+    labelFiltro.textContent = "Filtro de Contenido +18:";
+
+    const switchFiltroContainer = document.createElement('div');
+    switchFiltroContainer.className = "switch-container";
+
+    const switchFiltroLabel = document.createElement('label');
+    switchFiltroLabel.className = "switch";
+
+    const inputFiltro = document.createElement('input');
+    inputFiltro.type = "checkbox";
+    
+    const sliderFiltro = document.createElement('span');
+    sliderFiltro.className = "slider round";
+
+    switchFiltroLabel.appendChild(inputFiltro);
+    switchFiltroLabel.appendChild(sliderFiltro);
+
+    switchFiltroContainer.appendChild(labelFiltro);
+    switchFiltroContainer.appendChild(switchFiltroLabel);
+
+    // Evento al activar el Filtro de Contenido +18
+    inputFiltro.addEventListener('change', function () {
+        if (inputFiltro.checked) {
+            activarFiltroContenidoAdulto();
+        }
+    });
+
     // Crear botón de cierre del modal
     const closeButton = document.createElement('button');
     closeButton.textContent = "Cerrar";
@@ -2688,6 +3228,7 @@ function mostrarConfiguracion() {
     // Añadir todos los elementos al contenido del modal
     modalContent.appendChild(title);
     modalContent.appendChild(switchContainer);
+    modalContent.appendChild(switchFiltroContainer); // Añadir el Filtro de Contenido +18 al modal
     modalContent.appendChild(closeButton);
 
     // Añadir el contenido al modal
@@ -2697,6 +3238,13 @@ function mostrarConfiguracion() {
     // Mostrar el modal
     modal.style.display = 'block'; // Cambia a bloque para que sea visible
 }
+
+// Función para activar el Filtro de Contenido +18
+function activarFiltroContenidoAdulto() {
+    typeMessage("Hola puto(a), usa comandos y no seas chupapija.");
+}
+
+
   
 // Función para gestionar las notificaciones con botones
 function gestionarNotificaciones() {
@@ -3307,46 +3855,48 @@ function cerrarModal(modal) {
         }
     });
 
-    function animalPayTransaction(costo, saldoActual, deduccion, callback) {
-        // Crear el modal
+    function animalPayTransaction(costo, saldoActual, callback) {
         const modaltransaction = document.createElement('div');
         modaltransaction.classList.add('modal');
-    
+        
         const modalContent = document.createElement('div');
         modalContent.classList.add('modal-content');
-    
+        
         const title = document.createElement('h2');
         title.textContent = 'Completa tu transacción';
-    
+        
         const emailInput = document.createElement('input');
         emailInput.type = 'email';
         emailInput.placeholder = 'Ingresa tu correo electrónico';
         emailInput.required = true;
-    
+        
         const btnAnimalTokens = document.createElement('button');
         btnAnimalTokens.textContent = 'Pagar con Animal Tokens';
         btnAnimalTokens.classList.add('btn-animal-tokens'); // Clase para estilos personalizados
-    
+        
         modalContent.appendChild(title);
         modalContent.appendChild(emailInput);
         modalContent.appendChild(btnAnimalTokens);
         modaltransaction.appendChild(modalContent);
         document.body.appendChild(modaltransaction);
-    
+        
         // Mostrar el modal
         modaltransaction.style.display = 'block';
-    
+        
         // Evento para pagar con Animal Tokens
         btnAnimalTokens.addEventListener('click', function () {
             const email = emailInput.value.trim();
             if (saldoActual >= costo && validateEmail(email)) {
-                animalTokens -= costo; // Deduce los Animal Tokens del saldo global
-    
+                // Deduce los Animal Tokens
+                saldoActual -= costo; 
+        
                 // Mostrar animación de éxito
-                showSuccessAnimation(modaltransaction, 'Animal Tokens', costo, email, callback);
+                showSuccessAnimation(modaltransaction, 'Animal Tokens', costo, email, function() {
+                    callback(true); // Llamar el callback indicando éxito
+                });
             } else {
                 alert('❌ No tienes suficientes Animal Tokens o el correo es inválido.');
-                callback(false); // Llamar al callback indicando que la transacción falló
+                callback(false); // Llamar el callback indicando que la transacción falló
             }
         });
     }
@@ -4285,8 +4835,25 @@ document.head.appendChild(style);
         'acceder',
         'unirse',
         'usuarios',
+        'boss-battle',
+        'comandos-recomendados',
+        'generar-imagenes',
+        'explora-biomas',
+        't-rex-friend',
+        'definiciones',
+        'frases-motivacionales',
+        'quiz-animal',
+        'leyenda-mitica',
+        'recompensa-diaria/semanal',
+        'patch-notes',
+        'tienda',
+        'proximo-lanzamiento',
+        'ultimo-lanzamiento',
     ];
     
+
+
+
     const listaScripts = [
         'animalSaver.js', 
         'animalHandler.js', 
@@ -4408,13 +4975,8 @@ let totalSize = sizePerElement * cantidadTotalElementos; // Tamaño total en MB
                     // Instalación completada
                     textoInstalacionScripts.innerText = "Instalación de scripts completada. ¡Animal AI está lista para usarse!";
                     setTimeout(() => {
-                        // Limpiar todos los mensajes y la barra de progreso después de unos segundos
-                        chatLog.innerHTML = ""; // Limpiar el chat
-                        solicitarPaisUsuario();
-                    }, 1000); // Esperar 2 segundos antes de eliminar todo
-                    setTimeout(() => {
                         handleSeleccionarModeloIA();
-                    }, 15000); // Esperar 15 segundos antes de seleccionar el modelo
+                    }, 5000); // Esperar 5 segundos antes de seleccionar el modelo
                 }
             }
     
@@ -5001,28 +5563,40 @@ document.addEventListener("DOMContentLoaded", () => {
         { nombre: "/supervivencia", estado: "plateado" },
         { nombre: "/lineas", estado: "lila" },
         { nombre: "/generar-blog", estado: "funcionalverde" },
-        { nombre: "/PPOT", estado: "verde" },
+        { nombre: "/PPOT", estado: "de-pago" },
         { nombre: "/limpieza", estado: "funcionalverde" },
         { nombre: "/update", estado: "funcionalverde" },
         { nombre: "/proximo-comando", estado: "funcionalverde" },
         { nombre: "/verificacion-final", estado: "funcionalverde" },
-        { nombre: "/pase-de-temporada", estado: "inactivo" },
+        { nombre: "/pase-de-temporada", estado: "recompensas-incluidas" },
         { nombre: "/comando-existente", estado: "funcionalverde" },
         { nombre: "/resumir-texto", estado: "ambar" },
         { nombre: "/gatitos", estado: "funcionalverde" },
         { nombre: "/reproductor-de-musica", estado: "funcionalverde" },
         { nombre: "/animal-random", estado: "funcionalverde" },
-        { nombre: "/intercambio-de-moneda", estado: "funcionalverde" },
-        { nombre: "/sombra-asesina", estado: "verde" },
-        { nombre: "/comprar-moneda", estado: "funcionalverde" },
+        { nombre: "/intercambio-de-moneda", estado: "recompensas-incluidas" },
+        { nombre: "/sombra-asesina", estado: "recompensas-incluidas" },
+        { nombre: "/comprar-moneda", estado: "de-pago" },
         { nombre: "/generar-codigo", estado: "administrador" },
         { nombre: "/generar-imagenes", estado: "turquesa" },
         { nombre: "/configuracion", estado: "funcionalverde" },
         { nombre: "/acceder", estado: "verde" },
         { nombre: "/unirse", estado: "verde" },
         { nombre: "/usuarios", estado: "verde" },
+        { nombre: "/boss-battle", estado: "verde" },
+        { nombre: "/definiciones", estado: "funcionalverde" },
+        { nombre: "/frases-motivacionales", estado: "verde" },
+        { nombre: "/quiz-animal", estado: "verde" },
+        { nombre: "/leyenda-mitica", estado: "verde" },
+        { nombre: "/recompensa-diaria/semanal", estado: "recompensas-incluidas" },
+        { nombre: "/patch-notes", estado: "funcionalverde" },
+        { nombre: "/tienda", estado: "funcionalverde" },
+        { nombre: "/proximo-lanzamiento", estado: "funcionalverde" },
+        { nombre: "/ultimo-lanzamiento", estado: "funcionalverde" },
     ];
     
+
+
     const estados = {
         "verde": "Disponible",
         "funcionalverde": "Comando Funcional y Disponible.",
@@ -5046,7 +5620,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "administrador": "Comandos para el usuario con configuraciones solo para administrador",
         "inactivo": "Comando Inactivo Temporalmente",
         "en-observacion": "Comando en observacion, el comando afectado por este estado suele estar en revision extrema para que su funcionalidad no salga perjudicada.",
-        "de-pago": "Comando con Transacciones"
+        "de-pago": "Comando con Transacciones",
+        "recompensas-incluidas": "El comando contiene recompensas por participar en un juego, dinamica etc."
     };
     
     const descripciones = {
@@ -5072,7 +5647,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "administrador": "Este comando es exclusivo para usuarios con privilegios administrativos y permite gestionar funciones avanzadas del sistema.",
         "inactivo": "Este comando está inactivo y no puede ser utilizado en este momento.",
         "en-observacion": "Este comando está bajo revisión y no se puede utilizar. Se evaluará su funcionalidad antes de decidir su futuro.",
-        "de-pago": "Este comando requiere una transacción o suscripción para ser utilizado."
+        "de-pago": "Este comando requiere una transacción o suscripción para ser utilizado.",
+        "recompensas-incluidas": "Este comando otorga recompensas adicionales al usuario cuando se utiliza."
     };
     
     const comandosPorPagina = 7;
@@ -5253,6 +5829,11 @@ document.addEventListener("DOMContentLoaded", () => {
     <span class="estado-icon">🏷️</span> 
     <span class="estado-text">De Pago (Acceso mediante transacción):</span> 
     <span class="estado-valor">${conteo["de-pago"] || 0}</span>
+</div>
+          <div class="estado-item estado-recompensas-incluidas">
+    <span class="estado-icon">🎁</span> 
+    <span class="estado-text">Recompensas Incluidas (Bonificaciones al usar):</span> 
+    <span class="estado-valor">${conteo["recompensas-incluidas"] || 0}</span>
 </div>
 
                                                                    
@@ -5928,7 +6509,7 @@ const fobiaLower = fobia.toLowerCase();
 
 
 // Función que maneja el splash screen y redirige a index.html después de la animación
-function showSplashScreenAndRedirect() {
+function showSplashScreenAndRedirect() { 
     setTimeout(() => {
         // Ocultar el splash screen después de la animación
         document.getElementById('splash-screen').style.display = 'none';
