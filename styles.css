@@ -135,7 +135,9 @@ body2 {
     align-items: center;
     height: 100%;
     width: 100%;
+    margin-left: 20px; /* Ajusta este valor para moverlo más a la derecha */
 }
+
 
 
 
@@ -163,7 +165,9 @@ body2 {
     display: flex; /* Para que el contenedor principal tenga elementos flexibles */
     flex-direction: column; /* Coloca los elementos en columna */
     height: 100vh; /* Altura completa de la ventana */
+    margin-left: 20px; /* Ajusta este valor para moverlo más a la derecha */
 }
+
 
 
 /* Contenedor para las listas */
@@ -183,7 +187,10 @@ body2 {
     display: flex;
     flex-direction: column;
     gap: 15px; /* Espaciado reducido para un diseño más compacto */
+    position: relative; /* Cambiar a absolute si se necesita una posición fija */
+    left: 20px; /* Ajusta este valor para moverlo más a la derecha */
 }
+
 
 /* Estilos para la lista de rarezas */
 #rarity-list-container {

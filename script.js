@@ -1291,28 +1291,95 @@ function ejecutarPatchNotes() {
 
 
 // Lista de comandos disponibles
-const listaComandos2 = ['definicion', 'recompensa', 'quiz-animal', 'leyenda-mitica'];
+const listaComandos2 = ['definiciones', 'recompensa', 'quiz-animal', 'leyenda-mitica'];
 
-// Función modular para generar la URL del comando
-function generarURLComando(comando) {
-    const dominio = "oceanandwild.com";
-    return `${dominio}/comando/${comando}`;
-}
 
-// Función principal que actúa como un "navegador"
-function navegadorSimulado(url) {
-    const comandoBuscado = url.split('/comando/')[1];
+// Crear el contenedor para el input y el botón
+const inputContainer = document.createElement('div');
+inputContainer.id = 'input-container';
+chatContainer.appendChild(inputContainer); // Ajusta esto según tu estructura
 
-    if (listaComandos2.includes(comandoBuscado)) {
-        return `Navegando a ${url} ... Comando "${comandoBuscado}" encontrado y ejecutado.`;
-    } else {
-        return `Error: El comando "${comandoBuscado}" no existe.`;
+// Crear el h1 para mostrar el resultado
+const inputText = document.createElement('h1');
+inputText.id = 'resultado-comando';
+inputContainer.appendChild(inputText); // Agregar el h1 al contenedor
+
+// Crear el campo de entrada
+const comandoInput = document.createElement('input');
+comandoInput.type = 'text';
+comandoInput.id = 'comando-input';
+comandoInput.placeholder = 'Escribe la URL del comando aquí';
+
+// Crear el botón
+const ejecutarComandoBtn = document.createElement('button');
+ejecutarComandoBtn.id = 'ejecutar-comando-btn';
+ejecutarComandoBtn.innerText = 'Ejecutar Comando';
+
+// Agregar el input y el botón al contenedor
+inputContainer.appendChild(comandoInput);
+inputContainer.appendChild(ejecutarComandoBtn);
+
+
+// Estilos en JavaScript (se podrían mover a un archivo CSS externo)
+const styles2 = `
+    #input-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px; /* Espacio superior */
     }
-}
 
-// Ejemplo de uso
-console.log(navegadorSimulado(generarURLComando('recompensa'))); // Comando existente
-console.log(navegadorSimulado('oceanandwild.com/comando/comando-invalido')); // Comando no existente
+    #comando-input {
+        width: 300px; /* Ajusta el ancho como prefieras */
+        padding: 10px; /* Espaciado interno */
+        border-radius: 5px; /* Bordes redondeados */
+        border: 1px solid #ccc; /* Borde tenue */
+        margin-bottom: 10px; /* Espaciado inferior */
+    }
+
+    #ejecutar-comando-btn {
+        padding: 10px 15px; /* Espaciado interno del botón */
+        border: none; /* Sin borde */
+        border-radius: 5px; /* Bordes redondeados */
+        background-color: #007BFF; /* Color de fondo del botón */
+        color: white; /* Color del texto del botón */
+        cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    }
+
+    #ejecutar-comando-btn:hover {
+        background-color: #0056b3; /* Color más oscuro al pasar el mouse */
+    }
+`;
+
+// Crear un estilo y agregarlo al head
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = styles2;
+document.body.appendChild(styleSheet);
+
+// Función que se ejecuta al hacer clic en el botón
+ejecutarComandoBtn.addEventListener('click', function() {
+    const input = comandoInput.value.trim();
+    if (input.startsWith('oceanandwild.com/comando/')) {
+        const comandoBuscado = input.split('/comando/')[1];
+        
+        console.log(`Buscando el comando: ${comandoBuscado}`);
+        
+        // Verifica si el comando existe
+        if (listaComandos2.includes(comandoBuscado)) {
+            console.log(`Ejecutando: ${comandoBuscado}`);
+            // Ejecuta el comando correspondiente
+            commands[comandoBuscado](); // Llama a la función correspondiente
+
+            // Actualiza el h1 con el resultado
+            inputText.innerText = `${input}`;
+        } else {
+            inputText.innerText = `Error: El comando "${comandoBuscado}" no existe.`;
+        }
+    } else {
+        inputText.innerText = 'Por favor, ingresa una URL válida en el formato "oceanandwild.com/comando/{nombre del comando}".';
+    }
+});
 
 
 // Fecha actual en formato de solo día o semana
@@ -4554,8 +4621,7 @@ function cerrarModal(modal) {
                     commands[comandoSinSlash](container);
                 }
             } else {
-                typeMessage(container, `Comando no reconocido: "/${comandoSinSlash}"`);
-                notRecognizedCommand();
+                typeMessage(`Animal AI no reconocio este comando: "/${comandoSinSlash}"`);
             }
         }
     
