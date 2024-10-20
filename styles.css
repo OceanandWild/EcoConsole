@@ -170,39 +170,30 @@ body2 {
 
 
 
-/* Contenedor para las listas */
-#list-container {
-    display: flex; /* Para que las listas estén en fila */
-    justify-content: space-between; /* Espacio entre los contenedores */
-    margin-top: 20px; /* Espacio superior para separar del área de chat */
+.list-container {
+    display: flex;                /* Usar Flexbox para alineación horizontal */
+    justify-content: space-between; /* Espacio entre los elementos */
+    align-items: flex-start;     /* Alineación vertical al inicio */
+    margin: 20px 0;             /* Margen vertical */
 }
 
-/* Estilos para la lista de comandos */
+#rarity-list-container,
 #command-list-container {
-    width: 300px; /* Ajusta según sea necesario */
-    background-color: #ffffff; /* Mantener el fondo blanco para claridad */
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Sombra más suave */
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px; /* Espaciado reducido para un diseño más compacto */
-    position: relative; /* Cambiar a absolute si se necesita una posición fija */
-    left: 20px; /* Ajusta este valor para moverlo más a la derecha */
+    flex: 1;                     /* Hacer que ambos contenedores ocupen el mismo espacio */
+    margin: 0 10px;             /* Margen horizontal entre los contenedores */
+    min-width: 300px;           /* Ancho mínimo para cada contenedor */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra para destacar los contenedores */
+    padding: 10px;              /* Relleno interno */
+    background-color: #fff;     /* Fondo blanco para los contenedores */
+    border-radius: 5px;         /* Bordes redondeados */
+}
+
+h3 {
+    text-align: center;          /* Centrar el texto de los títulos */
 }
 
 
-/* Estilos para la lista de rarezas */
-#rarity-list-container {
-    width: 300px; /* Ajusta según sea necesario */
-    background-color: #ffffff;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
+
 
 
 
@@ -1187,21 +1178,6 @@ button:hover {
     top: -110%;
 }
 
-/* Estilo del contenedor de comandos */
-#command-list-container {
-    grid-area: commands; /* Mantener esto si estás usando grid */
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 10px;
-    overflow-y: auto;
-    height: 500px; /* Cambiado a un valor más razonable */
-    max-height: 500px; /* Altura máxima para evitar exceder la pantalla */
-    width: 430px; /* Ajusta el ancho para que se vea bien */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Agregar sombra para un mejor efecto visual */
-    position: relative; /* Cambiado a relativo para el flujo normal del documento */
-    top: -110%;
-}
 
 /* Estilo del contenedor WildCard */
 #wildcard-container {
@@ -1801,4 +1777,14 @@ img {
 .cancelar-post-btn {
     background-color: #dc3545;
     color: white;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
 }

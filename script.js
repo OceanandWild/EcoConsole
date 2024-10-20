@@ -451,7 +451,194 @@ const commands = {
    'ultimo-lanzamiento': crearCuentaHaciaAdelante,
    'notificar-nuevopost': abrirModalNotificarPost,
    'enviar-post': abrirModalPosts,
+   'instalar-documentacion': setupInstalacionDocumentacion,
 };
+
+
+// Lista de comandos con sus rarezas
+const comandosConRarezas = [
+    { nombre: 'saldo', rareza: 'Común' },
+    { nombre: 'localizador', rareza: 'Poco Común' },
+    { nombre: 'desactivar-localizador', rareza: 'Común' },
+    { nombre: 'salvador-de-animales', rareza: 'Raro' },
+    { nombre: 'fobias', rareza: 'Épico' },
+    { nombre: 'eventos', rareza: 'Legendario' },
+    { nombre: 'reto-de-pistas', rareza: 'Mítico' },
+    { nombre: 'inventario-de-tarjetas', rareza: 'Común' },
+    { nombre: 'actualizaciones', rareza: 'Poco Común' },
+    { nombre: 'crear-cuenta-o-iniciar-sesion', rareza: 'Raro' },
+    { nombre: 'servidor', rareza: 'Épico' },
+    { nombre: 'desastres-naturales', rareza: 'Legendario' },
+    { nombre: 'last-update', rareza: 'Mítico' },
+    { nombre: 'resaltar-texto-infoanimalai', rareza: 'Común' },
+    { nombre: 'paquete-de-cartas', rareza: 'Poco Común' },
+    { nombre: 'caza-megalodon', rareza: 'Raro' },
+    { nombre: 'refugio-animales', rareza: 'Épico' },
+    { nombre: 'mejorar-refugio', rareza: 'Legendario' },
+    { nombre: 'lineas', rareza: 'Mítico' },
+    { nombre: 'PPOT', rareza: 'Común' },
+];
+
+// Colores por rareza
+const coloresRarezas = {
+    'Común': '#4CAF50',         // Verde
+    'Poco Común': '#2196F3',    // Azul
+    'Raro': '#9C27B0',          // Púrpura
+    'Épico': '#FF9800',         // Naranja
+    'Legendario': '#FFC107',    // Amarillo
+    'Mítico': '#E91E63'         // Rosa
+};
+
+// Función para contar cuántos comandos hay por rareza
+function contarComandosPorRareza() {
+    const conteo = {
+        'Común': 0,
+        'Poco Común': 0,
+        'Raro': 0,
+        'Épico': 0,
+        'Legendario': 0,
+        'Mítico': 0
+    };
+
+    comandosConRarezas.forEach(comando => {
+        conteo[comando.rareza]++;
+    });
+
+    return conteo;
+}
+
+// Crear los elementos dinámicamente
+function crearListaRarezas() {
+    const contenedor = document.getElementById('rarity-list-container');
+
+    const conteo = contarComandosPorRareza();
+
+    // Crear un título
+    const titulo = document.createElement('h3');
+    titulo.textContent = 'Rarezas de Comandos';
+    contenedor.appendChild(titulo);
+
+    // Crear una lista para cada rareza
+    Object.keys(conteo).forEach(rareza => {
+        // Crear contenedor para cada rareza
+        const rarezaDiv = document.createElement('div');
+        rarezaDiv.style.color = coloresRarezas[rareza];
+        rarezaDiv.style.marginBottom = '10px';
+        
+        // Crear título para la rareza y el conteo
+        const rarezaTitulo = document.createElement('h4');
+        rarezaTitulo.textContent = `${rareza} (${conteo[rareza]} comandos)`;
+        rarezaDiv.appendChild(rarezaTitulo);
+
+        // Crear lista de comandos para cada rareza
+        const listaComandos = document.createElement('ul');
+        comandosConRarezas.forEach(comando => {
+            if (comando.rareza === rareza) {
+                const item = document.createElement('li');
+                item.textContent = comando.nombre;
+                listaComandos.appendChild(item);
+            }
+        });
+
+        rarezaDiv.appendChild(listaComandos);
+        contenedor.appendChild(rarezaDiv);
+    });
+}
+
+// Llamar a la función al cargar el script
+crearListaRarezas();
+
+function setupInstalacionDocumentacion() {  
+console.log("DOM completamente cargado");
+
+// Crear botón para ejecutar el comando "/instalar-documentacion"
+const instalarDocumentacionBtn = document.createElement('button');
+instalarDocumentacionBtn.textContent = 'Instalar Documentacion';
+instalarDocumentacionBtn.classList.add('btn');
+chatLog.appendChild(instalarDocumentacionBtn);
+
+// Agregar evento de clic para mostrar la instalación en el chat
+instalarDocumentacionBtn.addEventListener('click', mostrarInstalacionEnChat);
+console.log("Evento de clic añadido al botón");
+
+console.log("Botón de instalar documentación creado");
+}
+
+
+// Crear función para mostrar el proceso de instalación en el chat
+function mostrarInstalacionEnChat() {
+    console.log("Función mostrarInstalacionEnChat llamada");
+
+    // Mensaje de inicio de instalación
+    const mensajeInstalacion = document.createElement('div');
+    mensajeInstalacion.classList.add('mensaje');
+    mensajeInstalacion.textContent = '¿Desea comenzar la descarga e instalación de la documentación de Animal AI?';
+    chatLog.appendChild(mensajeInstalacion);
+
+    // Botones de acción en el chat
+    const botonesContainer = document.createElement('div');
+    botonesContainer.classList.add('botones-chat');
+
+    // Botón de descarga
+    const comenzarDescargaBtn = document.createElement('button');
+    comenzarDescargaBtn.textContent = 'Descargar Documentación';
+    comenzarDescargaBtn.classList.add('btn');
+    comenzarDescargaBtn.setAttribute('id', 'comenzarDescargaBtn');
+
+    // Botón de cancelar
+    const cancelarBtn = document.createElement('button');
+    cancelarBtn.textContent = 'Cancelar';
+    cancelarBtn.classList.add('btn', 'btn-cancelar');
+    cancelarBtn.setAttribute('id', 'cancelarBtn');
+
+    // Agregar botones al contenedor y al chatLog
+    botonesContainer.appendChild(comenzarDescargaBtn);
+    botonesContainer.appendChild(cancelarBtn);
+    chatLog.appendChild(botonesContainer);
+
+    console.log("Interfaz de instalación añadida al chat");
+
+    // Función para simular el proceso de descarga
+    function iniciarDescarga() {
+        const mensajeDescarga = document.createElement('div');
+        mensajeDescarga.classList.add('mensaje');
+        mensajeDescarga.textContent = 'Descargando la documentación de Animal AI...';
+        chatLog.appendChild(mensajeDescarga);
+
+        // Descargar el instalador
+        const link = document.createElement('a');
+        link.href = 'https://www.mediafire.com/file/cr18yuy3u4s4lhh/documentacion_animal_ai.exe/file#';  // Enlace real al instalador
+        link.download = 'documentacion_animal_ai.exe';  // Nombre del archivo
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        setTimeout(() => {
+            const mensajeInstalacionCompleta = document.createElement('div');
+            mensajeInstalacionCompleta.classList.add('mensaje');
+            mensajeInstalacionCompleta.textContent = 'Documentación de Animal AI instalada correctamente.';
+            chatLog.appendChild(mensajeInstalacionCompleta);
+        }, 3000);
+    }
+
+    // Evento para comenzar la descarga
+    comenzarDescargaBtn.addEventListener('click', () => {
+        iniciarDescarga();
+        botonesContainer.remove(); // Remover los botones después de iniciar la descarga
+    });
+
+    // Evento para cancelar la instalación
+    cancelarBtn.addEventListener('click', () => {
+        const mensajeCancelado = document.createElement('div');
+        mensajeCancelado.classList.add('mensaje');
+        mensajeCancelado.textContent = 'La instalación ha sido cancelada.';
+        chatLog.appendChild(mensajeCancelado);
+        botonesContainer.remove(); // Remover los botones si se cancela
+    });
+}
+
+
+
 
 function iniciarApp2() {
     // Crear el modal para activar el soporte móvil
@@ -1289,9 +1476,63 @@ function ejecutarPatchNotes() {
 }
 
 
+const listaComandos2 = [
+'saldo',
+'localizador',
+'desactivar-localizador',
+'salvador-de-animales',
+'fobias',
+'eventos',
+'reto-de-pistas',
+'inventario-de-tarjetas',
+'actualizaciones',
+'crear-cuenta-o-iniciar-sesion',
+'servidor',
+'desastres-naturales',
+'last-update',
+'resaltar-texto-infoanimalai',
+'paquete-de-cartas',
+'caza-megalodon',
+'refugio-animales',
+'mejorar-refugio',
+'lineas',
+'PPOT',
+'limpieza',
+'update',
+'proximo-comando',
+'verificacion-final',
+'pase-de-temporada',
+'comandos-existentes',
+'reproductor-de-musica',
+'animal-random',
+'mantenimiento',
+'proximos-comandos',
+'intercambiador-de-moneda',
+'sombra-asesina',
+'configuracion',
+'acceder',
+'unirse',
+'usuarios',
+'boss-battle',
+'comandos-recomendados',
+'generar-imagenes',
+'explora-biomas',
+'t-rex-friend',
+'definiciones',
+'frases-motivacionales',
+'quiz-animal',
+'leyenda-mitica',
+'recompensa-diaria/semanal',
+'patch-notes',
+'tienda',
+'proximo-lanzamiento',
+'ultimo-lanzamiento',
+'notificar-nuevopost',
+'enviar-post',
+'instalar-documentacion',
+];
 
-// Lista de comandos disponibles
-const listaComandos2 = ['definiciones', 'recompensa', 'quiz-animal', 'leyenda-mitica'];
+
 
 
 // Crear el contenedor para el input y el botón
@@ -1308,7 +1549,7 @@ inputContainer.appendChild(inputText); // Agregar el h1 al contenedor
 const comandoInput = document.createElement('input');
 comandoInput.type = 'text';
 comandoInput.id = 'comando-input';
-comandoInput.placeholder = 'Escribe la URL del comando aquí';
+comandoInput.placeholder = 'Escribe oceanandwild.com/comando/(el comando que quieres) para poder ejecutarlo';
 
 // Crear el botón
 const ejecutarComandoBtn = document.createElement('button');
@@ -5273,6 +5514,9 @@ document.head.appendChild(style);
         'tienda',
         'proximo-lanzamiento',
         'ultimo-lanzamiento',
+        'notificar-nuevopost',
+        'enviar-post',
+        'instalar-documentacion',
     ];
     
 
@@ -6017,6 +6261,7 @@ document.addEventListener("DOMContentLoaded", () => {
         { nombre: "/tienda", estado: "funcionalverde" },
         { nombre: "/proximo-lanzamiento", estado: "funcionalverde" },
         { nombre: "/ultimo-lanzamiento", estado: "funcionalverde" },
+        { nombre: "/instalar-documentacion", estado: "funcionalverde" },
     ];
     
 
@@ -6371,6 +6616,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('btn-siguiente').addEventListener('click', function() {
             cambiarPagina(1); // Cambia a la siguiente página
         });
+
 
 
 

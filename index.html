@@ -104,25 +104,38 @@
                 <button id="sendCMDBtn">Enviar Respuesta</button>
             </div>
 
-            <h4>Animal AI (V1.1.35)</h4>
-        </div>
-    
-        <!-- Contenedor para las listas de comandos y rarezas -->
-        <div id="command-list-container" class="grid-item commands">
-            <h3>Comandos Disponibles</h3>
-            <ul id="command-list">
-                <!-- Aquí se cargarán los comandos dinámicamente -->
-            </ul>
-            <div class="paginacion">
-                <button id="btn-anterior" disabled>&lt;</button>
-                <span id="pagina-actual">Página 1 de 2</span>
-                <button id="btn-siguiente" disabled>&gt;</button>
+            <h4>Animal AI (V1.0.4)</h4>
+            <div class="list-container">
+                <!-- Contenedor para las listas de comandos y rarezas -->
+                <div id="rarity-list-container" class="grid-item commands">
+                    <h3>Rarezas</h3>
+                    <!-- Aquí se cargarán dinámicamente las rarezas -->
+                </div>
+            
+                <!-- Contenedor para las listas de comandos -->
+                <div id="command-list-container" class="grid-item commands">
+                    <h3>Comandos Disponibles</h3>
+                    <ul id="command-list">
+                        <!-- Aquí se cargarán los comandos dinámicamente -->
+                    </ul>
+                    <div class="paginacion">
+                        <button id="btn-anterior" disabled>&lt;</button>
+                        <span id="pagina-actual">Página 1 de 2</span>
+                        <button id="btn-siguiente" disabled>&gt;</button>
+                    </div>
+                    <div id="estado-conteo">
+                        <!-- Aquí se mostrará el conteo de comandos por estado -->
+                    </div>
+                </div>
             </div>
-            <div id="estado-conteo">
-                <!-- Aquí se mostrará el conteo de comandos por estado -->
-            </div>
-        </div>
+            
+            
     
+
+       
+    
+
+                
         
 
         <script src="script.js"></script>
