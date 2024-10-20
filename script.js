@@ -810,7 +810,6 @@ function ajustarEstilosParaMovil() {
     document.head.appendChild(styles);
 }
 
-iniciarApp2();
 
 function abrirModalPosts() {
     // Crear el modal y su contenedor

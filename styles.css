@@ -142,9 +142,9 @@ body2 {
 
 /* Estilo extremo y personalizado para el contenedor del chat */
 #chat-container {
-    width: 95%;  /* Ajuste ligeramente menor para un mejor margen */
-    max-width: 1400px;  /* Aumentado para aprovechar mejor pantallas más grandes */
-    height: 85vh;  /* Ajuste para evitar que quede demasiado alto */
+    width: 50%;  /* Ajuste ligeramente menor para un mejor margen */
+    max-width: 1000px;  /* Aumentado para aprovechar mejor pantallas más grandes */
+    height: 50vh;  /* Ajuste para evitar que quede demasiado alto */
     background: linear-gradient(145deg, #ff7e5f, #feb47b, #6a11cb 90%);
     border-radius: 25px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 5px 15px rgba(255, 255, 255, 0.1);
@@ -267,7 +267,7 @@ body2 {
 /* Área de mensajes del chat - Estilo único */
 #chat-log {
     flex-grow: 1;  /* Prioriza el crecimiento del área de mensajes */
-    padding: 25px 30px;  /* Espaciado más amplio para mayor comodidad visual */
+    padding: 25px 10px;  /* Espaciado más amplio para mayor comodidad visual */
     overflow-y: scroll;  /* Siempre mostrar el scroll */
     color: #e0e0e0;  /* Color de texto más suave */
     font-size: 17px;  /* Tamaño de texto ligeramente mayor para mejor legibilidad */
