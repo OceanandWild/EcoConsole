@@ -453,6 +453,365 @@ const commands = {
    'enviar-post': abrirModalPosts,
 };
 
+function iniciarApp2() {
+    // Crear el modal para activar el soporte móvil
+    const modal = document.createElement('div');
+    modal.classList.add('modal-movil');
+
+    // Crear el contenedor del modal
+    const contenedor = document.createElement('div');
+    contenedor.classList.add('modal-contenido');
+
+    // Título h1
+    const titulo = document.createElement('h1');
+    titulo.textContent = "¿Quieres Activar el Soporte para Móvil?";
+    titulo.style.fontSize = "2em"; // Ajustar el tamaño de letra
+
+    // Texto para usuarios con problemas de visión
+    const textoAccesible = document.createElement('h3');
+    textoAccesible.textContent = "Se recomienda si es que estás usando la app en Móvil";
+    textoAccesible.style.fontSize = "1.5em"; // Ajustar el tamaño de letra
+
+    // Botón grande para activar el soporte móvil
+    const botonActivar = document.createElement('button');
+    botonActivar.textContent = "ACTIVAR!";
+    botonActivar.classList.add('btn-activar-movil');
+    botonActivar.style.fontSize = "2em"; // Hacer el texto del botón grande
+    botonActivar.style.padding = "15px 30px"; // Agrandar el botón
+
+    // Función para activar el soporte móvil
+    botonActivar.addEventListener('click', function () {
+        activarSoporteMovil(); // Llamar la función que adapta la app para móvil
+        modal.remove(); // Cerrar el modal
+    });
+
+    // Agregar elementos al contenedor del modal
+    contenedor.appendChild(titulo);
+    contenedor.appendChild(textoAccesible);
+    contenedor.appendChild(botonActivar);
+
+    // Agregar el contenedor al modal
+    modal.appendChild(contenedor);
+
+    // Agregar el modal al body
+    document.body.appendChild(modal);
+}
+
+// Función que adapta la app al entorno móvil
+function activarSoporteMovil() {
+    // Aquí puedes agregar las clases o cambiar estilos para adaptar la app a móvil
+    document.body.classList.add('soporte-movil'); // Por ejemplo, agregar una clase al body
+    console.log("Soporte para móvil activado.");
+
+    // Otros ajustes para la adaptación móvil
+    // Podrías agregar más ajustes como cambiar fuentes, tamaños, layout, etc.
+    ajustarEstilosParaMovil();
+}
+
+// Función que ajusta los estilos específicos para móviles
+function ajustarEstilosParaMovil() {
+    const styles = document.createElement('style');
+    styles.innerHTML = `
+        body.soporte-movil {
+            font-size: 1.2em;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        /* Ejemplo de hacer botones más grandes y textos más legibles en móvil */
+        button, .btn {
+            font-size: 1.5em;
+            padding: 15px;
+        }
+
+        /* Otros ajustes responsivos para pantallas pequeñas */
+        @media (max-width: 768px) {
+            .container {
+                padding: 5px;
+            }
+
+            h1, h2, h3 {
+                font-size: 1.8em;
+            }
+
+            /* Ajustar los tamaños de las entradas de texto */
+            input, textarea {
+                font-size: 1.2em;
+            }
+        }
+            /* Ajustes generales para móviles */
+@media (max-width: 768px) {
+    #splash-screen {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .splash-content {
+        padding: 20px;
+        margin: 0 10px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .splash-item img {
+        width: 60px; /* Reducir el tamaño del logo para móviles */
+        margin-right: 10px;
+    }
+
+    .splash-item h1, .splash-item h2, .splash-item h3 {
+        font-size: 1.2rem;
+    }
+
+    #chat-container {
+        width: 100%;
+        height: 75vh;
+        padding: 10px;
+        margin: 0;
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), inset 0 3px 10px rgba(255, 255, 255, 0.1);
+    }
+
+    #chat-header {
+        font-size: 20px;
+        padding: 10px;
+    }
+
+    #chat-log {
+        padding: 15px;
+        font-size: 14px; /* Reducimos el tamaño del texto */
+        line-height: 1.4;
+    }
+
+    #chat-log div {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    #list-container {
+        flex-direction: column; /* Apilar las listas en móviles */
+        gap: 15px; /* Espaciado entre listas */
+    }
+
+    #command-list-container, #rarity-list-container {
+        width: 100%; /* Ajustar listas al 100% del ancho en móviles */
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    #splash-screen {
+        padding: 15px;
+    }
+
+    .splash-content {
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .splash-item img {
+        width: 50px; /* Más pequeño aún en pantallas muy pequeñas */
+        margin-right: 8px;
+    }
+
+    .splash-item h1, .splash-item h2, .splash-item h3 {
+        font-size: 1rem;
+    }
+
+    #chat-container {
+        height: 10vh;
+        padding: 5px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), inset 0 2px 5px rgba(255, 255, 255, 0.05);
+    }
+
+    #chat-header {
+        font-size: 18px;
+    }
+
+    #chat-log {
+        padding: 25px;
+        font-size: 13px;
+        line-height: 1.3;
+    }
+
+    #chat-log div {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    #list-container {
+        gap: 10px;
+    }
+
+    #command-list-container, #rarity-list-container {
+        padding: 10px;
+    }
+}
+
+/* Estilo base */
+
+/* Estilo para los mensajes del usuario y del bot */
+.user-message, .bot-message {
+    display: inline-block;
+    max-width: 80%;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 15px;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.user-message {
+    background-color: #007bff;
+    align-self: flex-end;
+    text-align: right;
+}
+
+.bot-message {
+    background-color: #333;
+    align-self: flex-start;
+    text-align: left;
+}
+
+/* Estilos mejorados para los contenedores de entrada */
+#input-container {
+    display: flex;
+    padding: 15px;
+    background-color: #2c3037;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para los campos de entrada de texto */
+#chat-input,
+#cmd-input {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    margin-right: 10px;
+    background-color: #444;
+    color: #fff;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+/* Efecto focus para los campos de entrada */
+#chat-input:focus,
+#cmd-input:focus {
+    outline: none;
+    background-color: #555;
+}
+
+/* Estilo para el botón de enviar */
+#send-button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#send-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+#send-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.4);
+}
+
+/* Estilo para el título */
+#command-list-container h3 {
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* Estilo para la lista de comandos */
+#command-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Estilo para cada elemento de la lista */
+#command-list li {
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    background-color: #f7f7f7;
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+/* Efecto hover para los elementos de la lista */
+#command-list li:hover {
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+}
+
+/* Adaptación para móviles */
+@media (max-width: 600px) {
+
+    /* Ajustes generales */
+    .user-message, .bot-message {
+        max-width: 100%; /* Ocupa todo el ancho */
+        font-size: 12px; /* Reducir tamaño de fuente */
+        padding: 8px; /* Menor padding */
+    }
+
+    #input-container {
+        flex-direction: column; /* Alinear campos verticalmente */
+        padding: 10px; /* Menor padding */
+    }
+
+    #chat-input,
+    #cmd-input {
+        margin-right: 0; /* Quitar margen lateral */
+        margin-bottom: 10px; /* Espacio entre campos en móviles */
+        padding: 10px; /* Ajustar padding */
+        font-size: 14px; /* Reducir tamaño de fuente */
+    }
+
+    #send-button {
+        padding: 10px 20px; /* Reducir tamaño del botón */
+        font-size: 14px; /* Reducir tamaño de fuente */
+    }
+
+    /* Ajustes para la lista de comandos */
+    #command-list li {
+        padding: 10px;
+        font-size: 14px; /* Reducir tamaño de fuente */
+    }
+
+    #command-list-container h3 {
+        font-size: 18px; /* Ajustar tamaño de título */
+    }
+}
+
+    `;
+    document.head.appendChild(styles);
+}
+
+iniciarApp2();
+
 function abrirModalPosts() {
     // Crear el modal y su contenedor
     const modal = document.createElement('div');
