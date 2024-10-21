@@ -198,7 +198,7 @@ body2 {
     background: linear-gradient(145deg, #c1f0f0, #80d0c7); /* Degradado de colores pastel */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Sombra más destacada */
     border: 2px solid #b0e0e6; /* Borde azul claro */
-    font-family: 'Comic Sans MS', sans-serif; /* Fuente estilizada */
+    font-family: 'Helvetica', sans-serif; /* Fuente formal */
     color: #333; /* Color de texto */
 }
 
