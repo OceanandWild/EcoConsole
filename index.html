@@ -11,6 +11,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+     <!-- Script de html2canvas para convertir HTML a imagen -->
+     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
     <div id="app">
@@ -108,7 +110,7 @@
             <div class="list-container">
                 <!-- Contenedor para las listas de comandos y rarezas -->
                 <div id="rarity-list-container" class="grid-item commands">
-                    <h3>Rarezas</h3>
+                    <h3></h3>
                     <!-- Aquí se cargarán dinámicamente las rarezas -->
                 </div>
             
@@ -127,6 +129,13 @@
                         <!-- Aquí se mostrará el conteo de comandos por estado -->
                     </div>
                 </div>
+                <!-- Nuevo contenedor para awk-list-container -->
+<div id="awk-list-container" class="grid-item commands">
+    <h3>AWK Comandos</h3>
+    <ul id="awk-list">
+        <!-- Aquí se cargarán los comandos de AWK dinámicamente -->
+    </ul>
+</div>
             </div>
             
             

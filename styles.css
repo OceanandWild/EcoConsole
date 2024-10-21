@@ -140,12 +140,10 @@ body2 {
 
 
 
-
-
 /* Estilo extremo y personalizado para el contenedor del chat */
 #chat-container {
-    width: 50%;  /* Ajuste ligeramente menor para un mejor margen */
-    max-width: 1000px;  /* Aumentado para aprovechar mejor pantallas más grandes */
+    width: 80%;  /* Aumentado para hacerlo más ancho en los costados */
+    max-width: 1200px;  /* Ajustado el valor máximo para pantallas grandes */
     height: 50vh;  /* Ajuste para evitar que quede demasiado alto */
     background: linear-gradient(145deg, #ff7e5f, #feb47b, #6a11cb 90%);
     border-radius: 25px;
@@ -157,7 +155,11 @@ body2 {
     border: 5px solid rgba(255, 255, 255, 0.2);
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     animation: colorShift 5s ease-in-out infinite;  /* Animación de cambio de color */
+    margin: 0 auto; /* Centrando horizontalmente */
 }
+
+
+
 
 
 /* Estilos generales para el contenedor principal */
@@ -171,21 +173,201 @@ body2 {
 
 
 .list-container {
-    display: flex;                /* Usar Flexbox para alineación horizontal */
-    justify-content: space-between; /* Espacio entre los elementos */
-    align-items: flex-start;     /* Alineación vertical al inicio */
-    margin: 20px 0;             /* Margen vertical */
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 20px 0;
 }
 
 #rarity-list-container,
-#command-list-container {
-    flex: 1;                     /* Hacer que ambos contenedores ocupen el mismo espacio */
-    margin: 0 10px;             /* Margen horizontal entre los contenedores */
-    min-width: 300px;           /* Ancho mínimo para cada contenedor */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra para destacar los contenedores */
-    padding: 10px;              /* Relleno interno */
-    background-color: #fff;     /* Fondo blanco para los contenedores */
-    border-radius: 5px;         /* Bordes redondeados */
+#command-list-container,
+#awk-list-container {  /* Se agrega el nuevo contenedor awk-list-container */
+    flex: 1;
+    margin: 0 10px;
+    min-width: 300px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); /* Sombra más intensa */
+    padding: 20px; /* Espacio interno aumentado */
+    background-color: #f9f9f9; /* Fondo ligeramente gris */
+    border-radius: 10px; /* Bordes más redondeados */
+    border: 2px solid #ddd; /* Borde claro */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Transición suave */
+}
+
+/* Personalización exclusiva para rarity-list-container */
+#rarity-list-container {
+    background: linear-gradient(145deg, #c1f0f0, #80d0c7); /* Degradado de colores pastel */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Sombra más destacada */
+    border: 2px solid #b0e0e6; /* Borde azul claro */
+    font-family: 'Comic Sans MS', sans-serif; /* Fuente estilizada */
+    color: #333; /* Color de texto */
+}
+
+/* Hover para hacer más interactivo el contenedor */
+#rarity-list-container:hover {
+    transform: translateY(-10px); /* Efecto de flotación al pasar el mouse */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3); /* Sombra más intensa en hover */
+}
+
+/* Personalización del contenido dentro de rarity-list-container */
+#rarity-list-container h3 {
+    font-size: 24px;
+    text-transform: uppercase;
+    color: #006d77; /* Color destacado para el título */
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    text-align: center; /* Centrando el título */
+}
+
+#rarity-list-container ul {
+    list-style: none; /* Eliminando viñetas de la lista */
+    padding: 0;
+}
+
+#rarity-list-container li {
+    padding: 10px;
+    margin-bottom: 8px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Sombra en cada elemento de la lista */
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+#rarity-list-container li:hover {
+    transform: scale(1.05); /* Aumenta el tamaño ligeramente al pasar el mouse */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Sombra más profunda en hover */
+}
+
+.despertado {
+    color: #FF4500; /* Rojo llameante para comandos despertados */
+    font-weight: bold; /* Negrita */
+}
+
+.no-despertado {
+    color: #1E90FF; /* Azul oceánico para comandos no despertados */
+    font-style: italic; /* Cursiva */
+}
+
+
+/* Personalización extrema para los elementos de la lista de comandos */
+#awk-list li {
+    list-style: none; /* Sin viñetas */
+    padding: 15px;
+    margin-bottom: 15px;
+    color: #fff; /* Color de texto blanco */
+    font-size: 16px; /* Tamaño de letra más grande */
+    font-weight: bold; /* Negrita para resaltar */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Sombra de texto */
+    border-radius: 8px; /* Bordes redondeados */
+    border-left: 8px solid; /* Borde izquierdo más grueso según la rareza */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Sombra fuerte para destacar */
+    transition: all 0.3s ease; /* Transiciones suaves para cambios de estilo */
+}
+
+/* Efecto hover más sofisticado */
+#awk-list li:hover {
+    transform: translateY(-8px) rotate(-1deg); /* Movimiento ligero al pasar el ratón */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada */
+    background-image: linear-gradient(135deg, #4b79a1, #283e51); /* Degradado de fondo más estilizado */
+    cursor: pointer; /* Cambiar el cursor a pointer */
+}
+
+/* Personalización extrema para las rarezas */
+#awk-list li.legendario {
+    background-color: #FFD700; /* Oro */
+    border-left-color: #b8860b; /* Borde dorado */
+}
+
+#awk-list li.epico {
+    background-color: #8A2BE2; /* Púrpura */
+    border-left-color: #4B0082; /* Borde púrpura oscuro */
+}
+
+#awk-list li.raro {
+    background-color: #FF4500; /* Naranja fuerte */
+    border-left-color: #CD3700; /* Borde más oscuro */
+}
+
+#awk-list li.mitico {
+    background-color: #00FFFF; /* Cian */
+    border-left-color: #008B8B; /* Borde más oscuro */
+}
+
+#awk-list li.comun {
+    background-color: #32CD32; /* Verde */
+    border-left-color: #228B22; /* Borde verde oscuro */
+}
+
+/* Personalización de los encabezados */
+h3 {
+    font-family: 'Arial Black', sans-serif; /* Fuente más audaz */
+    color: #444; /* Color de texto oscuro */
+    letter-spacing: 1px; /* Espaciado entre letras */
+    text-transform: uppercase; /* Convertir el texto a mayúsculas */
+}
+
+/* Personalización del contenedor de awk-list-container */
+#awk-list-container {
+    background: linear-gradient(135deg, #f0f8ff, #ffffff); /* Degradado más claro */
+    border: 2px solid #ccc; /* Borde más definido */
+    border-radius: 15px; /* Bordes muy redondeados */
+    padding: 25px; /* Mayor espacio interno */
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2); /* Sombra más suave y extendida */
+}
+
+/* Efecto hover para todo el contenedor */
+#awk-list-container:hover {
+    transform: scale(1.03); /* Ligero aumento de tamaño al pasar el ratón */
+    background-color: #e6f7ff; /* Cambio de color de fondo al pasar el ratón */
+}
+
+/* Animaciones para los comandos despertados */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25%, 75% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+}
+
+@keyframes swing {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(10deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes fade {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* Clases de animaciones */
+.pulse {
+    animation: pulse 1.5s infinite;
+}
+
+.bounce {
+    animation: bounce 1s infinite;
+}
+
+.shake {
+    animation: shake 0.5s infinite;
+}
+
+.swing {
+    animation: swing 1s infinite;
+}
+
+.fade {
+    animation: fade 2s forwards;
 }
 
 h3 {
@@ -1787,4 +1969,89 @@ img {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
+}
+
+/* Estilo para texto rojo */
+.texto-rojo {
+    color: red;
+}
+
+/* Estilo para texto verde */
+.texto-verde {
+    color: green;
+}
+
+/* Estilo para subrayado */
+.texto-subrayado {
+    text-decoration: underline;
+}
+
+/* Animación de parpadeo */
+@keyframes parpadeo {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.animacion-parpadeo {
+    animation: parpadeo 1s infinite;
+}
+
+/* Animación de rotación */
+@keyframes rotacion {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.animacion-rotacion {
+    display: inline-block;
+    animation: rotacion 2s infinite linear;
+}
+
+/* Animación de oscilación */
+@keyframes oscilacion {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(10px); }
+}
+
+.animacion-oscilacion {
+    animation: oscilacion 1s infinite;
+}
+
+.form-container, .invoice-container {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-width: 600px;
+}
+.invoice-container {
+    display: none;
+}
+input, textarea {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    font-size: 16px;
+}
+.invoice {
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #000;
+    max-width: 600px;
+    margin: auto;
+}
+.invoice-header {
+    text-align: center;
+}
+.invoice-details, .invoice-products {
+    margin-top: 20px;
+}
+.invoice-products th, .invoice-products td {
+    border: 1px solid black;
+    padding: 8px;
+}
+.download-btn {
+    display: none;
+    margin-top: 20px;
 }

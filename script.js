@@ -452,7 +452,184 @@ const commands = {
    'notificar-nuevopost': abrirModalNotificarPost,
    'enviar-post': abrirModalPosts,
    'instalar-documentacion': setupInstalacionDocumentacion,
+   'texto-advertencia': setupTextoAdvertencia,
+   'enviar-peticion': crearPeticionWhatsApp,
 };
+
+function crearPeticionWhatsApp() {
+    // Crear el formulario para ingresar la petición
+    chatLog.innerHTML = ''; // Limpiar chatLog antes de agregar el formulario
+    const formContainer = document.createElement('div');
+    formContainer.classList.add('form-container');
+
+    formContainer.innerHTML = `
+        <h2>Enviar Petición por WhatsApp</h2>
+        <input type="text" id="peticion" placeholder="Escribe tu petición" required>
+        <button id="enviarPeticionBtn">Enviar Petición</button>
+    `;
+    chatLog.appendChild(formContainer);
+
+    // Añadir evento para enviar la petición
+    document.getElementById('enviarPeticionBtn').addEventListener('click', enviarPeticionWhatsApp);
+}
+
+function enviarPeticionWhatsApp() {
+    const peticion = document.getElementById('peticion').value;
+
+    if (!peticion) {
+        alert('Por favor, escribe tu petición antes de enviar.');
+        return;
+    }
+
+    // Número de destino (código internacional incluido)
+    const numeroDestino = '598099685536'; // Cambia esto al número que desees
+    // Crear un enlace para abrir WhatsApp
+    const mensaje = encodeURIComponent(`Petición: ${peticion}`);
+    const enlaceWhatsApp = `https://wa.me/${numeroDestino}?text=${mensaje}`;
+
+    // Abrir WhatsApp
+    window.open(enlaceWhatsApp);
+
+    typeMessage('Tu peticion se enviara al destinatario definido y el destinatario te respondera entre 1 hora y 3 dias, mas si es que hay peticiones antes que la tuya.');
+    typeMessage('Es posible que tu peticion sea rechazada o aprobada, dependiendo de varios factores que el destinatario te preguntara o revisara tu peticion y vera si es que se puede hacer, si es aprobada, tu peticion se convertira en una tarea que deberia estar completa para la proxima actualizacion, esa tarea (antes, tu peticion) sera parte de la proxima actualizacion y pueden ser, nuevas funcionalidades, nuevos comandos etc. Siempre y cuando, el equipo de Animal AI este al alcance de realizarlo.');
+}
+
+
+
+// Función para configurar el comando /texto-advertencia
+function setupTextoAdvertencia() {
+    // Crear botón para iniciar el proceso del comando
+    const textoAdvertenciaBtn = document.createElement('button');
+    textoAdvertenciaBtn.textContent = '/texto-advertencia';
+    textoAdvertenciaBtn.classList.add('btn');
+    chatLog.appendChild(textoAdvertenciaBtn);
+
+    // Agregar evento de clic para iniciar el proceso
+    textoAdvertenciaBtn.addEventListener('click', iniciarTextoAdvertencia);
+
+    console.log("Botón de /texto-advertencia creado");
+}
+
+// Función para manejar el flujo del comando /texto-advertencia
+function iniciarTextoAdvertencia() {
+    // Solicitar al usuario que introduzca el texto a mostrar
+    const textoInputDiv = document.createElement('div');
+    textoInputDiv.classList.add('mensaje');
+    textoInputDiv.textContent = 'Introduce un texto a mostrar:';
+    chatLog.appendChild(textoInputDiv);
+
+    const textoInput = document.createElement('input');
+    textoInput.setAttribute('type', 'text');
+    textoInput.classList.add('input-texto');
+    chatLog.appendChild(textoInput);
+
+    // Botón para confirmar el texto
+    const confirmarTextoBtn = document.createElement('button');
+    confirmarTextoBtn.textContent = 'Confirmar texto';
+    confirmarTextoBtn.classList.add('btn');
+    chatLog.appendChild(confirmarTextoBtn);
+
+    // Evento para cuando el texto es confirmado
+    confirmarTextoBtn.addEventListener('click', () => {
+        const texto = textoInput.value;
+
+        // Solicitar al usuario que elija las personalizaciones
+        mostrarOpcionesPersonalizacion(texto);
+        textoInputDiv.remove();
+        textoInput.remove();
+        confirmarTextoBtn.remove();
+    });
+}
+
+// Función para mostrar opciones de personalización
+function mostrarOpcionesPersonalizacion(texto) {
+    const personalizacionDiv = document.createElement('div');
+    personalizacionDiv.classList.add('mensaje');
+    personalizacionDiv.textContent = 'Seleccione la personalización deseada:';
+    chatLog.appendChild(personalizacionDiv);
+
+    // Opciones de personalización (checkboxes)
+    const opciones = [
+        { label: 'Color Rojo', clase: 'texto-rojo' },
+        { label: 'Animación Parpadeo', clase: 'animacion-parpadeo' },
+        { label: 'Texto Subrayado', clase: 'texto-subrayado' },
+        { label: 'Animación Rotación', clase: 'animacion-rotacion' },
+        { label: 'Color Verde', clase: 'texto-verde' },
+        { label: 'Animación Oscilación', clase: 'animacion-oscilacion' }
+    ];
+
+    const opcionesContainer = document.createElement('div');
+    chatLog.appendChild(opcionesContainer);
+
+    opciones.forEach(opcion => {
+        const checkbox = document.createElement('input');
+        checkbox.setAttribute('type', 'checkbox');
+        checkbox.setAttribute('value', opcion.clase);
+        const label = document.createElement('label');
+        label.textContent = opcion.label;
+        label.appendChild(checkbox);
+        opcionesContainer.appendChild(label);
+        opcionesContainer.appendChild(document.createElement('br'));
+    });
+
+    // Botón para confirmar la personalización
+    const confirmarPersonalizacionBtn = document.createElement('button');
+    confirmarPersonalizacionBtn.textContent = 'Aplicar personalización';
+    confirmarPersonalizacionBtn.classList.add('btn');
+    chatLog.appendChild(confirmarPersonalizacionBtn);
+
+    // Evento para cuando se aplica la personalización
+    confirmarPersonalizacionBtn.addEventListener('click', () => {
+        const clasesSeleccionadas = [];
+        opcionesContainer.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            clasesSeleccionadas.push(checkbox.value);
+        });
+
+        // Mostrar el texto con las personalizaciones
+        mostrarTextoPersonalizado(texto, clasesSeleccionadas);
+        personalizacionDiv.remove();
+        opcionesContainer.remove();
+        confirmarPersonalizacionBtn.remove();
+    });
+}
+
+// Función para mostrar el texto personalizado
+function mostrarTextoPersonalizado(texto, clases) {
+    const textoFinalDiv = document.createElement('div');
+    textoFinalDiv.classList.add('mensaje', ...clases);
+    textoFinalDiv.textContent = texto;
+    chatLog.appendChild(textoFinalDiv);
+}
+
+
+// Lista de comandos con su estado de despertado
+const awkCommands = [
+    { name: 'proximo-comando', isAwakened: true },
+    { name: 'ojo-de-halcon', isAwakened: false },
+    { name: 'rugido-de-leon', isAwakened: true },
+    { name: 'alas-de-aguila', isAwakened: false },
+    { name: 'pisada-de-elefante', isAwakened: true }
+];
+
+// Cargar comandos en el contenedor awk-list
+const awkList = document.getElementById('awk-list');
+
+awkCommands.forEach(command => {
+    const listItem = document.createElement('li');
+    listItem.innerText = `${command.name} - ${command.isAwakened ? 'Despertado' : 'No Despertado'}`;
+    
+    // Aplicar estilos directamente según el estado
+    if (command.isAwakened) {
+        listItem.style.color = '#FF4500'; // Rojo llameante
+        listItem.style.fontWeight = 'bold'; // Negrita
+    } else {
+        listItem.style.color = '#1E90FF'; // Azul oceánico
+        listItem.style.fontStyle = 'italic'; // Cursiva
+    }
+
+    awkList.appendChild(listItem);
+});
+
 
 
 // Lista de comandos con sus rarezas
@@ -549,95 +726,21 @@ function crearListaRarezas() {
 crearListaRarezas();
 
 function setupInstalacionDocumentacion() {  
-console.log("DOM completamente cargado");
+    console.log("DOM completamente cargado");
 
-// Crear botón para ejecutar el comando "/instalar-documentacion"
-const instalarDocumentacionBtn = document.createElement('button');
-instalarDocumentacionBtn.textContent = 'Instalar Documentacion';
-instalarDocumentacionBtn.classList.add('btn');
-chatLog.appendChild(instalarDocumentacionBtn);
+    // Crear botón para redireccionar a la documentación
+    const verDocumentacionBtn = document.createElement('button');
+    verDocumentacionBtn.textContent = 'Ver Documentación';
+    verDocumentacionBtn.classList.add('btn');
+    chatLog.appendChild(verDocumentacionBtn);
 
-// Agregar evento de clic para mostrar la instalación en el chat
-instalarDocumentacionBtn.addEventListener('click', mostrarInstalacionEnChat);
-console.log("Evento de clic añadido al botón");
-
-console.log("Botón de instalar documentación creado");
-}
-
-
-// Crear función para mostrar el proceso de instalación en el chat
-function mostrarInstalacionEnChat() {
-    console.log("Función mostrarInstalacionEnChat llamada");
-
-    // Mensaje de inicio de instalación
-    const mensajeInstalacion = document.createElement('div');
-    mensajeInstalacion.classList.add('mensaje');
-    mensajeInstalacion.textContent = '¿Desea comenzar la descarga e instalación de la documentación de Animal AI?';
-    chatLog.appendChild(mensajeInstalacion);
-
-    // Botones de acción en el chat
-    const botonesContainer = document.createElement('div');
-    botonesContainer.classList.add('botones-chat');
-
-    // Botón de descarga
-    const comenzarDescargaBtn = document.createElement('button');
-    comenzarDescargaBtn.textContent = 'Descargar Documentación';
-    comenzarDescargaBtn.classList.add('btn');
-    comenzarDescargaBtn.setAttribute('id', 'comenzarDescargaBtn');
-
-    // Botón de cancelar
-    const cancelarBtn = document.createElement('button');
-    cancelarBtn.textContent = 'Cancelar';
-    cancelarBtn.classList.add('btn', 'btn-cancelar');
-    cancelarBtn.setAttribute('id', 'cancelarBtn');
-
-    // Agregar botones al contenedor y al chatLog
-    botonesContainer.appendChild(comenzarDescargaBtn);
-    botonesContainer.appendChild(cancelarBtn);
-    chatLog.appendChild(botonesContainer);
-
-    console.log("Interfaz de instalación añadida al chat");
-
-    // Función para simular el proceso de descarga
-    function iniciarDescarga() {
-        const mensajeDescarga = document.createElement('div');
-        mensajeDescarga.classList.add('mensaje');
-        mensajeDescarga.textContent = 'Descargando la documentación de Animal AI...';
-        chatLog.appendChild(mensajeDescarga);
-
-        // Descargar el instalador
-        const link = document.createElement('a');
-        link.href = 'https://www.mediafire.com/file/cr18yuy3u4s4lhh/documentacion_animal_ai.exe/file#';  // Enlace real al instalador
-        link.download = 'documentacion_animal_ai.exe';  // Nombre del archivo
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        setTimeout(() => {
-            const mensajeInstalacionCompleta = document.createElement('div');
-            mensajeInstalacionCompleta.classList.add('mensaje');
-            mensajeInstalacionCompleta.textContent = 'Documentación de Animal AI instalada correctamente.';
-            chatLog.appendChild(mensajeInstalacionCompleta);
-        }, 3000);
-    }
-
-    // Evento para comenzar la descarga
-    comenzarDescargaBtn.addEventListener('click', () => {
-        iniciarDescarga();
-        botonesContainer.remove(); // Remover los botones después de iniciar la descarga
+    // Agregar evento de clic para redireccionar a la página de documentación
+    verDocumentacionBtn.addEventListener('click', () => {
+        window.open('https://www.animalai.com/documentacion', '_blank');  // Enlace a la documentación
     });
 
-    // Evento para cancelar la instalación
-    cancelarBtn.addEventListener('click', () => {
-        const mensajeCancelado = document.createElement('div');
-        mensajeCancelado.classList.add('mensaje');
-        mensajeCancelado.textContent = 'La instalación ha sido cancelada.';
-        chatLog.appendChild(mensajeCancelado);
-        botonesContainer.remove(); // Remover los botones si se cancela
-    });
+    console.log("Botón de ver documentación creado");
 }
-
-
 
 
 function iniciarApp2() {
@@ -1238,6 +1341,7 @@ function iniciarCuentaHaciaAdelante() {
 }
 
 
+// Función para crear la cuenta regresiva y el botón para ejecutar el comando
 function crearCuentaRegresiva() {
     // Crear elementos dinámicos
     const contenedor = document.createElement('div');
@@ -1285,14 +1389,22 @@ function crearCuentaRegresiva() {
     launchDateText.innerHTML = 'Fecha de lanzamiento: <span id="launch-date"></span>';
     contenedor.appendChild(launchDateText);
 
+    // Crear el botón para ejecutar el comando
+    const ejecutarComandoBtn = document.createElement('button');
+    ejecutarComandoBtn.textContent = 'El comando no ha sido lanzado aún';
+    ejecutarComandoBtn.classList.add('btn-ejecutar-comando');
+    ejecutarComandoBtn.disabled = true; // Inicialmente deshabilitado
+    contenedor.appendChild(ejecutarComandoBtn);
+
     // Agregar el contenedor al chatLog
     chatLog.appendChild(contenedor);
 
     // Iniciar la lógica de la cuenta regresiva
-    iniciarCuentaRegresiva();
+    iniciarCuentaRegresiva(ejecutarComandoBtn);
 }
 
-function iniciarCuentaRegresiva() {
+// Función para iniciar la cuenta regresiva
+function iniciarCuentaRegresiva(ejecutarComandoBtn) {
     const lanzamiento = new Date("October 25, 2024 12:00:00").getTime();
     document.getElementById('launch-date').textContent = new Date(lanzamiento).toLocaleString();
 
@@ -1310,9 +1422,23 @@ function iniciarCuentaRegresiva() {
         document.getElementById("minutes").textContent = minutos < 10 ? `0${minutos}` : minutos;
         document.getElementById("seconds").textContent = segundos < 10 ? `0${segundos}` : segundos;
 
+        // Verificar si la cuenta regresiva ha terminado
         if (distancia < 0) {
             clearInterval(interval);
             document.querySelector(".countdown").innerHTML = "<p>¡El lanzamiento ha comenzado!</p>";
+
+            // Habilitar el botón al finalizar la cuenta regresiva
+            ejecutarComandoBtn.disabled = false;
+            ejecutarComandoBtn.textContent = 'Ejecutar Comando /proximo-lanzamiento';
+            
+            // Añadir el evento para ejecutar el comando cuando se presiona el botón
+            ejecutarComandoBtn.addEventListener('click', function() {
+                ejecutarComando("/proximo-lanzamiento");  // Llamar al comando con el nombre apropiado
+            });
+        } else {
+            // Si aún no ha llegado el lanzamiento, mostrar el mensaje y deshabilitar el botón
+            ejecutarComandoBtn.textContent = 'El comando no ha sido lanzado aún';
+            ejecutarComandoBtn.disabled = true;
         }
     }, 1000);
 }
@@ -4578,27 +4704,33 @@ function cerrarModal(modal) {
         successContainer.classList.add('success-container');
     
         // Crear el círculo de animación
+        const circleContainer = document.createElement('div'); // Nuevo contenedor para centrar el círculo y el icono
+        circleContainer.classList.add('circle-container');
+    
         const circle = document.createElement('div');
         circle.classList.add('circle');
     
         // Crear el ícono de verificación (check)
         const checkIcon = document.createElement('span');
-        checkIcon.textContent = '✔️';
+        checkIcon.innerHTML = '&#10004;'; // Icono ✔️ usando HTML entity para mejor compatibilidad
         checkIcon.classList.add('check-icon');
     
-        // Agregar el círculo y el ícono de verificación al contenedor
-        successContainer.appendChild(circle);
-        successContainer.appendChild(checkIcon);
+        // Agregar el círculo y el ícono de verificación al contenedor del círculo
+        circleContainer.appendChild(circle);
+        circleContainer.appendChild(checkIcon);
+        successContainer.appendChild(circleContainer);
         modalContent.appendChild(successContainer);
     
         // Agregar mensaje de éxito
         const successMessage = document.createElement('p');
-        successMessage.textContent = `✅ Se realizó con éxito el pago (${metodoPago}).`;
+        successMessage.textContent = `✅ Pago realizado exitosamente con ${metodoPago}. Cantidad: $${cantidad}.`;
+        successMessage.classList.add('success-message');
         modalContent.appendChild(successMessage);
     
         // Botón para cerrar el modal
         const closeButton = document.createElement('button');
         closeButton.textContent = 'Cerrar';
+        closeButton.classList.add('btn-close');
         modalContent.appendChild(closeButton);
     
         // Cerrar modal al hacer clic en el botón
@@ -4606,13 +4738,13 @@ function cerrarModal(modal) {
             modal.style.display = 'none';
         });
     
-        // Animación de relleno del círculo
+        // Agregar animación al círculo
         circle.classList.add('fill-circle-animation');
     
         // Mostrar el ícono de verificación después de que el círculo esté completamente lleno
         setTimeout(() => {
             checkIcon.classList.add('show-check');
-        }, 2000); // Mostrar el ícono después de 2 segundos (al completar el relleno)
+        }, 1500); // Mostrar el ícono después de 1.5 segundos (al completar el relleno)
     
         // Simular el envío de correo al completar la transacción
         setTimeout(() => {
@@ -4620,6 +4752,7 @@ function cerrarModal(modal) {
             callback(true); // Transacción exitosa
         }, 3000); // 3 segundos para completar la transacción y enviar el correo
     }
+    
     
     
     // Función para validar el correo electrónico
@@ -4659,57 +4792,111 @@ function cerrarModal(modal) {
         text-align: center;
     }
     
-    .success-container {
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 150px;
+/* Contenedor de éxito */
+.success-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 20px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Contenedor del círculo */
+.circle-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Círculo de éxito */
+.circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 5px solid #28a745; /* Verde éxito */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    animation: fillCircle 1.5s forwards ease-in-out;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Icono de verificación */
+.check-icon {
+    font-size: 50px;
+    color: #28a745;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    position: relative;
+    z-index: 1; /* Asegurarse de que esté por encima del círculo */
+}
+
+.show-check {
+    opacity: 1;
+}
+
+/* Mensaje de éxito */
+.success-message {
+    font-size: 18px;
+    color: #28a745;
+    text-align: center;
+    margin-top: 10px;
+    animation: fadeInUp 1s ease-in-out;
+}
+
+/* Botón de cerrar */
+.btn-close {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.btn-close:hover {
+    background-color: #218838;
+}
+
+/* Animación de llenado del círculo */
+@keyframes fillCircle {
+    from {
+        border-color: #ccc;
+        transform: scale(0.8);
     }
-    
-    /* Círculo base */
-    .circle {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        border: 5px solid transparent;
-        position: relative;
-        background-image: conic-gradient(green 0deg, green 0deg, gray 360deg); /* Crea el efecto de relleno */
-        transform: rotate(-90deg); /* Para que la animación comience desde la parte superior */
-        transition: transform 0.5s ease-in-out;
+    to {
+        border-color: #28a745;
+        transform: scale(1);
     }
-    
-    /* Efecto de relleno circular */
-    .fill-circle-animation {
-        animation: fillCircle 2s forwards ease-in-out;
-    }
-    
-    /* Ícono de verificación (check) */
-    .check-icon {
-        font-size: 2rem;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+}
+
+/* Animación de desvanecimiento */
+@keyframes fadeIn {
+    from {
         opacity: 0;
-        color: white;
-        transition: opacity 0.5s ease-in-out;
     }
-    
-    /* Mostrar ícono de verificación */
-    .show-check {
+    to {
         opacity: 1;
     }
-    
-    /* Animación de relleno */
-    @keyframes fillCircle {
-        0% {
-            background-image: conic-gradient(green 0deg, gray 360deg); /* Inicio vacío */
-        }
-        100% {
-            background-image: conic-gradient(green 360deg, gray 360deg); /* Llenado completo */
-        }
+}
+
+/* Animación de desvanecimiento con subida */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
     
    .btn-animal-tokens {
     background-color: #4CAF50; /* Color verde */
@@ -5517,6 +5704,7 @@ document.head.appendChild(style);
         'notificar-nuevopost',
         'enviar-post',
         'instalar-documentacion',
+        'texto-advertencia',
     ];
     
 
