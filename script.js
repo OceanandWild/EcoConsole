@@ -451,7 +451,7 @@ const commands = {
    'ultimo-lanzamiento': crearCuentaHaciaAdelante,
    'notificar-nuevopost': abrirModalNotificarPost,
    'enviar-post': abrirModalPosts,
-   'instalar-documentacion': setupInstalacionDocumentacion,
+   'ver-documentacion': setupInstalacionDocumentacion,
    'texto-advertencia': setupTextoAdvertencia,
    'enviar-peticion': crearPeticionWhatsApp,
 };
