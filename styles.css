@@ -133,8 +133,8 @@ body2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    width: 100%;
+    height: 500%;
+    width: 500%;
     margin-left: 20px; /* Ajusta este valor para moverlo más a la derecha */
 }
 
@@ -142,9 +142,9 @@ body2 {
 
 /* Estilo extremo y personalizado para el contenedor del chat */
 #chat-container {
-    width: 80%;  /* Aumentado para hacerlo más ancho en los costados */
-    max-width: 1200px;  /* Ajustado el valor máximo para pantallas grandes */
-    height: 50vh;  /* Ajuste para evitar que quede demasiado alto */
+    width: 100%;  /* Ancho total */
+    max-width: 1600px;  /* Aumentado el ancho máximo para pantallas grandes */
+    height: 50vh;  /* Mantener la altura controlada */
     background: linear-gradient(145deg, #ff7e5f, #feb47b, #6a11cb 90%);
     border-radius: 25px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 5px 15px rgba(255, 255, 255, 0.1);
@@ -156,7 +156,13 @@ body2 {
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     animation: colorShift 5s ease-in-out infinite;  /* Animación de cambio de color */
     margin: 0 auto; /* Centrando horizontalmente */
+
+    /* Modificación para más ancho hacia la izquierda */
+    margin-left: -50px; /* Desplazamiento hacia la izquierda */
+    transform: translateX(-25px); /* Ajusta un poco más hacia la izquierda */
 }
+
+
 
 
 
@@ -174,14 +180,18 @@ body2 {
 
 .list-container {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    justify-content: flex-start; /* Alinear elementos al inicio */
+    align-items: flex-start;  /* Mantener el contenido alineado arriba */
+    flex-wrap: wrap;  /* Permitir que los elementos se ajusten en la siguiente fila si no hay suficiente espacio */
+    gap: 20px;  /* Espacio entre contenedores */
     margin: 20px 0;
 }
 
+
 #rarity-list-container,
 #command-list-container,
-#awk-list-container {  /* Se agrega el nuevo contenedor awk-list-container */
+#awk-list-container,
+#currency-list-container {  /* Se incluye currency-list-container */
     flex: 1;
     margin: 0 10px;
     min-width: 300px;
@@ -192,6 +202,64 @@ body2 {
     border: 2px solid #ddd; /* Borde claro */
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Transición suave */
 }
+
+/* Estilos exclusivos para el contenedor de divisas */
+#currency-list-container {
+    background: linear-gradient(145deg, #f7fafc, #e6e9ed); /* Degradado de colores suaves */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Sombra más destacada */
+    border: 2px solid #dcdcdc; /* Borde gris claro */
+    font-family: 'Arial', sans-serif; /* Fuente moderna */
+    color: #333; /* Color del texto */
+}
+
+/* Personalización del título del contenedor de divisas */
+#currency-list-container h3 {
+    font-size: 24px;
+    text-transform: uppercase;
+    color: #2a2a2a; /* Color más oscuro para el título */
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    text-align: center; /* Centrar el título */
+}
+
+/* Estilos para la cuadrícula de divisas */
+.currency-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Ajuste dinámico de las columnas */
+    gap: 15px; /* Espacio entre los elementos */
+    padding-top: 15px;
+}
+
+/* Estilos para cada divisa individual */
+.currency-item {
+    text-align: center;
+    background-color: #fff; /* Fondo blanco */
+    padding: 10px;
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    transition: transform 0.3s, box-shadow 0.3s; /* Transición suave para hover */
+}
+
+.currency-item img {
+    width: 40px; /* Tamaño de los íconos */
+    height: 40px;
+    display: block;
+    margin: 0 auto; /* Centra la imagen */
+}
+
+.currency-item span {
+    display: block;
+    font-size: 14px;
+    margin-top: 5px;
+    color: #444; /* Color del texto */
+}
+
+/* Efecto hover para cada divisa */
+.currency-item:hover {
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño al pasar el mouse */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Sombra más profunda en hover */
+}
+
 
 /* Personalización exclusiva para rarity-list-container */
 #rarity-list-container {
@@ -504,60 +572,95 @@ h3 {
 }
 
 
-/* Estilos mejorados para el contenedor de entrada del chat */
+/* Estilos optimizados para el contenedor de entrada del chat */
 #chat-input-container,
 #respuesta-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #f0f4f8; /* Fondo más suave y claro */
-    border: 1px solid #cfd8e3;
-    border-radius: 25px;
-    padding: 12px 18px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
-    transition: all 0.3s ease;
-    margin-top: 15px;
+    background-color: #ffffff; /* Fondo blanco para mayor limpieza */
+    border: 1px solid #e5e7eb; /* Borde sutil */
+    border-radius: 35px; /* Bordes más redondeados para un estilo moderno */
+    padding: 16px 24px; /* Espaciado más cómodo */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.03); /* Sombra ligera y elegante */
+    transition: all 0.3s ease; /* Transiciones suaves */
+    margin-top: 20px;
     max-width: 100%;
+    position: relative; /* Para futuros elementos flotantes */
 }
 
 /* Efecto hover para el contenedor de entrada */
 #chat-input-container:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
-    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1), 0 3px 8px rgba(0, 0, 0, 0.05); /* Sombra más pronunciada */
+    transform: translateY(-3px); /* Elevación sutil al hacer hover */
 }
 
 /* Efecto cuando el contenedor de entrada está enfocado */
 #chat-input-container:focus-within {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+    border-color: #3b82f6; /* Azul vibrante en foco */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); /* Realce con sombra azul */
+}
+
+/* Ajustes de responsividad */
+@media (max-width: 768px) {
+    #chat-input-container,
+    #respuesta-container {
+        padding: 12px 16px; /* Ajustes de espaciado en dispositivos móviles */
+        border-radius: 25px; /* Menor redondez en pantallas pequeñas */
+    }
 }
 
 /* Estilo mejorado para el botón de enviar mensaje */
 #sendMessageBtn,
 #sendCMDBtn {
-    background-color: #2563eb; /* Azul más moderno */
+    background-color: #3b82f6; /* Azul moderno */
     color: white;
     border: none;
-    padding: 10px 24px;
-    border-radius: 12px; /* Bordes más redondeados */
+    padding: 12px 28px;
+    border-radius: 14px; /* Bordes más redondeados */
     cursor: pointer;
     font-size: 16px;
-    font-weight: 500;
-    transition: background-color 0.3s, box-shadow 0.3s;
+    font-weight: 600; /* Tipografía un poco más gruesa */
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.2s;
 }
 
 /* Efecto hover para los botones de enviar mensaje */
 #sendMessageBtn:hover,
 #sendCMDBtn:hover {
-    background-color: #1d4ed8; /* Azul más oscuro en hover */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    background-color: #2563eb; /* Azul más oscuro en hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px); /* Pequeño efecto de elevación */
 }
 
 /* Efecto de focus para los botones */
 #sendMessageBtn:focus,
 #sendCMDBtn:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4);
+}
+
+/* Mejoras adicionales para el input de texto */
+#chat-input {
+    flex-grow: 1;
+    padding: 12px 18px;
+    border: none;
+    background-color: #f9fafc; /* Fondo claro para el input */
+    border-radius: 20px;
+    font-size: 16px;
+    color: #374151; /* Color de texto */
+    outline: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s;
+}
+
+#chat-input:focus {
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* Placeholder más moderno */
+#chat-input::placeholder {
+    color: #9ca3af; /* Gris claro */
+    opacity: 1; /* Asegura que el placeholder sea visible */
 }
 
 
@@ -1087,6 +1190,13 @@ h3 {
     margin-bottom: 5px;
 }
 
+.estado-juego {
+    background-color: #1E90FF; /* Color Azul Brillante */
+    color: #1d77d1; /* Texto blanco */
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
 
 
 /* Estilos mejorados para la cuadrícula de conteo de estados */
@@ -2054,4 +2164,214 @@ input, textarea {
 .download-btn {
     display: none;
     margin-top: 20px;
+}
+
+.contenedor-burbujas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    pointer-events: none; /* Evitar clics fuera de las burbujas */
+}
+
+.burbuja {
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+    pointer-events: all; /* Habilitar clics en las burbujas */
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Añadir sombra */
+}
+
+.burbuja:hover {
+    transform: scale(1.2); /* Ampliar un poco cuando el usuario pasa el ratón */
+    background-color: rgba(255, 255, 255, 0.9); /* Cambiar el fondo al hacer hover */
+}
+
+.panel-noticias {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: 50vh;
+    background-color: #f4f4f4;
+    border-top: 3px solid #ccc;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.contenedor-notificaciones, .contenedor-articulos {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.notificacion {
+    padding: 5px 0;
+    font-size: 14px;
+    color: #ff5722;
+    font-weight: bold;
+}
+
+.articulo {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.articulo h4 {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.articulo p {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Estilos personalizados para cada bioma */
+.modal-content.jungla {
+    background-color: #2a5229;
+}
+
+.modal-content.arrecife {
+    background-color: #0099cc;
+}
+
+.modal-content.océano {
+    background-color: #004d99;
+}
+
+.modal-content.desierto {
+    background-color: #e68a00;
+}
+
+.modal-content.ártico {
+    background-color: #1a75ff;
+}
+
+/* Estilos para el menú de pestañas */
+.tab-menu {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: space-around;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.tab-item {
+    cursor: pointer;
+    padding: 10px 20px;
+    background-color: #e6e6e6;
+    border-radius: 5px 5px 0 0;
+    transition: background-color 0.3s ease;
+}
+
+.tab-item:hover {
+    background-color: #ccc;
+}
+
+.tab-item.active {
+    background-color: #fff;
+    border-bottom: 2px solid transparent;
+}
+
+/* Contenedor de contenido de pestañas */
+.tab-content-container {
+    padding: 15px;
+    background-color: white;
+    border: 1px solid #ddd;
+    min-height: 100px;
+    transition: all 0.3s ease;
+}
+
+.notificaciones-panel {
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 16px;
+    max-width: 400px;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.notificaciones-lista {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+.notificacion-item {
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.notificacion-fecha {
+    font-size: 0.9em;
+    color: #6b7280;
+}
+
+.notificacion-mensaje {
+    font-size: 1em;
+    margin: 0;
+    color: #374151;
+}
+
+.badge-notification {
+    font-size: 1.2em;
+    color: #f59e0b;
+}
+
+.btn-crear {
+    background-color: #2563eb;
+    color: #ffffff;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-crear:hover {
+    background-color: #1d4ed8;
+}
+
+/* Estilos para el contador de notificaciones */
+.badge-counter {
+    background-color: #ff0000;
+    color: #ffffff;
+    font-size: 0.8em;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 12px;
+    margin-left: 8px;
+    display: none;
+}
+
+/* Estilo del badge */
+.badge {
+    display: none;
+    background-color: #ff4d4f;
+    color: white;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 12px;
+    position: absolute;
+    top: -5px;
+    right: -5px;
 }

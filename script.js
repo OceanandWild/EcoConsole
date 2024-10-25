@@ -135,7 +135,7 @@ document.body.addEventListener('mouseleave', function () {
     
         let isAwaitingInput = false;
         let currentCommand = null;
-        let animalTokens = 100;
+        let dolaresAnimal = 0;
         const prestamos = {};
     
         const messageContainer = document.getElementById('message'); // Asegúrate de obtener el elemento 
@@ -380,10 +380,38 @@ function cerrarModal(modal) {
     }
 }
 
+// Llamada a procesarConCosto con el costo, el saldo, y la función a ejecutar
+const costoDelComando = 0; // Ejemplo de costo en Dólares de Animal
+
+// Función para envolver una función con una verificación de costo en Dólares de Animal
+function procesarConCosto(costo, dolaresAnimal, funcionOriginal, args) {
+    // Mostrar el costo antes de continuar
+    typeMessage(`Este comando cuesta $${costo.toFixed(2)} Dólares de Animal. ¿Deseas proceder con la compra?`);
+
+    // Realizar la transacción antes de continuar con la función original
+    animalPayTransaction(costo, dolaresAnimal, function (exito) {
+        if (exito) {
+            // Si la transacción es exitosa, llamar a la función que invocó a esta función
+            funcionOriginal(...args); // Ejecuta la función original con los argumentos
+        } else {
+            // Si la transacción falla, mostrar un mensaje
+            typeMessage('❌ Transacción fallida. No se ha realizado la acción.');
+        }
+    });
+}
+
+// Ejemplo de una función que quieres ejecutar después de procesar el costo
+function ejemploDeFuncion(param1, param2) {
+    // Esta es la lógica que se ejecuta una vez que la transacción es exitosa
+    typeMessage(`¡Ejecutando el comando con los parámetros: ${param1} y ${param2}!`);
+
+}
 
 
 
-           
+
+
+
 const commands = {
     'saldo': handleSaldoCommand,
     'localizador': handleEventoActivo,
@@ -398,7 +426,6 @@ const commands = {
     'last-update': handleLastUpdateCommand,
     'ejemplo': handleNuevoComando,
     'resaltar-texto-infoanimalai': handleResaltarTextoInfoAnimalAI,
-    'paquete-de-cartas': handlePaqueteDeCartas,
     'caza-megalodon': handleCazaMegalodon,
     'refugio-animales': handleRefugioAnimalesCommand,
     'mejorar-refugio': handleMejorarRefugioCommand,
@@ -438,7 +465,9 @@ const commands = {
     'generar-imagenes': function() {
         mostrarModalEstadoComando("Proximamente", "El comando esta indisponible, pero pronto lo estara..", "Podras generar imagenes muy pronto.");
     },
-   'explora-biomas': handleExploraBiomasCommand,
+    
+   'explora-biomas': handleEventoActivo,
+   'explora-biomas-evento': handleExploraBiomasCommand,
    't-rex-friend': tRexFriend,
    'definiciones': handleDefinicion,
    'frases-motivacionales': handleFraseMotivacional,
@@ -454,7 +483,708 @@ const commands = {
    'ver-documentacion': setupInstalacionDocumentacion,
    'texto-advertencia': setupTextoAdvertencia,
    'enviar-peticion': crearPeticionWhatsApp,
+   'seleccionar-modelo': handleSeleccionarModeloIA,
+   'lluvia-de-dolares': lluviaDeDolaresAnimal,
+   'chequeo-medico': setupDiagnostico,
+   'ADN': handleConsultarSaldoADN,
+   'intercambiar-adn': function() {
+        convertirADNaDolaresAnimal(152); // Convertir 152 ADN a Dólares de Animal
+    },
+    'ataque-fantasma': handleAtaqueFantasma,
+    'animal-ai-research': iniciarAnimalAIResearch,
+    'notificaciones': ejecutarComandoNotificaciones,
 };
+
+// Variable global para manejar el contador de notificaciones
+let contadorNotificaciones = 3; // Ejemplo inicial (puedes modificar manualmente)
+
+
+// Lista de notificaciones (variable global)
+let notificacionesLista = [
+    {
+        mensaje: "Nueva Actualizacion",
+        fecha: "25/10/2024",
+        hora: "17:11 PM"
+    },
+
+];
+
+
+// Función para mostrar el panel de notificaciones en el chat
+function mostrarNotificaciones() {
+    const panel = document.createElement('div');
+    panel.classList.add('notificaciones-panel');
+
+    // Título del panel
+    const titulo = document.createElement('h3');
+    titulo.textContent = 'Notificaciones';
+    panel.appendChild(titulo);
+
+    // Contenedor para las notificaciones
+    const listaNotificaciones = document.createElement('div');
+    listaNotificaciones.classList.add('notificaciones-lista');
+    panel.appendChild(listaNotificaciones);
+
+    // Cargar notificaciones desde la lista global
+    notificacionesLista.forEach(notificacion => {
+        agregarNotificacionAlDOM(notificacion, listaNotificaciones);
+    });
+
+    // Crear el badge para el contador
+const badgeContador = document.createElement('span');
+badgeContador.id = 'badge-contador';
+badgeContador.classList.add('badge');
+chatLog.appendChild(badgeContador);
+
+
+    // Añadir el panel al chat
+    chatLog.appendChild(panel);
+
+    // Reducir el contador de notificaciones y actualizar el badge
+    contadorNotificaciones = 0;
+    actualizarBadgeContador();
+
+    // Eliminar panel después de 10 segundos
+    setTimeout(() => {
+        if (panel.parentNode) {
+            panel.parentNode.removeChild(panel);
+        }
+    }, 10000); // 10 segundos
+}
+
+
+// Función para verificar el código de administrador
+function verificarAdminCodigo(listaNotificaciones) {
+    const codigo = prompt('Ingrese el código de administrador para crear una notificación:');
+    const codigoAdmin = '1234'; // Cambiar a un código real seguro
+
+    if (codigo === codigoAdmin) {
+        const mensaje = prompt('Ingrese el mensaje de la notificación:');
+        if (mensaje) {
+            crearNotificacion(mensaje, listaNotificaciones);
+        } else {
+            alert('Mensaje no puede estar vacío.');
+        }
+    } else {
+        alert('Código de administrador incorrecto.');
+    }
+}
+
+// Función para crear una nueva notificación
+function crearNotificacion(mensaje, listaNotificaciones) {
+    const fecha = new Date();
+    const nuevaNotificacion = {
+        mensaje: mensaje,
+        fecha: fecha.toLocaleDateString(),
+        hora: fecha.toLocaleTimeString(),
+    };
+
+    // Agregar la notificación a la lista interna y al DOM
+    notificacionesLista.push(nuevaNotificacion);
+    agregarNotificacionAlDOM(nuevaNotificacion, listaNotificaciones);
+}
+
+// Función para agregar notificación al DOM en la lista de notificaciones
+function agregarNotificacionAlDOM(notificacion, listaNotificaciones) {
+    const notificacionElemento = document.createElement('div');
+    notificacionElemento.classList.add('notificacion-item');
+    notificacionElemento.innerHTML = `
+        <span class="notificacion-fecha">${notificacion.fecha} ${notificacion.hora}</span>
+        <p class="notificacion-mensaje">${notificacion.mensaje}</p>
+    `;
+    listaNotificaciones.appendChild(notificacionElemento);
+}
+
+// Función para cargar notificaciones de la lista interna al DOM
+function cargarNotificaciones(listaNotificaciones) {
+    listaNotificaciones.innerHTML = ''; // Limpiar lista de notificaciones
+
+    // Agregar cada notificación al DOM
+    notificacionesLista.forEach((notificacion) => {
+        agregarNotificacionAlDOM(notificacion, listaNotificaciones);
+    });
+}
+
+// Función para actualizar el badge del contador de notificaciones
+function actualizarBadgeContador() {
+    const badgeContador = document.getElementById('badge-contador');
+
+    if (contadorNotificaciones > 0) {
+        badgeContador.textContent = contadorNotificaciones;
+        badgeContador.style.display = 'inline-block';
+    } else {
+        badgeContador.style.display = 'none';
+    }
+}
+
+
+// Llamar al comando para abrir el panel de notificaciones
+function ejecutarComandoNotificaciones() {
+    mostrarNotificaciones();
+}
+
+// Variables globales
+let energiaPorComando = 0; // Energía en W
+let energiaMaxima = 10; // Nivel de energía para advertencia
+let energiaCritica = 15; // Nivel de energía para sobrecarga
+let generadorActivo = true; // Estado del generador de energía
+let intervaloEnergia; // Intervalo para actualizar la energía
+let sobrecargaActiva = false; // Indica si está en proceso de sobrecarga
+let cuentaRegresivaAutodestruccion = 180; // 3 minutos para autodestrucción
+let cuentaRegresivaBotonCohete = 30; // 30 segundos para activar botón de cohete
+let botonCoheteDeshabilitado = true; // Estado del botón del cohete
+let cuentaRegresivaInterval;
+
+// Función para mostrar el panel de investigación de IA Animal
+function mostrarPanelAnimalAIResearch() {
+    const modal = document.createElement('div');
+    modal.classList.add('typeMessage');
+
+    const modalContent = document.createElement('div');
+    modalContent.classList.add('modal-content');
+
+    const title = document.createElement('h2');
+    title.textContent = 'Panel de Investigación Animal AI';
+
+    // Contenedor para la energía producida por comando
+    const energiaContainer = document.createElement('div');
+    energiaContainer.classList.add('energia-container');
+
+    const energiaText = document.createElement('p');
+    energiaText.textContent = `Energía producida por comando: ${energiaPorComando} W`;
+
+    // Interruptor para el generador de energía
+    const switchGeneradorLabel = document.createElement('label');
+    switchGeneradorLabel.textContent = 'Generador de Energía:';
+    
+    const switchGenerador = document.createElement('input');
+    switchGenerador.type = 'checkbox';
+    switchGenerador.checked = true; // Generador activo por defecto
+    switchGeneradorLabel.appendChild(switchGenerador);
+
+    switchGenerador.addEventListener('change', function () {
+        generadorActivo = switchGenerador.checked;
+        if (!generadorActivo) {
+            energiaPorComando = 0; // Desactivar generador y bajar energía
+            energiaText.textContent = `Energía producida por comando: ${energiaPorComando} W`;
+        }
+    });
+
+    // Añadir elementos al contenedor del modal
+    energiaContainer.appendChild(energiaText);
+    modalContent.appendChild(title);
+    modalContent.appendChild(energiaContainer);
+    modalContent.appendChild(switchGeneradorLabel);
+
+    // Botón para iniciar el panel
+    const botonIniciar = document.createElement('button');
+    botonIniciar.textContent = 'Iniciar monitoreo';
+    botonIniciar.onclick = function () {
+        iniciarMonitoreoEnergia(energiaText, switchGenerador);
+        botonIniciar.disabled = true;
+    };
+    modalContent.appendChild(botonIniciar);
+
+    // Añadir el modal al documento
+    modal.appendChild(modalContent);
+    chatLog.appendChild(modal);
+    modal.style.display = 'block';
+}
+
+// Función para iniciar el monitoreo de energía
+function iniciarMonitoreoEnergia(energiaText, switchGenerador) {
+    intervaloEnergia = setInterval(() => {
+        if (generadorActivo) {
+            energiaPorComando += Math.random() * 2; // Incremento aleatorio de energía
+
+            // Actualizar el texto de energía
+            energiaText.textContent = `Energía producida por comando: ${energiaPorComando.toFixed(2)} W`;
+
+            // Advertencia si alcanza 10 W
+            if (energiaPorComando >= energiaMaxima && energiaPorComando < energiaCritica) {
+                energiaText.style.color = 'red';
+                typeMessage('⚠️ La energía ha alcanzado un nivel peligroso. Desactiva el Generador de Energía.');
+            }
+
+            // Activar sobrecarga si llega a 15 W
+            if (energiaPorComando >= energiaCritica && !sobrecargaActiva) {
+                iniciarProcesoAutodestruccion();
+            }
+        }
+    }, 1000); // Actualizar cada segundo
+}
+
+// Función para iniciar el proceso de autodestrucción
+function iniciarProcesoAutodestruccion() {
+    sobrecargaActiva = true;
+    typeMessage('⚠️ SOBRECARGA DE ENERGÍA, INICIANDO PROCESO DE AUTODESTRUCCIÓN...');
+    playSound('https://oceanandwild.github.io/audios/Explosion%20Sound%20Effects.mp3'); // Sonido de rayos
+    iniciarCuentaRegresivaAutodestruccion();
+}
+
+// Función para iniciar la cuenta regresiva de autodestrucción
+function iniciarCuentaRegresivaAutodestruccion() {
+    cuentaRegresivaInterval = setInterval(() => {
+        cuentaRegresivaAutodestruccion--;
+
+        if (cuentaRegresivaAutodestruccion === 150) { // A los 2:30 minutos
+            typeMessage('🚀 PREPARANDO COHETES...');
+            iniciarCuentaRegresivaBotonCohete();
+        }
+
+        if (cuentaRegresivaAutodestruccion <= 0) {
+            ejecutarAutodestruccion();
+            clearInterval(cuentaRegresivaInterval);
+        }
+    }, 1000);
+}
+
+// Función para iniciar la cuenta regresiva del botón del cohete
+function iniciarCuentaRegresivaBotonCohete() {
+    const botonCohete = document.createElement('button');
+    botonCohete.textContent = `PREPARANDO COHETE (${cuentaRegresivaBotonCohete}s)`;
+    botonCohete.disabled = true; // Botón deshabilitado inicialmente
+    chatLog.appendChild(botonCohete);
+
+    const intervaloBotonCohete = setInterval(() => {
+        cuentaRegresivaBotonCohete--;
+        botonCohete.textContent = `PREPARANDO COHETE (${cuentaRegresivaBotonCohete}s)`;
+
+        if (cuentaRegresivaBotonCohete <= 0) {
+            botonCohete.disabled = false;
+            botonCohete.textContent = 'LANZAR COHETE 1';
+            clearInterval(intervaloBotonCohete);
+        }
+    }, 1000);
+
+    botonCohete.addEventListener('click', function () {
+        lanzarCohete();
+    });
+}
+
+// Función para lanzar el cohete
+function lanzarCohete() {
+    typeMessage('🚀 LANZANDO COHETE 1...');
+    playSound('sound-launch.mp3'); // Sonido de lanzamiento
+}
+
+// Función para ejecutar la autodestrucción
+function ejecutarAutodestruccion() {
+    playSound('https://oceanandwild.github.io/audios/Explosion%20Sound%20Effects.mp3'); // Sonido de explosión
+    playSound('sound-alarma.mp3'); // Sonido de alarma
+    alert('💥 AUTODESTRUCCIÓN COMPLETA 💥');
+    reiniciarSistema(); // Reiniciar todo después de la autodestrucción
+}
+
+// Función para reiniciar el sistema
+function reiniciarSistema() {
+    clearInterval(intervaloEnergia);
+    energiaPorComando = 0;
+    energiaMaxima = 10;
+    energiaCritica = 15;
+    generadorActivo = true;
+    sobrecargaActiva = false;
+    cuentaRegresivaAutodestruccion = 180;
+    cuentaRegresivaBotonCohete = 30;
+    botonCoheteDeshabilitado = true;
+    document.body.innerHTML = ''; // Limpiar el DOM
+    mostrarPanelAnimalAIResearch(); // Mostrar nuevamente el panel
+}
+
+// Función para mostrar mensajes tipo typeMessage
+function typeMessage(message) {
+    const chatBox = document.getElementById('chat-box'); // Caja de chat donde aparecerán los mensajes
+    const mensaje = document.createElement('p');
+    mensaje.textContent = message;
+    chatBox.appendChild(mensaje);
+}
+
+// Función para reproducir sonidos
+function playSound(soundFile) {
+    const audio = new Audio(soundFile);
+    audio.play();
+}
+
+// Inicialización del comando /animal-ai-research
+function iniciarAnimalAIResearch() {
+    mostrarPanelAnimalAIResearch();
+}
+
+
+let saldoADN = 0; // Saldo inicial de ADN
+
+// Función para generar una cantidad aleatoria de Ectoplasma entre 1 y 50
+function generarEctoplasmaAleatorio() {
+    return Math.floor(Math.random() * 50) + 1; // Genera un número entre 1 y 50
+}
+
+// Variable para almacenar el saldo de Ectoplasma
+let saldoEctoplasma = 0; 
+
+// Función para agregar Ectoplasma al saldo actual
+function agregarEctoplasma() {
+    const ectoplasmaGanado = generarEctoplasmaAleatorio(); // Generar una cantidad aleatoria de Ectoplasma
+    saldoEctoplasma += ectoplasmaGanado; // Sumar el Ectoplasma ganado al saldo actual
+    typeMessage(`¡Has ganado ${ectoplasmaGanado} Ectoplasma! Tu nuevo saldo de Ectoplasma es: ${saldoEctoplasma}.`);
+    mostrarMonedas(); // Actualizar la lista de monedas después de cambiar el saldo
+}
+
+// Función para ver el saldo actual de Ectoplasma
+function verSaldoEctoplasma() {
+    typeMessage(`Tu saldo actual de Ectoplasma es: ${saldoEctoplasma}.`);
+}
+
+// Comando para consultar el saldo de Ectoplasma
+function handleConsultarSaldoEctoplasma() {
+    verSaldoEctoplasma(); // Llama a la función para mostrar el saldo
+}
+
+
+// Función para generar una cantidad aleatoria de Dulces entre 1 y 100
+function generarDulcesAleatorios() {
+    return Math.floor(Math.random() * 100) + 1; // Genera un número entre 1 y 100
+}
+
+// Variable para almacenar el saldo de Dulces
+let saldoDulces = 0; 
+
+// Función para agregar Dulces al saldo actual
+function agregarDulces() {
+    const dulcesGanados = generarDulcesAleatorios(); // Generar una cantidad aleatoria de Dulces
+    saldoDulces += dulcesGanados; // Sumar los Dulces ganados al saldo actual
+    typeMessage(`¡Has ganado ${dulcesGanados} Dulces! Tu nuevo saldo de Dulces es: ${saldoDulces}.`);
+    mostrarMonedas(); // Actualizar la lista de monedas después de cambiar el saldo
+}
+
+// Función para ver el saldo actual de Dulces
+function verSaldoDulces() {
+    typeMessage(`Tu saldo actual de Dulces es: ${saldoDulces}.`);
+}
+
+// Comando para consultar el saldo de Dulces
+function handleConsultarSaldoDulces() {
+    verSaldoDulces(); // Llama a la función para mostrar el saldo
+}
+
+
+// Función para generar una cantidad aleatoria de Calabazas entre 1 y 76
+function generarCalabazasAleatorias() {
+    return Math.floor(Math.random() * 76) + 1; // Genera un número entre 1 y 76
+}
+
+// Variable para almacenar el saldo de Calabazas
+let saldoCalabazas = 0; 
+
+// Función para agregar Calabazas al saldo actual
+function agregarCalabazas() {
+    const calabazasGanadas = generarCalabazasAleatorias(); // Generar una cantidad aleatoria de Calabazas
+    saldoCalabazas += calabazasGanadas; // Sumar las Calabazas ganadas al saldo actual
+    typeMessage(`¡Has ganado ${calabazasGanadas} Calabazas! Tu nuevo saldo de Calabazas es: ${saldoCalabazas}.`);
+    mostrarMonedas(); // Actualizar la lista de monedas después de cambiar el saldo
+}
+
+// Función para ver el saldo actual de Calabazas
+function verSaldoCalabazas() {
+    typeMessage(`Tu saldo actual de Calabazas es: ${saldoCalabazas}.`);
+}
+
+// Comando para consultar el saldo de Calabazas
+function handleConsultarSaldoCalabazas() {
+    verSaldoCalabazas(); // Llama a la función para mostrar el saldo
+}
+
+
+// Comando para convertir ADN en Dólares de Animal
+function handleConvertirADNaDolares() {
+    const cantidadADN = 152; // Puedes cambiarlo a una entrada dinámica
+    convertirADNaDolaresAnimal(cantidadADN); // Llama a la función de conversión
+}
+
+
+
+const conversionRate = 76; // 1 Dólar de Animal = 76 ADN
+
+// Función para convertir ADN a Dólares de Animal
+function convertirADNaDolaresAnimal(cantidadADN) {
+    // Verificar si el usuario tiene suficiente ADN
+    if (cantidadADN <= saldoADN) {
+        // Calcular cuántos Dólares de Animal obtendrá
+        const dolaresObtenidos = (cantidadADN / conversionRate).toFixed(2);
+        
+        // Actualizar el saldo de ADN y Dólares de Animal
+        saldoADN -= cantidadADN;
+        dolaresAnimal += parseFloat(dolaresObtenidos);
+
+        typeMessage(`¡Conversión exitosa! Has convertido ${cantidadADN} ADN en $${dolaresObtenidos} Dólares de Animal.`);
+        typeMessage(`Nuevo saldo de ADN: ${saldoADN}, Nuevo saldo de Dólares de Animal: $${dolaresAnimal.toFixed(2)}`);
+    } else {
+        // Mensaje de error si no hay suficiente ADN
+        typeMessage('❌ No tienes suficiente saldo de ADN para realizar esta conversión.');
+    }
+}
+
+
+// Array de las monedas del juego, con su icono y la cantidad
+const monedas = [
+    { nombre: 'Calabazas', icono: 'https://i.pinimg.com/564x/58/01/8e/58018e2ca2d23f731f30885952346e9c.jpg', cantidad: saldoCalabazas },
+    { nombre: 'Dulces', icono: 'https://i.pinimg.com/564x/af/57/d4/af57d40bb32c19f65a6a4011ae99e427.jpg', cantidad: saldoDulces },
+    { nombre: 'Ectoplasma', icono: 'https://i.pinimg.com/564x/a1/66/a9/a166a92619a87b8a7995c5b634adb175.jpg', cantidad: saldoEctoplasma },
+    { nombre: 'ADN', icono: 'https://i.pinimg.com/control/564x/ba/4d/f4/ba4df4b069b7044ce8f0b0845fa20c37.jpg', cantidad: saldoADN },
+    { nombre: 'Dolar Animal', icono: 'https://i.pinimg.com/564x/5e/cd/84/5ecd847af96e20ebe2c6d89cae85a2e5.jpg', cantidad: dolaresAnimal }
+];
+
+// Función para actualizar las cantidades en el array de monedas antes de mostrarlas
+function actualizarSaldosMonedas() {
+    monedas[0].cantidad = saldoCalabazas;   // Actualizar el saldo de Calabazas
+    monedas[1].cantidad = saldoDulces;      // Actualizar el saldo de Dulces
+    monedas[2].cantidad = saldoEctoplasma;  // Actualizar el saldo de Ectoplasma
+    monedas[3].cantidad = saldoADN;         // Actualizar el saldo de ADN
+    monedas[4].cantidad = dolaresAnimal;    // Actualizar el saldo de Dólares de Animal
+}
+
+
+// Función para mostrar la lista de monedas con las cantidades actualizadas
+function mostrarMonedas() {
+    actualizarSaldosMonedas(); // Asegurarse de que los saldos están actualizados
+
+    const currencyList = document.getElementById('currency-list');
+    currencyList.innerHTML = ''; // Limpiar cualquier contenido anterior
+
+    monedas.forEach(moneda => {
+        const currencyItem = document.createElement('div');
+        currencyItem.classList.add('currency-item');
+
+        // Crear imagen del icono
+        const icono = document.createElement('img');
+        icono.src = moneda.icono;
+        icono.alt = moneda.nombre;
+
+        // Crear el texto del nombre y cantidad
+        const nombre = document.createElement('span');
+        nombre.textContent = `${moneda.nombre}: ${moneda.cantidad}`;
+
+        // Añadir el icono y el nombre al contenedor
+        currencyItem.appendChild(icono);
+        currencyItem.appendChild(nombre);
+
+        // Añadir el contenedor a la lista de monedas
+        currencyList.appendChild(currencyItem);
+    });
+}
+
+// Llamar a la función para mostrar las monedas (por ejemplo después de obtener saldo)
+mostrarMonedas();
+
+
+// Función para mostrar los fantasmas en el chat
+function generarFantasma() {
+    const chatBox = document.getElementById('chat-box'); // Caja de chat donde aparecerán los fantasmas
+
+    // Crear un nuevo div para el fantasma
+    const fantasma = document.createElement('div');
+    fantasma.classList.add('fantasma');
+
+    // Establecer una imagen o emoji para el fantasma
+    const imagenFantasma = document.createElement('img');
+    imagenFantasma.src = 'https://i.pinimg.com/564x/a1/66/a9/a166a92619a87b8a7995c5b634adb175.jpg'; // Imagen del fantasma
+    imagenFantasma.alt = 'Fantasma';
+
+    // Añadir un evento de clic para otorgar Ectoplasma al hacer clic
+    fantasma.addEventListener('click', () => {
+        const ectoplasmaGanado = generarEctoplasmaAleatorio(); // Generar una cantidad aleatoria de Ectoplasma
+        agregarEctoplasma(ectoplasmaGanado); // Agregar el Ectoplasma al saldo del jugador
+
+        // Eliminar el fantasma después de ser clicado
+        fantasma.remove();
+    });
+
+    // Añadir la imagen al div del fantasma
+    fantasma.appendChild(imagenFantasma);
+
+    // Añadir el fantasma a la caja de chat
+    chatLog.appendChild(fantasma);
+
+    // Hacer que el fantasma desaparezca después de 5 segundos si no ha sido clicado
+    setTimeout(() => {
+        if (chatLog.contains(fantasma)) {
+            fantasma.remove(); // Eliminar el fantasma del chat
+        }
+    }, 5000); // 5 segundos antes de que desaparezca
+}
+
+// Comando para activar el ataque fantasma
+function handleAtaqueFantasma() {
+    const cantidadFantasmas = Math.floor(Math.random() * 5) + 1; // Generar entre 1 y 5 fantasmas
+
+    for (let i = 0; i < cantidadFantasmas; i++) {
+        setTimeout(generarFantasma, i * 1000); // Generar fantasmas con intervalos de tiempo
+    }
+
+    typeMessage('👻 ¡Los fantasmas han invadido el chat! ¡Haz clic en ellos para ganar Ectoplasma! 👻');
+}
+
+function setupDiagnostico() {
+    // Crear botón para iniciar el proceso del comando
+    const diagnosticoBtn = document.createElement('button');
+    diagnosticoBtn.textContent = '/diagnostico';
+    diagnosticoBtn.classList.add('btn');
+    chatLog.appendChild(diagnosticoBtn);
+
+    // Agregar evento de clic para iniciar el proceso
+    diagnosticoBtn.addEventListener('click', iniciarDiagnostico);
+
+    console.log("Botón de /diagnostico creado");
+}
+
+// Función para iniciar el diagnóstico
+function iniciarDiagnostico() {
+    typeMessage('Diagnosticando...');
+
+    setTimeout(() => {
+        realizarDiagnostico();
+    }, 2000); // Simulación del proceso de diagnóstico
+}
+
+// Función para realizar el diagnóstico aleatorio
+function realizarDiagnostico() {
+    const enfermedades = [
+        { nombre: 'Gripe', tratamiento: 'Reposo y medicación', esCronica: false, costo: 10 },
+        { nombre: 'Fractura', tratamiento: 'Inmovilización y yeso', esCronica: false, costo: 50 },
+        { nombre: 'Diabetes', tratamiento: 'No definido', esCronica: true, costo: 200 },
+        { nombre: 'Hipertensión', tratamiento: 'No definido', esCronica: true, costo: 150 },
+        { nombre: 'Migraña', tratamiento: 'Reposo y analgésicos', esCronica: false, costo: 30 },
+    ];
+
+    // Seleccionar una enfermedad aleatoriamente
+    const enfermedadSeleccionada = enfermedades[Math.floor(Math.random() * enfermedades.length)];
+
+    // Mostrar resumen del diagnóstico
+    const diagnosticoDiv = document.createElement('div');
+    diagnosticoDiv.classList.add('mensaje');
+    diagnosticoDiv.innerHTML = `
+        <strong>Diagnóstico:</strong> ${enfermedadSeleccionada.nombre}<br>
+        <strong>Tratamiento:</strong> ${enfermedadSeleccionada.tratamiento}<br>
+        <strong>Cronica:</strong> ${enfermedadSeleccionada.esCronica ? 'Sí' : 'No'}<br>
+        <strong>Costo:</strong> $${enfermedadSeleccionada.costo} Dólares de Animal
+    `;
+    chatLog.appendChild(diagnosticoDiv);
+
+    // Botón para continuar con el pago
+    const continuarBtn = document.createElement('button');
+    continuarBtn.textContent = 'Continuar';
+    continuarBtn.classList.add('btn');
+    chatLog.appendChild(continuarBtn);
+
+    // Evento para continuar con el pago
+    continuarBtn.addEventListener('click', () => {
+        realizarPagoTratamiento(enfermedadSeleccionada);
+        diagnosticoDiv.remove();
+        continuarBtn.remove();
+    });
+}
+
+// Función para realizar el pago del tratamiento
+function realizarPagoTratamiento(enfermedad) {
+    // Asumimos que el saldo actual de Dólares de Animal está almacenado en una variable global llamada 'saldoDolaresAnimal'
+    if (dolaresAnimal >= enfermedad.costo) {
+        animalPayTransaction(enfermedad.costo, dolaresAnimal, function (exito) {
+            if (exito) {
+                // Deducir el costo del saldo del usuario
+                dolaresAnimal -= enfermedad.costo;
+
+                typeMessage(`¡Estas curado de ${enfermedad.nombre}!`);
+
+                // Mostrar el saldo restante después del pago
+                typeMessage(`Saldo restante: ${dolaresAnimal.toFixed(2)} Dólares de Animal`);
+
+                // Crear botón para hacer otro diagnóstico
+                const otroDiagnosticoBtn = document.createElement('button');
+                otroDiagnosticoBtn.textContent = 'Hacer otro diagnóstico';
+                otroDiagnosticoBtn.classList.add('btn');
+                chatLog.appendChild(otroDiagnosticoBtn);
+
+                // Evento para hacer otro diagnóstico
+                otroDiagnosticoBtn.addEventListener('click', () => {
+                    otroDiagnosticoBtn.remove();
+                    iniciarDiagnostico();
+                });
+            } else {
+                typeMessage('Error en la transacción. Inténtalo de nuevo.');
+            }
+        });
+    } else {
+        typeMessage('Saldo insuficiente para pagar el tratamiento.');
+    }
+}
+
+
+
+
+
+
+function lluviaDeDolaresAnimal() {
+    const totalBurbujas = 10; // Número de burbujas que aparecerán
+    const burbujas = [];
+    let totalGanado = 0; // Total de Dólares de Animal ganados
+    const contenedorBurbujas = document.createElement('div');
+    contenedorBurbujas.classList.add('contenedor-burbujas');
+
+    // Mostrar el mensaje inicial
+    typeMessage('💸 ¡Es la lluvia de Dólares de Animal! Haz clic en las burbujas para ganar.');
+
+    // Crear las burbujas con cantidades y estilos personalizados
+    for (let i = 0; i < totalBurbujas; i++) {
+        const burbuja = document.createElement('div');
+        const dolaresGanados = (Math.random() * 5 + 1).toFixed(2); // Cantidad entre 1 y 5 Dólares de Animal
+        burbuja.classList.add('burbuja');
+        burbuja.textContent = `+$${dolaresGanados}`;
+        
+        // Personalización del tamaño, color y borde de cada burbuja
+        const size = Math.random() * 40 + 60; // Tamaño entre 60px y 100px
+        const colors = ['#ffdd57', '#57ffde', '#ff5757', '#a857ff', '#57aaff']; // Colores personalizados
+        const borderColor = colors[Math.floor(Math.random() * colors.length)]; // Seleccionar un color aleatorio para el borde
+
+        // Aplicar los estilos personalizados a la burbuja
+        burbuja.style.width = `${size}px`;
+        burbuja.style.height = `${size}px`;
+        burbuja.style.border = `2px solid ${borderColor}`;
+        burbuja.style.backgroundColor = `rgba(255, 255, 255, 0.7)`; // Fondo semitransparente
+        burbuja.style.color = borderColor; // El color del texto coincide con el borde
+        
+        // Posición aleatoria de las burbujas
+        burbuja.style.left = `${Math.random() * 90}vw`;
+        burbuja.style.top = `${Math.random() * 70}vh`;
+
+        // Evento de clic en la burbuja
+        burbuja.addEventListener('click', function () {
+            totalGanado += parseFloat(dolaresGanados); // Sumar la cantidad al total ganado
+            burbuja.remove(); // Quitar la burbuja del contenedor
+        });
+
+        // Añadir la burbuja al contenedor
+        contenedorBurbujas.appendChild(burbuja);
+        burbujas.push(burbuja);
+    }
+
+    // Añadir el contenedor de burbujas al cuerpo del documento
+    chatLog.appendChild(contenedorBurbujas);
+
+    // Temporizador para finalizar la lluvia de burbujas
+    setTimeout(() => {
+        // Eliminar todas las burbujas restantes
+        burbujas.forEach(burbuja => burbuja.remove());
+
+        // Mostrar el total ganado
+        typeMessage(`🎉 ¡Has ganado un total de $${totalGanado.toFixed(2)} Dólares de Animal!`);
+
+        // Sumar el total ganado al saldo actual
+        dolaresAnimal += totalGanado;
+        typeMessage(`✅ Tu nuevo saldo es: $${dolaresAnimal.toFixed(2)} Dólares de Animal.`);
+        
+        // Quitar el contenedor de burbujas
+        contenedorBurbujas.remove();
+    }, 15000); // 15 segundos para la lluvia de burbujas
+}
 
 function crearPeticionWhatsApp() {
     // Crear el formulario para ingresar la petición
@@ -496,7 +1226,6 @@ function enviarPeticionWhatsApp() {
 
 
 
-// Función para configurar el comando /texto-advertencia
 function setupTextoAdvertencia() {
     // Crear botón para iniciar el proceso del comando
     const textoAdvertenciaBtn = document.createElement('button');
@@ -506,13 +1235,10 @@ function setupTextoAdvertencia() {
 
     // Agregar evento de clic para iniciar el proceso
     textoAdvertenciaBtn.addEventListener('click', iniciarTextoAdvertencia);
-
-    console.log("Botón de /texto-advertencia creado");
 }
 
 // Función para manejar el flujo del comando /texto-advertencia
 function iniciarTextoAdvertencia() {
-    // Solicitar al usuario que introduzca el texto a mostrar
     const textoInputDiv = document.createElement('div');
     textoInputDiv.classList.add('mensaje');
     textoInputDiv.textContent = 'Introduce un texto a mostrar:';
@@ -523,13 +1249,11 @@ function iniciarTextoAdvertencia() {
     textoInput.classList.add('input-texto');
     chatLog.appendChild(textoInput);
 
-    // Botón para confirmar el texto
     const confirmarTextoBtn = document.createElement('button');
     confirmarTextoBtn.textContent = 'Confirmar texto';
     confirmarTextoBtn.classList.add('btn');
     chatLog.appendChild(confirmarTextoBtn);
 
-    // Evento para cuando el texto es confirmado
     confirmarTextoBtn.addEventListener('click', () => {
         const texto = textoInput.value;
 
@@ -548,14 +1272,13 @@ function mostrarOpcionesPersonalizacion(texto) {
     personalizacionDiv.textContent = 'Seleccione la personalización deseada:';
     chatLog.appendChild(personalizacionDiv);
 
-    // Opciones de personalización (checkboxes)
     const opciones = [
-        { label: 'Color Rojo', clase: 'texto-rojo' },
-        { label: 'Animación Parpadeo', clase: 'animacion-parpadeo' },
-        { label: 'Texto Subrayado', clase: 'texto-subrayado' },
-        { label: 'Animación Rotación', clase: 'animacion-rotacion' },
-        { label: 'Color Verde', clase: 'texto-verde' },
-        { label: 'Animación Oscilación', clase: 'animacion-oscilacion' }
+        { label: 'Color Rojo (Gratis)', clase: 'texto-rojo', costo: 0 },
+        { label: 'Animación Parpadeo (2 Dólares de Animal)', clase: 'animacion-parpadeo', costo: 2 },
+        { label: 'Texto Subrayado (Gratis)', clase: 'texto-subrayado', costo: 0 },
+        { label: 'Animación Rotación (3 Dólares de Animal)', clase: 'animacion-rotacion', costo: 3 },
+        { label: 'Color Verde (Gratis)', clase: 'texto-verde', costo: 0 },
+        { label: 'Animación Oscilación (5 Dólares de Animal)', clase: 'animacion-oscilacion', costo: 5 }
     ];
 
     const opcionesContainer = document.createElement('div');
@@ -565,6 +1288,7 @@ function mostrarOpcionesPersonalizacion(texto) {
         const checkbox = document.createElement('input');
         checkbox.setAttribute('type', 'checkbox');
         checkbox.setAttribute('value', opcion.clase);
+        checkbox.setAttribute('data-costo', opcion.costo);
         const label = document.createElement('label');
         label.textContent = opcion.label;
         label.appendChild(checkbox);
@@ -572,21 +1296,40 @@ function mostrarOpcionesPersonalizacion(texto) {
         opcionesContainer.appendChild(document.createElement('br'));
     });
 
-    // Botón para confirmar la personalización
+    const saldoDiv = document.createElement('div');
+    saldoDiv.textContent = `Tu saldo actual es: $${dolaresAnimal.toFixed(2)} Dólares de Animal`;
+    chatLog.appendChild(saldoDiv);
+
     const confirmarPersonalizacionBtn = document.createElement('button');
     confirmarPersonalizacionBtn.textContent = 'Aplicar personalización';
     confirmarPersonalizacionBtn.classList.add('btn');
     chatLog.appendChild(confirmarPersonalizacionBtn);
 
-    // Evento para cuando se aplica la personalización
     confirmarPersonalizacionBtn.addEventListener('click', () => {
+        let costoTotal = 0;
         const clasesSeleccionadas = [];
+
         opcionesContainer.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            const costo = parseFloat(checkbox.getAttribute('data-costo'));
+            costoTotal += costo;
             clasesSeleccionadas.push(checkbox.value);
         });
 
-        // Mostrar el texto con las personalizaciones
-        mostrarTextoPersonalizado(texto, clasesSeleccionadas);
+        if (costoTotal > dolaresAnimal) {
+            typeMessage('❌ No tienes suficientes Dólares de Animal para aplicar estas personalizaciones.');
+        } else {
+            // Realizar el pago utilizando la función animalPayTransaction
+            animalPayTransaction(costoTotal, dolaresAnimal, (exito) => {
+                if (exito) {
+                    dolaresAnimal -= costoTotal; // Restar el costo si la transacción es exitosa
+                    saldoDiv.textContent = `Tu nuevo saldo es: $${dolaresAnimal.toFixed(2)} Dólares de Animal`;
+
+                    // Mostrar el texto con las personalizaciones aplicadas
+                    mostrarTextoPersonalizado(texto, clasesSeleccionadas);
+                }
+            });
+        }
+
         personalizacionDiv.remove();
         opcionesContainer.remove();
         confirmarPersonalizacionBtn.remove();
@@ -601,14 +1344,9 @@ function mostrarTextoPersonalizado(texto, clases) {
     chatLog.appendChild(textoFinalDiv);
 }
 
-
 // Lista de comandos con su estado de despertado
 const awkCommands = [
     { name: 'proximo-comando', isAwakened: true },
-    { name: 'ojo-de-halcon', isAwakened: false },
-    { name: 'rugido-de-leon', isAwakened: true },
-    { name: 'alas-de-aguila', isAwakened: false },
-    { name: 'pisada-de-elefante', isAwakened: true }
 ];
 
 // Cargar comandos en el contenedor awk-list
@@ -695,7 +1433,15 @@ const comandosConRarezas = [
     { nombre: "/ver-documentacion", rareza: "Raro" },
     { nombre: "/texto-advertencia", rareza: "Raro" },
     { nombre: "/enviar-peticion", rareza: "Raro" },
+    { nombre: "/ADN", rareza: "Legendario" },
+    { nombre: "/seleccionar-modelo", rareza: "Común" },
+    { nombre: "/chequeo-medico", rareza: "Épico" },
+    { nombre: "/lluvia-de-dolares", rareza: "Mítico" },
+    { nombre: "/intercambiar-adn", rareza: "Raro" },
+    { nombre: "/ataque-fantasma", rareza: "Legendario" },
+    { nombre: "/animal-ai-research", rareza: "Épico" },
 ];
+
 
 // Colores por rareza
 const coloresRarezas = {
@@ -704,7 +1450,7 @@ const coloresRarezas = {
     'Raro': '#9C27B0',          // Púrpura
     'Épico': '#FF9800',         // Naranja
     'Legendario': '#FFC107',    // Amarillo
-    'Mítico': '#E91E63'         // Rosa
+    'Mítico': 'red'         // Rosa
 };
 
 // Función para contar cuántos comandos hay por rareza
@@ -1560,7 +2306,7 @@ function crearSeccionTienda(tituloSeccion, productos) {
 
 
 function iniciarCompraProducto(nombreProducto, costo, comando) {
-    const saldoActual = 100; // Supongamos que el saldo actual es 100 Animal Tokens
+    const saldoActual = dolaresAnimal;
     animalPayTransaction(costo, saldoActual, function(exito) {
         if (exito) {
             ejecutarComando(comando);  // Usar el "comando" aquí
@@ -1569,48 +2315,50 @@ function iniciarCompraProducto(nombreProducto, costo, comando) {
 }
 
 
-// Función para mostrar el modal con las notas de parche
-function mostrarModalPatchNotes(version, fecha, contenido) {
+// Función para mostrar el menú de pestañas y su contenido
+function mostrarMenuDePestanas(version, fecha, contenido) {
     const modal = document.createElement('div');
     modal.classList.add('modal');
 
     const modalContent = document.createElement('div');
     modalContent.classList.add('modal-content');
 
-    // Título (Versión de la actualización)
-    const title = document.createElement('h2');
-    title.textContent = `Versión: ${version}`;
+    // Menú de pestañas
+    const tabMenu = document.createElement('ul');
+    tabMenu.classList.add('tab-menu');
 
-    // Subtítulo (Fecha de la actualización)
-    const subtitle = document.createElement('h4');
-    subtitle.textContent = `Fecha: ${fecha}`;
+    // Secciones
+    const secciones = ['Noticias', 'Registro: Última Actualización', 'Detalles'];
+    const seccionesContenido = [
+        'Aquí se mostrarán las últimas noticias relacionadas con el juego y el desarrollo.',
+        `Registro de la actualización - Versión ${version} (${fecha}): ${contenido}`,
+        'Detalles específicos sobre los cambios recientes y características agregadas.',
+    ];
 
-    // Contenedor del contenido (última actualización) con deslizador
+    // Crear pestañas
+    secciones.forEach((seccion, index) => {
+        const tab = document.createElement('li');
+        tab.textContent = seccion;
+        tab.classList.add('tab-item');
+        tab.onclick = () => mostrarContenidoSeccion(index, seccionesContenido);
+        tabMenu.appendChild(tab);
+    });
+
+    // Contenedor del contenido de cada pestaña
     const contentContainer = document.createElement('div');
-    contentContainer.classList.add('content-container');
-
-    const patchText = document.createElement('p');
-    patchText.textContent = contenido;
-
-    contentContainer.appendChild(patchText);
-
-    // Estilos para el contenedor con deslizador
-    contentContainer.style.maxHeight = '200px'; // Ajusta la altura según sea necesario
-    contentContainer.style.overflowY = 'auto'; // Deslizador vertical
-    contentContainer.style.border = '1px solid #ccc';
-    contentContainer.style.padding = '10px';
-    contentContainer.style.marginTop = '15px';
+    contentContainer.classList.add('tab-content-container');
+    contentContainer.textContent = seccionesContenido[0]; // Contenido por defecto (Noticias)
 
     // Botón de cierre
     const closeButton = document.createElement('button');
     closeButton.textContent = 'Cerrar';
+    closeButton.classList.add('close-button');
     closeButton.onclick = function () {
         cerrarModal(modal);
     };
 
-    // Añadir todos los elementos al modal
-    modalContent.appendChild(title);
-    modalContent.appendChild(subtitle);
+    // Añadir elementos al modal
+    modalContent.appendChild(tabMenu);
     modalContent.appendChild(contentContainer);
     modalContent.appendChild(closeButton);
 
@@ -1620,6 +2368,12 @@ function mostrarModalPatchNotes(version, fecha, contenido) {
     modal.style.display = 'block';
 }
 
+// Función para mostrar el contenido correspondiente a la pestaña seleccionada
+function mostrarContenidoSeccion(index, contenidoArray) {
+    const contentContainer = document.querySelector('.tab-content-container');
+    contentContainer.textContent = contenidoArray[index];
+}
+
 // Función para cerrar el modal
 function cerrarModal(modal) {
     if (modal) {
@@ -1627,20 +2381,83 @@ function cerrarModal(modal) {
     }
 }
 
-// Ejemplo de uso del comando /patch-notes
+// Ejemplo de uso del comando con menú de pestañas
 function ejecutarPatchNotes() {
     const version = 'v1.0.35';
     const fecha = '15 de Octubre, 2024';
     const contenido = `
-        - Se ha añadido el nuevo comando de temporada.
-        - Ajustes en la obtención de EXP.
-        - Corrección de errores menores en la interfaz.
-        - Mejoras en la carga de contenido de recompensas.
-        - Cambios en la estructura del nivel máximo y recompensas finales.
-    `;
+        ### Notas de Actualización v1.0.4  
+**Fecha:** 25/10/2024  
 
-    mostrarModalPatchNotes(version, fecha, contenido);
+• **Nuevo sistema de instalación de documentación**  
+  - Se ha añadido un **Instalador** que permite instalar la documentación de manera más ágil y directa.
+
+• **+28 Comandos Nuevos! 🎉**
+
+• **Rarezas de Comandos**  
+  - Se han añadido rarezas a los comandos, una característica que se utilizará en una próxima función.
+
+• **Remodelación de la lista de comandos disponibles**  
+  - La lista de comandos ahora está integrada directamente en el contenedor del chat, optimizando el acceso y la visibilidad.
+
+• **Optimización para dispositivos móviles**  
+  - Ajustes en la plataforma para mejorar la visualización en dispositivos móviles.
+
+• **Correcciones menores en modales**  
+  - Solucionados problemas que impedían la visualización de algunos modales.
+
+• **Mejoras en recompensas de Dólares de Animal**  
+  - Ahora, las recompensas son más accesibles para evitar cuentas sin fondos.
+
+• **Nuevos estados de comando**  
+  - **De Pago** y **Recompensas Incluidas**, estados que permiten identificar comandos especiales o recompensantes.
+
+• **Mejoras en la estilización de rarezas de comandos**
+
+• **Nuevo sistema de búsqueda de comandos**
+
+• **Implementación de Python para mejoras menores**  
+  - Se utilizó Python para optimizaciones de la plataforma.
+
+• **Nuevo sistema de Dominio de Ocean and Wild**  
+  - Ahora, puedes ejecutar un comando escribiendo la URL con el dominio \`oceanandwild.com/comando/(comando)\` que lo ejecutará si existe.
+
+• **Actualización en \`/instalar-documentacion\`**  
+  - El botón **Instalar Documentación** ha sido reemplazado por **Ver Documentación** en un sitio web externo.
+
+• **Conversión ajustada para Créditos de Fobias**  
+  - La conversión ha cambiado de **1000** a **300**.
+
+• **Nueva función: Despertar Comandos**  
+  - Un sistema de **Comandos Despertados** estará disponible en una actualización de noviembre.
+
+• **NUEVO: Crea peticiones de funcionalidades o comandos**  
+  - Puedes realizar peticiones directamente en **Animal AI** para una próxima actualización.
+
+• **Nuevo evento: Biomas**  
+  - Comando: \`/explora-biomas\`.
+
+• **Cambio de "Animal Tokens" a "Dólares de Animal"**
+
+• **Mejora en el comando \`/patch-notes\`**
+
+• **Nuevo comando de Halloween**
+
+• **Nueva lista: Lista de Divisas**
+
+• **Actualización en la lista "Divisas"**  
+  - Es posible que **Dólares de Animal** no aparezca en algunos comandos por esta integración, pero se sumará progresivamente en próximas actualizaciones.
+
+• **Nueva funcionalidad de Notificaciones**  
+  - Comando \`/notificaciones\` permite recibir notificaciones sin necesidad de servidores adicionales, optimizando recursos.
+`;
+
+
+    mostrarMenuDePestanas(version, fecha, contenido);
 }
+
+
+
 
 
 const listaComandos2 = [
@@ -1699,6 +2516,13 @@ const listaComandos2 = [
 'ver-documentacion',
 'texto-advertencia',
 'enviar-peticion',
+'seleccionar-modelo',
+'lluvia-de-dolares',
+'chequeo-medico',
+'ADN',
+'intercambiar-adn',
+'ataque-fantasma',
+'animal-ai-research',
 ];
 
 
@@ -1814,12 +2638,12 @@ function reclamarRecompensa(tipo) {
 
     if (tipo === 'diaria' && ultimaRecompensaDiaria !== hoy) {
         ultimaRecompensaDiaria = hoy;
-        animalTokens += tokensDiarios;
-        return `¡Recompensa diaria reclamada! 🎁 Has recibido ${tokensDiarios} Animal Tokens. Ahora tienes ${animalTokens} tokens.`;
+        dolaresAnimal += tokensDiarios;
+        return `¡Recompensa diaria reclamada! 🎁 Has recibido ${tokensDiarios} Dolares de Animal. Ahora tienes ${dolaresAnimal.toFixed(2)} Dolares de Animal.`;
     } else if (tipo === 'semanal' && ultimaRecompensaSemanal !== hoy) {
         ultimaRecompensaSemanal = hoy;
-        animalTokens += tokensSemanales;
-        return `¡Recompensa semanal reclamada! 🎁 Has recibido ${tokensSemanales} Animal Tokens. Ahora tienes ${animalTokens} tokens.`;
+        dolaresAnimal += tokensSemanales;
+        return `¡Recompensa semanal reclamada! 🎁 Has recibido ${tokensSemanales} Dolares de Animal. Ahora tienes ${dolaresAnimal.toFixed(2)} Dolares de Animal.`;
     } else {
         return `Ya has reclamado tu recompensa ${tipo}. ¡Vuelve más tarde!`;
     }
@@ -1903,8 +2727,8 @@ function evaluarRespuesta(pregunta, respuestaUsuario, container) {
         typeMessage("✅ ¡Respuesta correcta!");
         // Otorgar Animal Tokens
         const tokensGanados = 10; // Puedes ajustar la cantidad
-        animalTokens += tokensGanados;
-        typeMessage(`¡Has ganado ${tokensGanados} Animal Tokens! Tu saldo actual es: ${animalTokens}`);
+        dolaresAnimal += tokensGanados;
+        typeMessage(`¡Has ganado ${dolaresAnimal.toFixed(2)} Dolares de Animal! Tu saldo actual es: ${dolaresAnimal.toFixed(2)}`);
     } else {
         typeMessage(`❌ Respuesta incorrecta. La respuesta correcta es: "${pregunta.respuestaCorrecta}".`);
     }
@@ -2130,7 +2954,7 @@ function explorarBiomas() {
             typeMessage(`¡Tú y el T-Rex están explorando el ${bioma}!`);
             setTimeout(() => {
                 typeMessage('¡Has encontrado un tesoro! Recibes 5 Animal Tokens.');
-                animalTokens += 5; // Premiar con Animal Tokens
+                dolaresAnimal += 5; // Premiar con Dolares Animal
             }, 2000);
         });
     });
@@ -2138,7 +2962,7 @@ function explorarBiomas() {
 
 function alimentarTRex() {
     const costoAlimento = 10; // Coste de alimentar al T-Rex
-    const saldoActual = animalTokens; // Supongamos que esta es la cantidad actual del jugador
+    const saldoActual = dolaresAnimal; // Supongamos que esta es la cantidad actual del jugador
 
     // Usamos la función animalPayTransaction para gestionar el pago
     animalPayTransaction(costoAlimento, saldoActual, 0, false, function(success) {
@@ -2156,7 +2980,7 @@ function alimentarTRex() {
 
 function entrenarTRex() {
     const costoEntrenamiento = 15; // Coste para entrenar al T-Rex
-    const saldoActual = animalTokens; // Supongamos que esta es la cantidad actual del jugador
+    const saldoActual = dolaresAnimal; // Supongamos que esta es la cantidad actual del jugador
 
     // Usamos la función animalPayTransaction para gestionar el pago
     animalPayTransaction(costoEntrenamiento, saldoActual, 0, false, function(success) {
@@ -2185,19 +3009,21 @@ function conversarTRex() {
 }
 
 
+
 // Comando para explorar biomas
 function handleExploraBiomasCommand() {
-    const costoExploracion = 10; // Costo en Animal Tokens
-    const saldoActual = animalTokens; // Saldo actual de Animal Tokens
+    const costoExploracion = 0; // Costo en Animal Tokens
+    const saldoActual = dolaresAnimal; // Saldo actual de Animal Tokens
 
     typeMessage('¿Quieres explorar un nuevo bioma? El costo es de 10 Animal Tokens.');
 
     // Llamar a la función de transacción
-    animalPayTransaction(costoExploracion, saldoActual, costoExploracion, true, function(success) {
+    animalPayTransaction(costoExploracion, saldoActual, function(success) {
         if (success) {
             typeMessage('¡Exploración exitosa! Has desbloqueado un nuevo bioma.');
-            // Aquí puedes agregar la lógica para desbloquear el bioma
-            desbloquearBioma();
+            desbloquearBioma(); // Desbloquear el bioma
+            agregarADN(); // Agregar ADN después de la exploración exitosa
+            verSaldoADN();
         } else {
             typeMessage('❌ La transacción ha fallado. No se pudo completar la exploración.');
         }
@@ -2209,6 +3035,32 @@ function desbloquearBioma() {
     // Lógica para desbloquear el bioma (por ejemplo, mostrar un nuevo menú, cambiar la escena, etc.)
     typeMessage("Bioma desbloqueado. Ahora puedes explorar la nueva área.");
 }
+
+// Función para generar una cantidad aleatoria de ADN entre 1 y 76
+function generarADNAleatorio() {
+    return Math.floor(Math.random() * 76) + 1; // Genera un número entre 1 y 76
+}
+
+// Función para agregar ADN al saldo actual
+function agregarADN() {
+    const adnGanado = generarADNAleatorio(); // Generar una cantidad aleatoria de ADN
+    saldoADN += adnGanado; // Asumimos que 'saldoADN' es la variable que almacena el saldo de ADN
+    typeMessage(`¡Has ganado ${adnGanado} ADN! Tu nuevo saldo de ADN es: ${saldoADN}.`);
+    mostrarMonedas(); // Actualizar la lista de monedas después de cambiar el saldo
+}
+
+
+
+// Función para ver el saldo actual de ADN
+function verSaldoADN() {
+    typeMessage(`Tu saldo actual de ADN es: ${saldoADN}.`);
+}
+
+// Comando para consultar el saldo de ADN
+function handleConsultarSaldoADN() {
+    verSaldoADN(); // Llama a la función para mostrar el saldo
+}
+
 
 
 // Comando para buscar comandos
@@ -2255,7 +3107,7 @@ function handleComandosRecomendados() {
         });
     });
 
-    // Ejecutar comando al presionar Enter
+    // Ejecutar comando al presionar Enter 
     inputBusqueda.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             const comandoEjecutar = inputBusqueda.value.trim();
@@ -2455,8 +3307,8 @@ function mostrarBotonesDeJefes() {
 
 // Función para otorgar la recompensa al jugador
 function otorgarRecompensa() {
-    animalTokens += 15;
-    typeMessage(`Has ganado 15 Animal Tokens. Total de Animal Tokens: ${animalTokens}`);
+    dolaresAnimal += 15;
+    typeMessage(`Has ganado 15 Dolares de Animal. Total de Dolares de Animal: ${dolaresAnimal.toFixed(2)}`);
 }
 
 
@@ -3126,13 +3978,18 @@ function mostrarModalPaseTemporada() {
     recompensasTitle.textContent = 'Recompensas del Pase';
     recompensasSection.appendChild(recompensasTitle);
 
-    const recompensaAnimalTokensButton = crearBotonRecompensa('Animal Tokens', 200, 'comando-secreto');
+    // Recompensas existentes
+    const recompensadolaresAnimalButton = crearBotonRecompensa('Animal Tokens', 200, 'comando-secreto');
     const recompensaFobiasButton = crearBotonRecompensa('Créditos de Fobias', 50, 'comando-extra');
     const recompensaAsesinoButton = crearBotonRecompensa('Créditos de Asesino', 75);
 
-    recompensasSection.appendChild(recompensaAnimalTokensButton);
+    // Nuevo comando /ataque-fantasma agregado como recompensa
+    const recompensaFantasmaButton = crearBotonRecompensa('Saldo de Ectoplasma', 50, 'ataque-fantasma');
+
+    recompensasSection.appendChild(recompensadolaresAnimalButton);
     recompensasSection.appendChild(recompensaFobiasButton);
     recompensasSection.appendChild(recompensaAsesinoButton);
+    recompensasSection.appendChild(recompensaFantasmaButton);
 
     // Si el usuario está en el último nivel
     if (nivelActual >= 76 && !comandoDesbloqueado) {
@@ -3228,13 +4085,13 @@ function crearBotonRecompensa(tipoRecompensa, cantidad, comando) {
     return boton;
 }
 
-
-
 // Función para desbloquear el comando secreto
 function desbloquearComandoSecreto() {
     comandoDesbloqueado = true;
     alert('¡Felicidades! Has desbloqueado el Comando de Temporada: /comando-secreto.');
 }
+
+
 
 // Función para cerrar el modal
 function cerrarModal(modal) {
@@ -3242,8 +4099,6 @@ function cerrarModal(modal) {
         document.body.removeChild(modal);
     }
 }
-
-
 
     // Función para mostrar el modal de compra
 function mostrarModalCompraTokens() {
@@ -3257,17 +4112,17 @@ function mostrarModalCompraTokens() {
     title.textContent = 'Compra Tokens y Créditos';
 
     // Sección para Animal Tokens
-    const animalTokensSection = document.createElement('div');
-    const animalTokensTitle = document.createElement('h3');
-    animalTokensTitle.textContent = 'Comprar Animal Tokens';
-    animalTokensSection.appendChild(animalTokensTitle);
+    const dolaresAnimalSection = document.createElement('div');
+    const dolaresAnimalTitle = document.createElement('h3');
+    dolaresAnimalTitle.textContent = 'Comprar Dolares de Animal';
+    dolaresAnimalSection.appendChild(dolaresAnimalTitle);
 
-    const comprarAnimalTokensButton = document.createElement('button');
-    comprarAnimalTokensButton.textContent = 'Comprar Animal Tokens';
-    comprarAnimalTokensButton.onclick = function () {
-        solicitarCodigoCompra('Animal Tokens');
+    const comprardolaresAnimalButton = document.createElement('button');
+    comprardolaresAnimalButton.textContent = 'Comprar Dolares de Animal';
+    comprardolaresAnimalButton.onclick = function () {
+        solicitarCodigoCompra('Dolares Animal');
     };
-    animalTokensSection.appendChild(comprarAnimalTokensButton);
+    dolaresAnimalSection.appendChild(comprardolaresAnimalButton);
 
     // Sección para Créditos de Fobias
     const fobiaCreditsSection = document.createElement('div');
@@ -3304,7 +4159,7 @@ function mostrarModalCompraTokens() {
 
     // Añadir todo al modal
     modalContent.appendChild(title);
-    modalContent.appendChild(animalTokensSection);
+    modalContent.appendChild(dolaresAnimalSection);
     modalContent.appendChild(fobiaCreditsSection);
     modalContent.appendChild(asesinoCreditsSection);
     modalContent.appendChild(closeButton);
@@ -4423,9 +5278,9 @@ function cerrarModal(modal) {
     }
     
     function handlePPOT() {
-        const costo = 5; // Costo para jugar Piedra, Papel o Tijera
-        const saldoActual = animalTokens; // Saldo actual de Animal Tokens
-        const deduccion = 5; // Deducción de WildCard si se usa
+        const costo = 5.0; // Costo para jugar Piedra, Papel o Tijera (en Dólares de Animal)
+        const saldoActual = dolaresAnimal; // Saldo actual de Dólares de Animal
+        const deduccion = 5.0; // Deducción de Dólares de Animal si se usa WildCard
         const opciones = ['Piedra', 'Papel', 'Tijera'];
         
         // Mostrar opciones para jugar
@@ -4464,13 +5319,13 @@ function cerrarModal(modal) {
     function jugar(jugadaUsuario, opciones, costo, saldoActual, deduccion) {
         const jugadaIA = opciones[Math.floor(Math.random() * opciones.length)];
     
-        // Realizar la transacción de los Animal Tokens
-        animalPayTransaction(costo, saldoActual, deduccion, true, function(transaccionExitosa) {
+        // Realizar la transacción de los Dólares de Animal
+        animalPayTransaction(costo, saldoActual, function(transaccionExitosa) {
             if (transaccionExitosa) {
                 // La transacción fue exitosa, ahora determinar si ganaste o perdiste
                 let resultado;
     
-                typeMessage(`✅ Has jugado por ${deduccion} Animal Tokens. Tu saldo actual es: ${animalTokens} Animal Tokens.`);
+                typeMessage(`✅ Has jugado por $${deduccion.toFixed(2)} Dólares de Animal. Tu saldo actual es: $${saldoActual.toFixed(2)} Dólares de Animal.`);
     
                 if (jugadaUsuario === jugadaIA) {
                     typeMessage(`🤝 ¡Empate! Ambos eligieron ${jugadaUsuario}.`);
@@ -4485,18 +5340,18 @@ function cerrarModal(modal) {
                 }
     
                 if (resultado === 'ganar') {
-                    // Ganaste: Se añade una "transacción inversa" de +10 Animal Tokens
-                    typeMessage(`🎉 ¡Ganaste! Has ganado 10 Animal Tokens.`);
+                    // Ganaste: Se añade una "transacción inversa" de +10.0 Dólares de Animal
+                    typeMessage(`🎉 ¡Ganaste! Has ganado $10.00 Dólares de Animal.`);
                     setTimeout(() => {
-                        animalTokens += 10; // Añadir los 10 tokens al saldo
-                        typeMessage(`✅ Transacción inversa completada. Tu nuevo saldo es ${animalTokens} Animal Tokens.`);
+                        dolaresAnimal += 10.0; // Añadir los 10 Dólares de Animal al saldo
+                        typeMessage(`✅ Transacción inversa completada. Tu nuevo saldo es $${dolaresAnimal.toFixed(2)} Dólares de Animal.`);
                     }, 1000);
                 } else if (resultado === 'perder') {
-                    // Perdiste: Se deducen otros 5 tokens adicionales
+                    // Perdiste: Se deducen otros 5.0 Dólares de Animal adicionales
                     setTimeout(() => {
-                        typeMessage(`😢 ¡Perdiste! Se te deducirán otros 5 Animal Tokens.`);
-                        animalTokens -= 5; // Deducir los 5 tokens adicionales
-                        typeMessage(`❌ Has perdido otros 5 Animal Tokens. Tu nuevo saldo es ${animalTokens} Animal Tokens.`);
+                        typeMessage(`😢 ¡Perdiste! Se te deducirán otros $5.00 Dólares de Animal.`);
+                        dolaresAnimal -= 5.0; // Deducir los 5 Dólares adicionales
+                        typeMessage(`❌ Has perdido otros $5.00 Dólares de Animal. Tu nuevo saldo es $${dolaresAnimal.toFixed(2)} Dólares de Animal.`);
                     }, 1000);
                 }
             } else {
@@ -4506,76 +5361,78 @@ function cerrarModal(modal) {
     }
     
     
-    
     function handlelimpiarChat() {
         chatLog.innerHTML = '';
     }
     
     
     
-    // Función para retirar saldo si el usuario ha iniciado sesión
-    function handleRetirarSaldoCommand(monto) {
-        console.log("Estado de sesión:", tarjetaSesionActiva); // Para depurar la sesión activa
-    
-        if (tarjetaSesionActiva !== null) {
-            // Obtener la tarjeta con la que se inició sesión
-            const tarjeta = tarjetaSesionActiva;
-            
-            // Validar si la tarjeta existe
-            if (tarjetasWildCard[tarjeta] !== undefined) {
-                const saldoActual = tarjetasWildCard[tarjeta];
-    
-                // Validar si hay saldo suficiente para retirar
-                if (saldoActual >= monto) {
-                    // Restar el monto al saldo
-                    tarjetasWildCard[tarjeta] -= monto;
-                    typeMessage(`Has retirado $${monto.toFixed(2)} de la tarjeta ${tarjeta}. Nuevo saldo: $${tarjetasWildCard[tarjeta].toFixed(2)}`);
-                    console.log(`Has retirado $${monto.toFixed(2)}. Nuevo saldo: $${tarjetasWildCard[tarjeta].toFixed(2)}`);
-                } else {
-                    typeMessage(`Saldo insuficiente. No puedes retirar $${monto.toFixed(2)}. Saldo actual: $${saldoActual.toFixed(2)}`);
-                    console.log(`Saldo insuficiente. Saldo actual: $${saldoActual.toFixed(2)}`);
-                }
+// Función para retirar saldo si el usuario ha iniciado sesión
+function handleRetirarSaldoCommand(monto) {
+    console.log("Estado de sesión:", tarjetaSesionActiva); // Para depurar la sesión activa
+
+    if (tarjetaSesionActiva !== null) {
+        // Obtener la tarjeta con la que se inició sesión
+        const tarjeta = tarjetaSesionActiva;
+        
+        // Validar si la tarjeta existe
+        if (tarjetasWildCard[tarjeta] !== undefined) {
+            const saldoActual = tarjetasWildCard[tarjeta];
+
+            // Validar si hay saldo suficiente para retirar
+            if (saldoActual >= monto) {
+                // Restar el monto al saldo
+                tarjetasWildCard[tarjeta] -= monto;
+                typeMessage(`Has retirado $${monto.toFixed(2)} de la tarjeta ${tarjeta}. Nuevo saldo: $${tarjetasWildCard[tarjeta].toFixed(2)}`);
+                console.log(`Has retirado $${monto.toFixed(2)}. Nuevo saldo: $${tarjetasWildCard[tarjeta].toFixed(2)}`);
             } else {
-                typeMessage(`El número de tarjeta ${tarjeta} no existe.`);
-                console.log(`La tarjeta ${tarjeta} no existe.`);
+                typeMessage(`Saldo insuficiente. No puedes retirar $${monto.toFixed(2)}. Saldo actual: $${saldoActual.toFixed(2)}`);
+                console.log(`Saldo insuficiente. Saldo actual: $${saldoActual.toFixed(2)}`);
             }
         } else {
-            typeMessage("Debes iniciar sesión con una tarjeta antes de retirar saldo.");
-            console.log("No se ha iniciado sesión. No se puede retirar saldo.");
+            typeMessage(`El número de tarjeta ${tarjeta} no existe.`);
+            console.log(`La tarjeta ${tarjeta} no existe.`);
         }
+    } else {
+        typeMessage("Debes iniciar sesión con una tarjeta antes de retirar saldo.");
+        console.log("No se ha iniciado sesión. No se puede retirar saldo.");
     }
+}
+
+
+
+// Función para manejar el comando de saldo
+function handleSaldoCommand() {
+    const chatLog = document.getElementById('chat-log');
     
+    typeMessage(`Tu saldo es $${dolaresAnimal.toFixed(2)} Dólares de Animal.`);
     
+    // Botón para iniciar sesión en la WildCard
+    const cardNumberInput = document.createElement('input');
+    cardNumberInput.type = 'text';
+    cardNumberInput.placeholder = 'Ingresa el número de la WildCard';
     
-    let wildCardBalances = {
-        '7600123456789012': 50,
-        '7600234567890123': 100,
-        '7600345678901234': 75,
-        '7600456789012345': 300,
-        '7600567890123456': 150
-    };
-    // Función para manejar el comando de saldo
-    function handleSaldoCommand() {
-        const chatLog = document.getElementById('chat-log');
-        
-        typeMessage(`Your balance is ${animalTokens} Animal Tokens`);
-        
-        // Botón para iniciar sesión en la WildCard
-        const cardNumberInput = document.createElement('input');
-        cardNumberInput.type = 'text';
-        cardNumberInput.placeholder = 'Enter WildCard number';
-        
-        const loginButton = document.createElement('button');
-        loginButton.textContent = 'Login';
-        loginButton.onclick = () => validateCardLogin(cardNumberInput.value);
-        
-        const loginContainer = document.createElement('div');
-        loginContainer.appendChild(cardNumberInput);
-        loginContainer.appendChild(loginButton);
-        
-        chatLog.appendChild(loginContainer);
+    const loginButton = document.createElement('button');
+    loginButton.textContent = 'Iniciar sesión';
+    loginButton.onclick = () => validateCardLogin(cardNumberInput.value);
+    
+    const loginContainer = document.createElement('div');
+    loginContainer.appendChild(cardNumberInput);
+    loginContainer.appendChild(loginButton);
+    
+    chatLog.appendChild(loginContainer);
+}
+
+// Función para validar inicio de sesión en la tarjeta WildCard
+function validateCardLogin(cardNumber) {
+    if (tarjetasWildCard[cardNumber] !== undefined) {
+        tarjetaSesionActiva = cardNumber;
+        typeMessage(`Has iniciado sesión con la tarjeta ${cardNumber}. Saldo actual: $${tarjetasWildCard[cardNumber].toFixed(2)} Dólares de Animal.`);
+    } else {
+        typeMessage("Número de tarjeta inválido. Por favor, inténtalo de nuevo.");
     }
-    
+}
+
     // Función para validar el inicio de sesión en la WildCard
     function validateCardLogin(cardNumber) {
         if (wildCardBalances[cardNumber] !== undefined) {
@@ -4585,7 +5442,7 @@ function cerrarModal(modal) {
             const balanceContainer = document.createElement('div');
             
             const rechargeTokensButton = document.createElement('button');
-            rechargeTokensButton.textContent = 'Recharge Animal Tokens';
+            rechargeTokensButton.textContent = 'Recharge Dolares de Animal';
             rechargeTokensButton.onclick = () => initiateRecharge('tokens');
             
             const rechargeWildCardButton = document.createElement('button');
@@ -4631,8 +5488,8 @@ function cerrarModal(modal) {
         }
     
         if (type === 'tokens') {
-            if (animalTokens >= amountValue) {
-                animalTokens -= amountValue;
+            if (dolaresAnimal >= amountValue) {
+                dolaresAnimal -= amountValue;
                 typeMessage(`Redirecting to WhatsApp in 5 seconds...`);
                 setTimeout(() => redirectToWhatsApp(amountValue, 'Animal Tokens'), 5000);
             } else {
@@ -4705,36 +5562,37 @@ function cerrarModal(modal) {
         emailInput.placeholder = 'Ingresa tu correo electrónico';
         emailInput.required = true;
         
-        const btnAnimalTokens = document.createElement('button');
-        btnAnimalTokens.textContent = 'Pagar con Animal Tokens';
-        btnAnimalTokens.classList.add('btn-animal-tokens'); // Clase para estilos personalizados
+        const btnDolarAnimal = document.createElement('button');
+        btnDolarAnimal.textContent = 'Pagar con Dólares de Animal';
+        btnDolarAnimal.classList.add('btn-dolar-animal'); // Clase para estilos personalizados
         
         modalContent.appendChild(title);
         modalContent.appendChild(emailInput);
-        modalContent.appendChild(btnAnimalTokens);
+        modalContent.appendChild(btnDolarAnimal);
         modaltransaction.appendChild(modalContent);
         document.body.appendChild(modaltransaction);
         
         // Mostrar el modal
         modaltransaction.style.display = 'block';
         
-        // Evento para pagar con Animal Tokens
-        btnAnimalTokens.addEventListener('click', function () {
+        // Evento para pagar con Dólares de Animal
+        btnDolarAnimal.addEventListener('click', function () {
             const email = emailInput.value.trim();
             if (saldoActual >= costo && validateEmail(email)) {
-                // Deduce los Animal Tokens
-                saldoActual -= costo; 
+                // Deduce los Dólares de Animal
+                saldoActual -= costo;
         
                 // Mostrar animación de éxito
-                showSuccessAnimation(modaltransaction, 'Animal Tokens', costo, email, function() {
+                showSuccessAnimation(modaltransaction, 'Dólares de Animal', costo.toFixed(2), email, function() {
                     callback(true); // Llamar el callback indicando éxito
                 });
             } else {
-                alert('❌ No tienes suficientes Animal Tokens o el correo es inválido.');
+                alert(`❌ No tienes suficientes Dólares de Animal o el correo es inválido. Saldo actual: $${saldoActual.toFixed(2)}.`);
                 callback(false); // Llamar el callback indicando que la transacción falló
             }
         });
     }
+    
     
     
     function showSuccessAnimation(modal, metodoPago, cantidad, email, callback) {
@@ -4963,11 +5821,11 @@ function cerrarModal(modal) {
     
     function handleComprarArticulo() {
         const costoArticulo = 30;
-        const saldoAnimalTokens = animalTokens;
+        const dolaresAnimal = dolaresAnimal;
         const deduccionWildCard = 25;
         
         // Ejecutar la transacción con la opción de WildCard habilitada
-        animalPayTransaction(costoArticulo, saldoAnimalTokens, deduccionWildCard, true);
+        animalPayTransaction(costoArticulo, dolaresAnimal, deduccionWildCard, true);
     }
     
     
@@ -5426,49 +6284,10 @@ document.head.appendChild(style);
     }
     
     
-    // Función para manejar el comando /paquete-de-cartas
-    function handlePaqueteDeCartas() {
-        typeMessage("¡Bienvenido al paquete de cartas!");
-    
-        // Mostrar opciones de compra
-        typeMessage("Puedes comprar un paquete de cartas por 50 Animal Tokens o $25 pesos de tarjeta WildCard.");
-    
-        const input = document.getElementById("cmd-input");
-        const button = document.getElementById("sendCMDBtn");
-    
-        button.addEventListener("click", () => {
-            const opcionCompra = input.value.trim();
-    
-            if (opcionCompra === "Animal Tokens") {
-                comprarPaqueteConAnimalTokens();
-            } else if (opcionCompra === "tarjeta WildCard") {
-                comprarPaqueteConTarjetaWildCard();
-            } else {
-                typeMessage("Opción de compra inválida. Por favor, intenta nuevamente.");
-            }
-    
-            // Limpiar el input
-            input.value = "";
-        });
-    }
+
     
     
-    
-    // Función para comprar un paquete de cartas con Animal Tokens
-    function comprarPaqueteConAnimalTokens() {
-        const precioPaquete = 50; // Precio en Animal Tokens del paquete de cartas
-    
-        // Verificar si hay suficientes Animal Tokens para comprar el paquete
-        if (saldoAnimalTokens >= precioPaquete) {
-            saldoAnimalTokens -= precioPaquete; // Deducción del saldo correspondiente
-            typeMessage(`Has comprado un paquete de cartas con Animal Tokens. Tu saldo actual es ${saldoAnimalTokens} Animal Tokens.`);
-    
-            // Abrir el paquete de cartas y desbloquear los comandos
-            abrirPaqueteDeCartas();
-        } else {
-            typeMessage("Saldo insuficiente de Animal Tokens. No se puede realizar la compra del paquete de cartas.");
-        }
-    }
+
     
     // Función para manejar el comando /caza-megalodon
     function handleCazaMegalodon() {
@@ -5596,13 +6415,13 @@ document.head.appendChild(style);
     
     // Función para ofrecer revivir al jugador gastando Animal Tokens
     function ofrecerRevivir() {
-        if (animalTokens >= 25) {
-            const revivir = confirm("¿Deseas gastar 25 Animal Tokens para revivir?");
+        if (dolaresAnimal >= 25) {
+            const revivir = confirm("¿Deseas gastar 25 Dolares de Animal para revivir?");
     
             if (revivir) {
-                animalTokens -= 25;
+                dolaresAnimal -= 25;
                 vidaJugador = 50; // Revivir con 50 puntos de vida
-                typeMessage(`Has revivido utilizando 25 Animal Tokens. Te quedan ${animalTokens} tokens. Vida actual: ${vidaJugador}.`);
+                typeMessage(`Has revivido utilizando 25 Dolares de Animal. Te quedan ${dolaresAnimal.toFixed(2)}  Dolares de Animal. Vida actual: ${vidaJugador}.`);
                 mostrarOpciones(["Defenderse", "Atacar", "Esconderse o Usar Señuelos"]);
             } else {
                 typeMessage("Has decidido no revivir. La caza ha terminado.");
@@ -5614,8 +6433,8 @@ document.head.appendChild(style);
     
     // Función para ganar Animal Tokens tras una victoria
     function ganarTokens(cantidad) {
-        animalTokens += cantidad;
-        typeMessage(`¡Has ganado ${cantidad} Animal Tokens! Total actual: ${animalTokens}`);
+        dolaresAnimal += cantidad;
+        typeMessage(`¡Has ganado ${cantidad} Animal Tokens! Total actual: ${dolaresAnimal.toFixed(2)} `);
     }
     
     // Define the card variable with an initial balance
@@ -5623,73 +6442,9 @@ document.head.appendChild(style);
         balance: 50 // Initial balance of the card
       };
       
-    // Función para comprar un paquete de cartas con tarjeta WildCard
-    function comprarPaqueteConTarjetaWildCard() {
-        const precioPaquete = 25; // Precio en pesos de la tarjeta WildCard del paquete de cartas
+ 
     
-        // Verificar si la tarjeta WildCard existe y tiene suficiente saldo para comprar el paquete
-        if (card.balance && card.balance >= precioPaquete) {
-            card.balance -= precioPaquete; // Deducción del saldo correspondiente
-            typeMessage(`Has comprado un paquete de cartas con tarjeta WildCard. Tu saldo actual es ${card.balance} pesos.`);
-    
-            // Abrir el paquete de cartas y desbloquear los comandos
-            abrirPaqueteDeCartas();
-        } else {
-            typeMessage("Tarjeta WildCard no válida o saldo insuficiente. No se puede realizar la compra del paquete de cartas.");
-        }
-    }
-    
-    
-    
-    // Función para abrir un paquete de cartas y desbloquear los comandos
-    function abrirPaqueteDeCartas() {
-        // Lógica para abrir un paquete de cartas y desbloquear los comandos correspondientes
-        // ...
-    
-        // Mostrar una animación de apertura del paquete de cartas
-        const animationDuration = 2000; // Duración de la animación en milisegundos
-    
-        // Crear un elemento para representar el paquete de cartas
-        const paqueteElement = document.createElement("div");
-        paqueteElement.classList.add("paquete");
-    
-        // Agregar el paquete de cartas al chat log
-        chatLog.appendChild(paqueteElement);
-    
-        // Animación de apertura del paquete de cartas
-        setTimeout(() => {
-            paqueteElement.classList.add("abierto");
-    
-            // Desbloquear los comandos obtenidos del paquete
-            desbloquearComandos();
-        }, animationDuration);
-    
-        // Mostrar un mensaje indicando que se ha abierto el paquete de cartas
-        typeMessage("Has abierto un paquete de cartas.");
-    }
-    
-    
-    // Función para desbloquear los comandos obtenidos del paquete de cartas
-    function desbloquearComandos() {
-        // Lógica para desbloquear los comandos obtenidos del paquete de cartas
-        // ...
-        typeMessage("Has desbloqueado los comandos obtenidos del paquete de cartas.");
-    
-        // Verificar si hay cartas repetidas y convertirlas en Animal Tokens
-        convertirCartasRepetidasEnAnimalTokens();
-    }
-    
-    // Función para convertir las cartas repetidas en Animal Tokens
-    function convertirCartasRepetidasEnAnimalTokens() {
-        // Lógica para convertir las cartas repetidas en Animal Tokens
-        // ...
-        typeMessage("Las cartas repetidas se han convertido en 30 Animal Tokens.");
-    
-        // Mostrar información sobre los comandos desbloqueados
-        typeMessage("Puedes utilizar los comandos desbloqueados en el paquete de cartas.");
-        typeMessage("Si deseas desbloquear más comandos, puedes comprar más paquetes de cartas.");
-    }
-    
+
     
     
     // Lista de comandos que se instalarán
@@ -5749,6 +6504,13 @@ document.head.appendChild(style);
         'ver-documentacion',
         'texto-advertencia',
         'enviar-peticion',
+        'seleccionar-modelo',
+'lluvia-de-dolares',
+'chequeo-medico',
+'ADN',
+'intercambiar-adn',
+'ataque-fantasma',
+'animal-ai-research'
     ];
     
 
@@ -5957,14 +6719,16 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-    // Lista de modelos de IA disponibles con costos
-    const modelosIA = [
-        { nombre: 'Animal AI BETA', descripcion: 'IA para lo básico', costo: 0, funcionalidad: () => typeMessage('Animal AI BETA activado. Funcionalidades básicas disponibles.') },
-        { nombre: 'Animal AI Pro', descripcion: 'Para tareas más complejas.', costo: 20, funcionalidad: () => typeMessage('Animal AI Pro activado. Tareas avanzadas listas para ejecutarse.') },
-        { nombre: 'Animal AI Infinity', descripcion: 'Te permite crear comandos, pedirlos y tenerlos en un par de horas.', costo: 50, funcionalidad: handleInfinityFuncionalidad },
-        { nombre: 'Animal AI X-Gen', descripcion: 'Gana Animal Tokens cada hora!', costo: 30 },
-        { nombre: 'Animal AI X-Gen Plus', descripcion: 'Gana Animal Tokens cada 1 hora!', costo: 1000, funcionalidad: handleXGenFuncionalidad }
-    ];
+const modelosIA = [
+    { nombre: 'Animal AI BETA', descripcion: 'IA para lo básico', costo: 0, funcionalidad: () => typeMessage('Animal AI BETA activado. Funcionalidades básicas disponibles.') },
+    { nombre: 'Animal AI Pro', descripcion: 'Para tareas más complejas.', costo: 20, funcionalidad: () => typeMessage('Animal AI Pro activado. Tareas avanzadas listas para ejecutarse.') },
+    { nombre: 'Animal AI Infinity', descripcion: 'Te permite crear comandos, pedirlos y tenerlos en un par de horas.', costo: 50, funcionalidad: handleInfinityFuncionalidad },
+    { nombre: 'Animal AI X-Gen', descripcion: 'Gana Dolares de Animal cada 1 Hora!', costo: 30, funcionalidad: handleXGenFuncionalidad },
+    { nombre: 'Animal AI X-Gen Plus', descripcion: 'Gana Dolares de Animal cada 30 Minutos!', costo: 75, funcionalidad: handleXGenFuncionalidad },
+    // Nuevo modelo: Animal AI Ultra
+    { nombre: 'Animal AI Ultra', descripcion: 'Soporte prioritario y personalización avanzada.', costo: 200, funcionalidad: handleUltraFuncionalidad }
+];
+
     
     
     
@@ -6001,15 +6765,15 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Función para manejar la selección del modelo
     function seleccionarModelo(modelo) {
-        typeMessage(`Has seleccionado: ${modelo.nombre}. Costo: ${modelo.costo} Animal Tokens.`);
+        typeMessage(`Has seleccionado: ${modelo.nombre}. Costo: ${modelo.costo} Dolares de Animal.`);
         
         // Verifica si el saldo es suficiente antes de realizar la transacción
-        if (animalTokens >= modelo.costo) {
+        if (dolaresAnimal >= modelo.costo) {
             // Llama a la función de transacción para pagar por el modelo
-            animalPayTransaction(modelo.costo, animalTokens, modelo.costo, true, (transaccionExitosa) => {
+            animalPayTransaction(modelo.costo, dolaresAnimal, modelo.costo, true, (transaccionExitosa) => {
                 if (transaccionExitosa) {
                     // La transacción fue exitosa, el saldo ya ha sido deducido en animalPayTransaction
-                    typeMessage(`✅ Has adquirido ${modelo.nombre} exitosamente! Se han removido ${modelo.costo} Animal Tokens de tu saldo. Tu saldo actual es: ${animalTokens} Animal Tokens.`);
+                    typeMessage(`✅ Has adquirido ${modelo.nombre} exitosamente! Se han removido ${modelo.costo} Dolares de Animal de tu saldo. Tu saldo actual es: ${dolaresAnimal.toFixed(2)}  Dolares de Animal.`);
                     
                     // Ejecutar la funcionalidad específica del modelo seleccionado
                     modelo.funcionalidad();
@@ -6033,7 +6797,11 @@ document.addEventListener("DOMContentLoaded", () => {
         typeMessage("Si quieres crear un comando, envía a +598 099 685 536 una captura de la transacción completada, el nombre del comando (con el prefijo '/' incluido al principio), y la descripción detallada de lo que hará el comando. Además, selecciona uno de los estados disponibles para tu comando. En unas horas actualizaremos la app con el nuevo comando y el estado que elegiste.");
     }
     
-    
+    // Funcionalidad específica para Animal AI Master
+function handleUltraFuncionalidad() {
+    typeMessage("Bienvenido a Animal AI Master. Con este nivel, tienes acceso a personalización avanzada y soporte prioritario. Para solicitar asistencia, envía un mensaje a +598 099 685 536 con tu usuario y las características que te gustaría que mejoremos. Recibirás una respuesta prioritaria en alrededor de 1 dia o mas.");
+}
+
     
     
     
@@ -6457,7 +7225,7 @@ document.addEventListener("DOMContentLoaded", () => {
         { nombre: "/movie-playtime", estado: "azul-oscuro" },
         { nombre: "/enfrentamientos", estado: "plateado" },
         { nombre: "/t-rex-friend", estado: "verde-lima" },
-        { nombre: "/explora-biomas", estado: "de-pago" },
+        { nombre: "/explora-biomas", estado: "evento" },
         { nombre: "/conservacion", estado: "plateado" },
         { nombre: "/fenomenos-espaciales", estado: "plateado" },
         { nombre: "/supervivencia", estado: "plateado" },
@@ -6496,8 +7264,16 @@ document.addEventListener("DOMContentLoaded", () => {
         { nombre: "/ver-documentacion", estado: "funcionalverde" },
         { nombre: "/texto-advertencia", estado: "funcionalverde" },
         { nombre: "/enviar-peticion", estado: "funcionalverde" },
+        { nombre: "/chequeo-medico", estado: "juego" },
+        { nombre: "/lluvia-de-dolares", estado: "recompensas-incluidas" },
+        { nombre: "/ADN", estado: "evento" },
+        { nombre: "/seleccionar-modelo", estado: "funcionalverde" },
+        { nombre: "/intercambiar-adn", estado: "funcionalverde" },
+        { nombre: "/ataque-fantasma", estado: "recompensas-incluidas" },
+        { nombre: "/animal-ai-research", estado: "juego" },
     ];
     
+
 
 
     const estados = {
@@ -6524,7 +7300,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "inactivo": "Comando Inactivo Temporalmente",
         "en-observacion": "Comando en observacion, el comando afectado por este estado suele estar en revision extrema para que su funcionalidad no salga perjudicada.",
         "de-pago": "Comando con Transacciones",
-        "recompensas-incluidas": "El comando contiene recompensas por participar en un juego, dinamica etc."
+        "recompensas-incluidas": "El comando contiene recompensas por participar en un juego, dinamica etc.",
+        "juego": "Comando Interactivo"
     };
     
     const descripciones = {
@@ -6551,7 +7328,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "inactivo": "Este comando está inactivo y no puede ser utilizado en este momento.",
         "en-observacion": "Este comando está bajo revisión y no se puede utilizar. Se evaluará su funcionalidad antes de decidir su futuro.",
         "de-pago": "Este comando requiere una transacción o suscripción para ser utilizado.",
-        "recompensas-incluidas": "Este comando otorga recompensas adicionales al usuario cuando se utiliza."
+        "recompensas-incluidas": "Este comando otorga recompensas adicionales al usuario cuando se utiliza.",
+        "juego": "Este comando pertenece a la categoría de juegos interactivos. Úsalo para acceder a actividades lúdicas y entretenidas."
     };
     
     const comandosPorPagina = 7;
@@ -6738,6 +7516,11 @@ document.addEventListener("DOMContentLoaded", () => {
     <span class="estado-text">Recompensas Incluidas (Bonificaciones al usar):</span> 
     <span class="estado-valor">${conteo["recompensas-incluidas"] || 0}</span>
 </div>
+<div class="estado-item estado-juego">
+    <span class="estado-icon">🎮</span> 
+    <span class="estado-text">Juego (Comandos interactivos):</span> 
+    <span class="estado-valor">${conteo["juego"] || 0}</span>
+</div>
 
                                                                    
             `;
@@ -6854,6 +7637,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+
         
 
     function switchToDynamicInput(callback) {
@@ -6912,6 +7696,13 @@ const eventos = [
         fechaInicio: new Date("2024-11-10T00:00:00"),
         fechaFin: new Date("2024-12-01T23:59:59"),
         comando: "caza-megalodon"
+    },
+    {
+        nombre: "Biomas",
+        imagen: "https://i.pinimg.com/736x/9b/36/2a/9b362af8160f427ebe5000a8fe57805d.jpg",
+        fechaInicio: new Date("2024-10-25T00:00:00"),
+        fechaFin: new Date("2024-11-01T23:59:59"),
+        comando: "explora-biomas-evento"
     }
 ];
 
@@ -7097,7 +7888,7 @@ function generarEventos() {
     }
     
     let saldoCreditosFobia = 0;
-const ratioConversion = 1000; // 1000 Créditos de Fobia = 1 Animal Token
+const ratioConversion = 300; // 1000 Créditos de Fobia = 1 Animal Token
 
         function handleFobiaCommand(fobia) {
             const fobias = {
@@ -7271,7 +8062,7 @@ const fobiaLower = fobia.toLowerCase();
     }
     
     function mostrarSaldoFobia() {
-        typeMessage(`Tienes ${saldoCreditosFobia} Créditos de Fobia y ${animalTokens} Animal Tokens.`);
+        typeMessage(`Tienes ${saldoCreditosFobia} Créditos de Fobia y ${dolaresAnimal.toFixed(2)}  Animal Tokens.`);
         
         const tokensPosibles = Math.floor(saldoCreditosFobia / ratioConversion);
         
@@ -7293,8 +8084,8 @@ const fobiaLower = fobia.toLowerCase();
     function convertirFobiaTokens(tokensPosibles) {
         if (tokensPosibles >= 1) {
             saldoCreditosFobia -= tokensPosibles * ratioConversion;
-            animalTokens += tokensPosibles;
-            typeMessage(`Has convertido ${tokensPosibles} Animal Tokens. Saldo actual: ${animalTokens} Animal Tokens y ${saldoCreditosFobia} Créditos de Fobia.`);
+            dolaresAnimal += tokensPosibles;
+            typeMessage(`Has convertido ${tokensPosibles} Animal Tokens. Saldo actual: ${dolaresAnimal.toFixed(2)}  Animal Tokens y ${saldoCreditosFobia} Créditos de Fobia.`);
         } else {
             typeMessage("No tienes suficientes Créditos de Fobia para convertir.");
         }
