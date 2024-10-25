@@ -410,6 +410,88 @@ function ejemploDeFuncion(param1, param2) {
 
 
 
+let saldoADN = 0; // Saldo inicial de ADN
+
+// Función para generar una cantidad aleatoria de Ectoplasma entre 1 y 50
+function generarEctoplasmaAleatorio() {
+    return Math.floor(Math.random() * 50) + 1; // Genera un número entre 1 y 50
+}
+
+// Variable para almacenar el saldo de Ectoplasma
+let saldoEctoplasma = 0; 
+
+// Función para agregar Ectoplasma al saldo actual
+function agregarEctoplasma() {
+    const ectoplasmaGanado = generarEctoplasmaAleatorio(); // Generar una cantidad aleatoria de Ectoplasma
+    saldoEctoplasma += ectoplasmaGanado; // Sumar el Ectoplasma ganado al saldo actual
+    typeMessage(`¡Has ganado ${ectoplasmaGanado} Ectoplasma! Tu nuevo saldo de Ectoplasma es: ${saldoEctoplasma}.`);
+    mostrarMonedas(); // Actualizar la lista de monedas después de cambiar el saldo
+}
+
+// Función para ver el saldo actual de Ectoplasma
+function verSaldoEctoplasma() {
+    typeMessage(`Tu saldo actual de Ectoplasma es: ${saldoEctoplasma}.`);
+}
+
+// Comando para consultar el saldo de Ectoplasma
+function handleConsultarSaldoEctoplasma() {
+    verSaldoEctoplasma(); // Llama a la función para mostrar el saldo
+}
+
+
+// Función para generar una cantidad aleatoria de Dulces entre 1 y 100
+function generarDulcesAleatorios() {
+    return Math.floor(Math.random() * 100) + 1; // Genera un número entre 1 y 100
+}
+
+// Variable para almacenar el saldo de Dulces
+let saldoDulces = 0; 
+
+// Función para agregar Dulces al saldo actual
+function agregarDulces() {
+    const dulcesGanados = generarDulcesAleatorios(); // Generar una cantidad aleatoria de Dulces
+    saldoDulces += dulcesGanados; // Sumar los Dulces ganados al saldo actual
+    typeMessage(`¡Has ganado ${dulcesGanados} Dulces! Tu nuevo saldo de Dulces es: ${saldoDulces}.`);
+    mostrarMonedas(); // Actualizar la lista de monedas después de cambiar el saldo
+}
+
+// Función para ver el saldo actual de Dulces
+function verSaldoDulces() {
+    typeMessage(`Tu saldo actual de Dulces es: ${saldoDulces}.`);
+}
+
+// Comando para consultar el saldo de Dulces
+function handleConsultarSaldoDulces() {
+    verSaldoDulces(); // Llama a la función para mostrar el saldo
+}
+
+
+// Función para generar una cantidad aleatoria de Calabazas entre 1 y 76
+function generarCalabazasAleatorias() {
+    return Math.floor(Math.random() * 76) + 1; // Genera un número entre 1 y 76
+}
+
+// Variable para almacenar el saldo de Calabazas
+let saldoCalabazas = 0; 
+
+// Función para agregar Calabazas al saldo actual
+function agregarCalabazas() {
+    const calabazasGanadas = generarCalabazasAleatorias(); // Generar una cantidad aleatoria de Calabazas
+    saldoCalabazas += calabazasGanadas; // Sumar las Calabazas ganadas al saldo actual
+    typeMessage(`¡Has ganado ${calabazasGanadas} Calabazas! Tu nuevo saldo de Calabazas es: ${saldoCalabazas}.`);
+    mostrarMonedas(); // Actualizar la lista de monedas después de cambiar el saldo
+}
+
+// Función para ver el saldo actual de Calabazas
+function verSaldoCalabazas() {
+    typeMessage(`Tu saldo actual de Calabazas es: ${saldoCalabazas}.`);
+}
+
+// Comando para consultar el saldo de Calabazas
+function handleConsultarSaldoCalabazas() {
+    verSaldoCalabazas(); // Llama a la función para mostrar el saldo
+}
+
 
 
 const commands = {
@@ -493,7 +575,95 @@ const commands = {
     'ataque-fantasma': handleAtaqueFantasma,
     'animal-ai-research': iniciarAnimalAIResearch,
     'notificaciones': ejecutarComandoNotificaciones,
+    'Cria-Calabazas': ejecutarComandoCriaCalabazas,
 };
+
+
+let vidas = 3;
+
+// Función para iniciar el minijuego
+function iniciarMinijuegoCalabazas() {
+    const contenedorJuego = document.createElement('div');
+    contenedorJuego.classList.add('contenedor-juego');
+
+    // Crear el área de juego en el chat
+    const mensajeJuego = document.createElement('p');
+    mensajeJuego.textContent = '¡Corta las calabazas para ganar saldo de Calabazas!';
+
+    // Contadores de saldo y vidas
+    const saldoDisplay = document.createElement('p');
+    saldoDisplay.textContent = `Saldo de Calabazas: ${saldoCalabazas}`;
+    
+    const vidasDisplay = document.createElement('p');
+    vidasDisplay.textContent = `Vidas restantes: ${vidas}`;
+
+    contenedorJuego.appendChild(mensajeJuego);
+    contenedorJuego.appendChild(saldoDisplay);
+    contenedorJuego.appendChild(vidasDisplay);
+    
+    // Agregar el contenedor de calabazas al área de juego
+    const areaCalabazas = document.createElement('div');
+    areaCalabazas.classList.add('area-calabazas');
+    contenedorJuego.appendChild(areaCalabazas);
+
+    // Mostrar el minijuego en el chat
+    chatLog.appendChild(contenedorJuego);
+
+    // Función para crear calabazas aleatoriamente
+    function crearCalabaza() {
+        if (vidas <= 0) return; // Terminar si no quedan vidas
+
+        const calabaza = document.createElement('div');
+        calabaza.classList.add('calabaza');
+        calabaza.textContent = '🎃';
+
+        // Posición aleatoria de la calabaza
+        calabaza.style.left = `${Math.random() * 80}%`;
+        calabaza.style.top = `${Math.random() * 80}%`;
+
+        // Agregar calabaza al área de juego
+        areaCalabazas.appendChild(calabaza);
+
+        // Evento para "cortar" la calabaza
+        calabaza.addEventListener('click', () => {
+            saldoCalabazas += 5;
+            saldoDisplay.textContent = `Saldo de Calabazas: ${saldoCalabazas}`;
+            calabaza.remove();
+        });
+
+        // Tiempo de vida de la calabaza antes de desaparecer
+        setTimeout(() => {
+            if (areaCalabazas.contains(calabaza)) {
+                calabaza.remove();
+                vidas--;
+                vidasDisplay.textContent = `Vidas restantes: ${vidas}`;
+
+                if (vidas <= 0) {
+                    terminarMinijuego();
+                }
+            }
+        }, 2000); // 2 segundos antes de que la calabaza desaparezca
+    }
+
+    // Crear una calabaza cada segundo
+    const intervaloCalabazas = setInterval(crearCalabaza, 1000);
+
+    // Función para terminar el minijuego
+    function terminarMinijuego() {
+        clearInterval(intervaloCalabazas);
+        mensajeJuego.textContent = `¡Juego terminado! Tu saldo final de Calabazas es: ${saldoCalabazas}`;
+        areaCalabazas.remove();
+        mostrarMonedas();
+    }
+}
+
+// Activar el minijuego con el comando /Cria-Calabazas
+function ejecutarComandoCriaCalabazas() {
+    iniciarMinijuegoCalabazas();
+}
+
+
+
 
 // Variable global para manejar el contador de notificaciones
 let contadorNotificaciones = 3; // Ejemplo inicial (puedes modificar manualmente)
@@ -804,88 +974,6 @@ function iniciarAnimalAIResearch() {
     mostrarPanelAnimalAIResearch();
 }
 
-
-let saldoADN = 0; // Saldo inicial de ADN
-
-// Función para generar una cantidad aleatoria de Ectoplasma entre 1 y 50
-function generarEctoplasmaAleatorio() {
-    return Math.floor(Math.random() * 50) + 1; // Genera un número entre 1 y 50
-}
-
-// Variable para almacenar el saldo de Ectoplasma
-let saldoEctoplasma = 0; 
-
-// Función para agregar Ectoplasma al saldo actual
-function agregarEctoplasma() {
-    const ectoplasmaGanado = generarEctoplasmaAleatorio(); // Generar una cantidad aleatoria de Ectoplasma
-    saldoEctoplasma += ectoplasmaGanado; // Sumar el Ectoplasma ganado al saldo actual
-    typeMessage(`¡Has ganado ${ectoplasmaGanado} Ectoplasma! Tu nuevo saldo de Ectoplasma es: ${saldoEctoplasma}.`);
-    mostrarMonedas(); // Actualizar la lista de monedas después de cambiar el saldo
-}
-
-// Función para ver el saldo actual de Ectoplasma
-function verSaldoEctoplasma() {
-    typeMessage(`Tu saldo actual de Ectoplasma es: ${saldoEctoplasma}.`);
-}
-
-// Comando para consultar el saldo de Ectoplasma
-function handleConsultarSaldoEctoplasma() {
-    verSaldoEctoplasma(); // Llama a la función para mostrar el saldo
-}
-
-
-// Función para generar una cantidad aleatoria de Dulces entre 1 y 100
-function generarDulcesAleatorios() {
-    return Math.floor(Math.random() * 100) + 1; // Genera un número entre 1 y 100
-}
-
-// Variable para almacenar el saldo de Dulces
-let saldoDulces = 0; 
-
-// Función para agregar Dulces al saldo actual
-function agregarDulces() {
-    const dulcesGanados = generarDulcesAleatorios(); // Generar una cantidad aleatoria de Dulces
-    saldoDulces += dulcesGanados; // Sumar los Dulces ganados al saldo actual
-    typeMessage(`¡Has ganado ${dulcesGanados} Dulces! Tu nuevo saldo de Dulces es: ${saldoDulces}.`);
-    mostrarMonedas(); // Actualizar la lista de monedas después de cambiar el saldo
-}
-
-// Función para ver el saldo actual de Dulces
-function verSaldoDulces() {
-    typeMessage(`Tu saldo actual de Dulces es: ${saldoDulces}.`);
-}
-
-// Comando para consultar el saldo de Dulces
-function handleConsultarSaldoDulces() {
-    verSaldoDulces(); // Llama a la función para mostrar el saldo
-}
-
-
-// Función para generar una cantidad aleatoria de Calabazas entre 1 y 76
-function generarCalabazasAleatorias() {
-    return Math.floor(Math.random() * 76) + 1; // Genera un número entre 1 y 76
-}
-
-// Variable para almacenar el saldo de Calabazas
-let saldoCalabazas = 0; 
-
-// Función para agregar Calabazas al saldo actual
-function agregarCalabazas() {
-    const calabazasGanadas = generarCalabazasAleatorias(); // Generar una cantidad aleatoria de Calabazas
-    saldoCalabazas += calabazasGanadas; // Sumar las Calabazas ganadas al saldo actual
-    typeMessage(`¡Has ganado ${calabazasGanadas} Calabazas! Tu nuevo saldo de Calabazas es: ${saldoCalabazas}.`);
-    mostrarMonedas(); // Actualizar la lista de monedas después de cambiar el saldo
-}
-
-// Función para ver el saldo actual de Calabazas
-function verSaldoCalabazas() {
-    typeMessage(`Tu saldo actual de Calabazas es: ${saldoCalabazas}.`);
-}
-
-// Comando para consultar el saldo de Calabazas
-function handleConsultarSaldoCalabazas() {
-    verSaldoCalabazas(); // Llama a la función para mostrar el saldo
-}
 
 
 // Comando para convertir ADN en Dólares de Animal
@@ -1434,6 +1522,8 @@ const comandosConRarezas = [
     { nombre: "/intercambiar-adn", rareza: "Raro" },
     { nombre: "/ataque-fantasma", rareza: "Legendario" },
     { nombre: "/animal-ai-research", rareza: "Épico" },
+    { nombre: "/notificaciones", rareza: "Común" },
+    { nombre: "/Cria-Calabazas", rareza: "Legendario" },
 ];
 
 
@@ -2517,6 +2607,8 @@ const listaComandos2 = [
 'intercambiar-adn',
 'ataque-fantasma',
 'animal-ai-research',
+'notificaciones',
+'Cria-Calabazas',
 ];
 
 
@@ -3669,21 +3761,14 @@ function cerrarModal(modal) {
 }
 
 // Variable de estado para comprobar la disponibilidad de Animal AI
-let animalAIDisponible = false; // Cambia esto a true o false según la lógica de tu aplicación
+let animalAIDisponible = true; // Cambia esto a true o false según la lógica de tu aplicación
 
-// Función para verificar si es el 12 de octubre de 2024
-function esFechaEspecifica() {
-    const fechaEspecifica = new Date('2024-10-12T00:00:00'); // 12 de octubre de 2024
-    const fechaActual = new Date();
 
-    // Compara la fecha actual con la fecha específica
-    return fechaActual.toDateString() === fechaEspecifica.toDateString();
-}
 
 // Función para mostrar el modal si Animal AI no está disponible
 function verificarDisponibilidadAnimalAI() {
     // Verifica si la fecha actual es el 12 de octubre de 2024
-    if (!animalAIDisponible && !esFechaEspecifica()) {
+    if (!animalAIDisponible) {
         mostrarModalNoDisponible();
     } else {
         // Aquí puedes manejar la lógica cuando Animal AI está disponible o si es la fecha específica
@@ -6504,7 +6589,9 @@ document.head.appendChild(style);
 'ADN',
 'intercambiar-adn',
 'ataque-fantasma',
-'animal-ai-research'
+'animal-ai-research',
+'notificaciones',
+'Cria-Calabazas'
     ];
     
 
@@ -7265,6 +7352,8 @@ function handleUltraFuncionalidad() {
         { nombre: "/intercambiar-adn", estado: "funcionalverde" },
         { nombre: "/ataque-fantasma", estado: "recompensas-incluidas" },
         { nombre: "/animal-ai-research", estado: "juego" },
+        { nombre: "/notificaciones", estado: "funcionalverde" },
+        { nombre: "/Cria-Calabazas", estado: "juego" },
     ];
     
 
