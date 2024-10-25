@@ -791,13 +791,7 @@ function reiniciarSistema() {
     mostrarPanelAnimalAIResearch(); // Mostrar nuevamente el panel
 }
 
-// Función para mostrar mensajes tipo typeMessage
-function typeMessage(message) {
-    const chatBox = document.getElementById('chat-box'); // Caja de chat donde aparecerán los mensajes
-    const mensaje = document.createElement('p');
-    mensaje.textContent = message;
-    chatBox.appendChild(mensaje);
-}
+
 
 // Función para reproducir sonidos
 function playSound(soundFile) {
@@ -3675,7 +3669,7 @@ function cerrarModal(modal) {
 }
 
 // Variable de estado para comprobar la disponibilidad de Animal AI
-let animalAIDisponible = true; // Cambia esto a true o false según la lógica de tu aplicación
+let animalAIDisponible = false; // Cambia esto a true o false según la lógica de tu aplicación
 
 // Función para verificar si es el 12 de octubre de 2024
 function esFechaEspecifica() {
@@ -3709,7 +3703,7 @@ function mostrarModalNoDisponible() {
     title.textContent = 'Ups, Animal AI no está disponible en este momento.';
 
     const razon = document.createElement('p');
-    razon.textContent = 'Razón: Animal AI no se ha lanzado aun, si te estas conectando antes de su lanzamiento es posible que sea un error que cometimos, este mensaje dejara de aparecer cuando el lanzamiento llegue.'; 
+    razon.textContent = 'Razón: Mantenimiento: 25/10/2024 18:00 - 25/10/2024 18:30.'; 
     const closeButton = document.createElement('button');
     closeButton.textContent = "🔄"; // Emoji de reinicio
 
