@@ -579,6 +579,7 @@ const commands = {
 };
 
 
+
 let vidas = 3;
 
 // Función para iniciar el minijuego
@@ -3761,7 +3762,7 @@ function cerrarModal(modal) {
 }
 
 // Variable de estado para comprobar la disponibilidad de Animal AI
-let animalAIDisponible = true; // Cambia esto a true o false según la lógica de tu aplicación
+let animalAIDisponible = false; // Cambia esto a true o false según la lógica de tu aplicación
 
 
 
@@ -3788,7 +3789,7 @@ function mostrarModalNoDisponible() {
     title.textContent = 'Ups, Animal AI no está disponible en este momento.';
 
     const razon = document.createElement('p');
-    razon.textContent = 'Razón: Mantenimiento: 25/10/2024 18:00 - 25/10/2024 18:30.'; 
+    razon.textContent = 'Razón: Mantenimiento: 26/10/2024 17:10 - 26/10/2024 18:00.'; 
     const closeButton = document.createElement('button');
     closeButton.textContent = "🔄"; // Emoji de reinicio
 
