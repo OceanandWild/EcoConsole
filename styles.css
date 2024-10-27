@@ -2375,3 +2375,47 @@ input, textarea {
     top: -5px;
     right: -5px;
 }
+
+
+  /* Estilos para el contenedor */
+  #dulcesContainer {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    position: relative;
+  }
+
+  /* Estilos para cada calabaza */
+  .calabaza {
+    width: 80px;
+    height: 100px;
+    background-color: orange;
+    border-radius: 50% 50% 0 0;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    overflow: hidden;
+  }
+
+  /* Etiqueta de saldo en la calabaza */
+  .calabaza .dulcesLabel {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ffd700;
+    padding: 5px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  /* Animación de derrame de dulces */
+  .derrama {
+    animation: derrame 1s forwards;
+  }
+
+  @keyframes derrame {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(100px); opacity: 0; }
+  }

@@ -412,6 +412,13 @@ function ejemploDeFuncion(param1, param2) {
 
 let saldoADN = 0; // Saldo inicial de ADN
 
+// Definición de la tasa de conversión de cada divisa a Dólares de Animal
+const tasaConversionEctoplasma = 0.1; // 1 Ectoplasma equivale a 0.1 Dólares de Animal
+const tasaConversionDulces = 0.05; // 1 Dulce equivale a 0.05 Dólares de Animal
+const tasaConversionCalabazas = 0.2; // 1 Calabaza equivale a 0.2 Dólares de Animal
+
+let saldoDolaresAnimal = dolaresAnimal;
+
 // Función para generar una cantidad aleatoria de Ectoplasma entre 1 y 50
 function generarEctoplasmaAleatorio() {
     return Math.floor(Math.random() * 50) + 1; // Genera un número entre 1 y 50
@@ -424,13 +431,13 @@ let saldoEctoplasma = 0;
 function agregarEctoplasma() {
     const ectoplasmaGanado = generarEctoplasmaAleatorio(); // Generar una cantidad aleatoria de Ectoplasma
     saldoEctoplasma += ectoplasmaGanado; // Sumar el Ectoplasma ganado al saldo actual
-    typeMessage(`¡Has ganado ${ectoplasmaGanado} Ectoplasma! Tu nuevo saldo de Ectoplasma es: ${saldoEctoplasma}.`);
+    typeMessage('¡Has ganado ${ectoplasmaGanado} Ectoplasma! Tu nuevo saldo de Ectoplasma es: ${saldoEctoplasma}.');
     mostrarMonedas(); // Actualizar la lista de monedas después de cambiar el saldo
 }
 
 // Función para ver el saldo actual de Ectoplasma
 function verSaldoEctoplasma() {
-    typeMessage(`Tu saldo actual de Ectoplasma es: ${saldoEctoplasma}.`);
+    typeMessage('Tu saldo actual de Ectoplasma es: ${saldoEctoplasma}.');
 }
 
 // Comando para consultar el saldo de Ectoplasma
@@ -451,13 +458,13 @@ let saldoDulces = 0;
 function agregarDulces() {
     const dulcesGanados = generarDulcesAleatorios(); // Generar una cantidad aleatoria de Dulces
     saldoDulces += dulcesGanados; // Sumar los Dulces ganados al saldo actual
-    typeMessage(`¡Has ganado ${dulcesGanados} Dulces! Tu nuevo saldo de Dulces es: ${saldoDulces}.`);
+    typeMessage('¡Has ganado ${dulcesGanados} Dulces! Tu nuevo saldo de Dulces es: ${saldoDulces}.');
     mostrarMonedas(); // Actualizar la lista de monedas después de cambiar el saldo
 }
 
 // Función para ver el saldo actual de Dulces
 function verSaldoDulces() {
-    typeMessage(`Tu saldo actual de Dulces es: ${saldoDulces}.`);
+    typeMessage('Tu saldo actual de Dulces es: ${saldoDulces}.');
 }
 
 // Comando para consultar el saldo de Dulces
@@ -478,13 +485,13 @@ let saldoCalabazas = 0;
 function agregarCalabazas() {
     const calabazasGanadas = generarCalabazasAleatorias(); // Generar una cantidad aleatoria de Calabazas
     saldoCalabazas += calabazasGanadas; // Sumar las Calabazas ganadas al saldo actual
-    typeMessage(`¡Has ganado ${calabazasGanadas} Calabazas! Tu nuevo saldo de Calabazas es: ${saldoCalabazas}.`);
+    typeMessage('¡Has ganado ${calabazasGanadas} Calabazas! Tu nuevo saldo de Calabazas es: ${saldoCalabazas}.');
     mostrarMonedas(); // Actualizar la lista de monedas después de cambiar el saldo
 }
 
 // Función para ver el saldo actual de Calabazas
 function verSaldoCalabazas() {
-    typeMessage(`Tu saldo actual de Calabazas es: ${saldoCalabazas}.`);
+    typeMessage('Tu saldo actual de Calabazas es: ${saldoCalabazas}.');
 }
 
 // Comando para consultar el saldo de Calabazas
@@ -492,6 +499,596 @@ function handleConsultarSaldoCalabazas() {
     verSaldoCalabazas(); // Llama a la función para mostrar el saldo
 }
 
+
+
+// Función genérica para convertir recursos a Dólares de Animal
+function handleConvertirRecursosADolares(saldoRecursos, tasaConversion, tipoRecurso) {
+    const dolaresGanados = saldoRecursos * tasaConversion;
+    saldoDolaresAnimal += dolaresGanados;
+    saldoRecursos = 0; // Restablece el saldo de recursos a 0 tras el intercambio
+    typeMessage(`Has convertido ${tipoRecurso} a Dólares de Animal y ganado ${dolaresGanados.toFixed(2)} Dólares de Animal. Tu saldo actual de Dólares de Animal es: ${saldoDolaresAnimal.toFixed(2)}.`);
+    return saldoRecursos; // Devolver el saldo actualizado
+}
+
+// Funciones específicas para manejar la conversión de cada recurso
+function handleConvertirEctoplasmaADolares() {
+    handleConvertirRecursosADolares(saldoEctoplasma, handleConvertirEctoplasmaADolares, 'Ectoplasma');
+}
+
+function handleConvertirDulcesADolares() {
+    handleConvertirRecursosADolares(saldoDulces, handleConvertirDulcesADolares, 'Dulces');
+}
+
+function handleConvertirCalabazasADolares() {
+    handleConvertirRecursosADolares(saldoCalabazas, handleConvertirCalabazasADolares, 'Calabazas');
+}
+
+
+
+
+// Definir los roles disponibles
+const roles = ['asesino', 'sheriff', 'inocente'];
+
+// Variables globales para manejo del juego
+let creditosDeAsesino = 0;
+let heroe = null; // Para rastrear si hay un héroe
+let partidaTerminada = false;
+let intervaloAsesinoSheriff;
+let intervaloHeroe;
+
+// Función para iniciar el juego de Murder Mystery 2
+function iniciarMurderMystery() {
+    typeMessage("¡Bienvenido a Murder Mystery 2! Se están asignando roles...");
+
+    // Asignar un rol aleatorio al jugador
+    const rolJugador = roles[Math.floor(Math.random() * roles.length)];
+    typeMessage(`Tu rol es: ${rolJugador.toUpperCase()}`);
+
+    // Iniciar intervalos de ataque entre asesino y sheriff
+    if (rolJugador === 'asesino' || rolJugador === 'sheriff') {
+        iniciarAtaquesAsesinoSheriff(rolJugador);
+    }
+
+    // Lógica según el rol asignado
+    if (rolJugador === 'asesino') {
+        typeMessage("Tu objetivo es eliminar a todos los inocentes y al sheriff sin ser descubierto.");
+        otorgarCreditosDeAsesino(25);  // El asesino comienza con más créditos
+
+        // Mostrar botón para hacer un ataque como asesino
+        const botonAtacar = document.createElement("button");
+        botonAtacar.innerText = "Atacar a un jugador";
+        botonAtacar.onclick = () => {
+            atacarJugador(rolJugador);  // Función para atacar
+        };
+        chatLog.appendChild(botonAtacar);
+
+        // Iniciar intervalo para intentar convertir a un inocente en héroe
+        iniciarConversionHeroe();
+    } else if (rolJugador === 'sheriff') {
+        typeMessage("Eres el sheriff. Encuentra al asesino y protégelos a todos.");
+        otorgarCreditosDeAsesino(5);  // El sheriff comienza con algunos créditos
+
+        // Mostrar botón para intentar capturar al asesino
+        const botonCapturar = document.createElement("button");
+        botonCapturar.innerText = "Intentar capturar al asesino";
+        botonCapturar.onclick = () => {
+            capturarAsesino();  // Función para capturar al asesino
+        };
+        chatLog.appendChild(botonCapturar);
+    } else {
+        typeMessage("Eres un inocente. Sobrevive y evita al asesino.");
+        otorgarCreditosDeAsesino(2);  // Los inocentes empiezan con menos créditos
+
+        // Mostrar botón para esconderse
+        const botonEsconderse = document.createElement("button");
+        botonEsconderse.innerText = "Esconderse";
+        botonEsconderse.onclick = () => {
+            esconderseAsesino();  // Función para esconderse
+        };
+        chatLog.appendChild(botonEsconderse);
+    }
+
+    // Al final, preguntar si quieren jugar otra partida
+    const botonNuevaPartida = document.createElement("button");
+    botonNuevaPartida.innerText = "Jugar otra partida";
+    botonNuevaPartida.onclick = iniciarMurderMystery;  // Volver a iniciar el juego
+    chatLog.appendChild(botonNuevaPartida);
+}
+
+// Función para otorgar créditos
+function otorgarCreditosDeAsesino(cantidad) {
+    creditosDeAsesino += cantidad;
+    typeMessage(`Has ganado ${cantidad} Créditos de Asesino. Total actual: ${creditosDeAsesino}.`);
+    mostrarMonedas();
+}
+
+// Función para ataques automáticos entre asesino y sheriff
+function iniciarAtaquesAsesinoSheriff(rolJugador) {
+    intervaloAsesinoSheriff = setInterval(() => {
+        if (rolJugador === 'asesino' && !partidaTerminada) {
+            const resultado = Math.random() < 0.55 ? 'eliminaste al sheriff' : 'fallaste';
+            typeMessage(`Intentaste matar al sheriff y... ${resultado}.`);
+
+            if (resultado === 'eliminaste al sheriff') {
+                typeMessage('¡Has matado al sheriff!');
+                finalizarPartida('Asesino');
+                clearInterval(intervaloAsesinoSheriff);  // Detener el intervalo
+            }
+        } else if (rolJugador === 'sheriff' && !partidaTerminada) {
+            const resultado = Math.random() < 0.55 ? 'mataste al asesino' : 'fallaste';
+            typeMessage(`Intentaste matar al asesino y... ${resultado}.`);
+
+            if (resultado === 'mataste al asesino') {
+                typeMessage('¡Has matado al asesino!');
+                finalizarPartida('Sheriff');
+                clearInterval(intervaloAsesinoSheriff);  // Detener el intervalo
+            }
+        }
+    }, 25000); // Cada 25 segundos
+}
+
+// Función para iniciar el intervalo de conversión a héroe
+function iniciarConversionHeroe() {
+    intervaloHeroe = setInterval(() => {
+        if (!heroe && Math.random() < 0.35 && !partidaTerminada) {
+            heroe = 'inocente';
+            typeMessage('¡Un inocente se ha convertido en héroe y ha matado al asesino!');
+            finalizarPartida('Héroe');
+            clearInterval(intervaloHeroe);  // Detener el intervalo
+        }
+    }, 15000); // Cada 15 segundos
+}
+
+// Función para atacar (solo para el asesino)
+function atacarJugador(rolJugador) {
+    if (rolJugador === 'asesino' && !partidaTerminada) {
+        const resultado = Math.random() < 0.5 ? 'fallaste' : 'eliminaste a un jugador';
+        typeMessage(`Intentaste atacar y... ${resultado}.`);
+
+        if (resultado === 'eliminaste a un jugador') {
+            otorgarCreditosDeAsesino(5); // Ganar créditos por eliminar a un jugador
+        }
+    }
+}
+
+// Función para capturar al asesino (solo para el sheriff)
+function capturarAsesino() {
+    if (!partidaTerminada) {
+        const resultado = Math.random() < 0.76 ? 'capturaste al asesino' : 'fallaste';
+        typeMessage(`Intentaste capturar al asesino y... ${resultado}.`);
+
+        if (resultado === 'capturaste al asesino') {
+            otorgarCreditosDeAsesino(20);  // El sheriff gana muchos créditos si atrapa al asesino
+            finalizarPartida('Sheriff');
+        }
+    }
+}
+
+// Función para esconderse (solo para inocentes)
+function esconderseAsesino() {
+    if (!partidaTerminada) {
+        const resultado = Math.random() < 0.7 ? 'te escondiste exitosamente' : 'el asesino te encontró';
+        typeMessage(`Intentaste esconderte y... ${resultado}.`);
+
+        if (resultado === 'te escondiste exitosamente') {
+            otorgarCreditosDeAsesino(3); // Ganar algunos créditos por sobrevivir
+        }
+    }
+}
+
+// Función para finalizar la partida y mostrar el ganador
+function finalizarPartida(ganador) {
+    partidaTerminada = true;
+    typeMessage(`¡Partida Terminada! Ganó el ${ganador}.`);
+
+    // Detener todos los intervalos
+    clearInterval(intervaloAsesinoSheriff);
+    clearInterval(intervaloHeroe);
+}
+
+// Mostrar el input para iniciar el juego
+function mostrarInputMurderMystery() {
+    const botonIniciar = document.createElement("button");
+    botonIniciar.innerText = "Iniciar Murder Mystery 2";
+    botonIniciar.onclick = iniciarMurderMystery;
+    chatLog.appendChild(botonIniciar);
+}
+
+function handleFobiaStart() {
+    const mensajesFobias = [
+        "Por favor, ingrese una fobia de las disponibles:",
+        "Aracnofobia",
+        "Claustrofobia",
+        "Agorafobia",
+        "Megalofobia",
+        "Talasofobia",
+        "Cacofobia",
+        "Emetofobia",
+        "Crometofobia",
+        "Nyctofobia",
+        "Chionofobia",
+        "Hoplofobia",
+        "Taphofobia",
+        "Fobia social",
+        "Zoofobia",
+        "Antrofobia",
+        "Aviophobia",
+        "Necrofobia",
+        "Brontofobia",     // Nueva
+        "Hemofobia",       // Nueva
+        "Aerofobia",       // Nueva
+        "Misofobia",       // Nueva
+        "Xenofobia",       // Nueva
+        "Nictofobia",      // Nueva
+        "Tanatofobia",     // Nueva
+        "Ofidiofobia",     // Nueva
+        "Acuafobia",       // Nueva
+        "Coulrofobia",     // Nueva
+        "Sicosis",         // Nueva
+        "Dendrofobia",     // Nueva
+        "Entomofobia",     // Nueva
+        "Haphephobia",     // Nueva
+        "Ablutofobia",     // Nueva
+        "Phobofobia",      // Nueva
+        "Telefobia",       // Nueva
+        "Papafobia",       // Nueva
+        "Chronofobia",     // Nueva
+        "Malaxofobia",     // Nueva
+        "Turofobia",       // Nueva
+        "Erotofobia",      // Nueva
+        "Bibliophobia",    // Nueva
+        "Globofobia",      // Nueva
+        "Triskaidekafobia",// Nueva
+        "Atelofobia",      // Nueva
+        "Catoptrofobia",   // Nueva
+        "Matofobia",       // Nueva
+        "Genofobia",       // Nueva
+        "Teleofobia",      // Nueva
+        "Ergofobia",       // Nueva
+        "Erythrofobia",    // Nueva
+        "Neofobia",        // Nueva
+        "Hippopotomonstrosesquippedaliofobia", // Nueva
+        "Zootrofobia",     // Nueva
+        "Phasmophobia",    // Nueva
+        "Fobia al éxito",  // Nueva
+        "Deipnofobia",     // Nueva
+        "Ophiophobia",     // Nueva
+        "Gymnofobia",      // Nueva
+        "Gaphophobia",     // Nueva
+        "Monofobia",       // Nueva
+        "Iatrofobia",      // Nueva
+        "Amaxofobia",      // Nueva
+        "Optofobia",       // Nueva
+        "Phonophobia",     // Nueva
+        "Selacofobia",     // Nueva
+        "Siderodromofobia",// Nueva
+        "Pediophobia",     // Nueva
+        "Heterofobia",     // Nueva
+        "Toxofobia",       // Nueva
+        "Hidrofobia"       // Nueva
+    ];
+
+    mensajesFobias.forEach((mensaje, index) => {
+        setTimeout(() => typeMessage(mensaje), index * 500);
+    });
+
+    setTimeout(() => switchToDynamicInput(handleFobiaCommand), mensajesFobias.length * 500);
+
+
+}
+
+let saldoCreditosFobia = 0;
+const ratioConversion = 300; // 1000 Créditos de Fobia = 1 Animal Token
+
+    function handleFobiaCommand(fobia) {
+        const fobias = {
+            aracnofobia: "La aracnofobia es el miedo a las arañas.",
+            claustrofobia: "La claustrofobia es el miedo a los espacios cerrados.",
+            agorafobia: "La agorafobia es el miedo a los lugares abiertos o a estar en situaciones donde escapar podría ser difícil.",
+            megalofobia: "La megalofobia es el miedo a objetos grandes.",
+            talasofobia: "La talasofobia es el miedo al mar o a las profundidades del océano.",
+            cacofobia: "La cacofobia es el miedo a lo feo.",
+            emetofobia: "La emetofobia es el miedo a vomitar.",
+            crometofobia: "La crometofobia es el miedo a los colores.",
+            nyctofobia: "La nyctofobia es el miedo a la oscuridad.",
+            chionofobia: "La chionofobia es el miedo a la nieve.",
+            hoplofobia: "La hoplofobia es el miedo a las armas.",
+            taphofobia: "La taphofobia es el miedo a ser enterrado vivo.",
+            "fobia social": "La fobia social es el miedo intenso a ser juzgado o evaluado negativamente en situaciones sociales.",
+            zoofobia: "La zoofobia es el miedo a los animales.",
+            antrofobia: "La antrofobia es el miedo a las flores.",
+            aviophobia: "La aviophobia es el miedo a volar.",
+            necrofobia: "La necrofobia es el miedo a la muerte o a los muertos.",
+            brontofobia: "La brontofobia es el miedo a los truenos.",
+            hemofobia: "La hemofobia es el miedo a la sangre.",
+            aerofobia: "La aerofobia es el miedo a volar.",
+            misofobia: "La misofobia es el miedo a los gérmenes o a la suciedad.",
+            xenofobia: "La xenofobia es el miedo a los extranjeros o a lo desconocido.",
+            nictofobia: "La nictofobia es el miedo a la noche.",
+            tanatofobia: "La tanatofobia es el miedo a la muerte.",
+            ofidiofobia: "La ofidiofobia es el miedo a las serpientes.",
+            acuafobia: "La acuafobia es el miedo al agua.",
+            coulrofobia: "La coulrofobia es el miedo a los payasos.",
+            sicosis: "La sicosis es el miedo a la locura.",
+            dendrofobia: "La dendrofobia es el miedo a los árboles.",
+            entomofobia: "La entomofobia es el miedo a los insectos.",
+            haphephobia: "La haphephobia es el miedo a ser tocado.",
+            ablutofobia: "La ablutofobia es el miedo a lavarse o a bañarse.",
+            phobofobia: "La phobofobia es el miedo a las fobias.",
+            telefobia: "La telefobia es el miedo a los teléfonos o a las llamadas telefónicas.",
+            papafobia: "La papafobia es el miedo a los padres.",
+            chronofobia: "La chronofobia es el miedo al tiempo.",
+            malaxofobia: "La malaxofobia es el miedo a ser tocado por otros.",
+            turofobia: "La turofobia es el miedo al queso.",
+            erotofobia: "La erotofobia es el miedo a la sexualidad.",
+            bibliophobia: "La bibliophobia es el miedo a los libros.",
+            globofobia: "La globofobia es el miedo a los globos.",
+            triskaidekafobia: "La triskaidekafobia es el miedo al número 13.",
+            atelofobia: "La atelofobia es el miedo a la imperfección.",
+            catoptrofobia: "La catoptrofobia es el miedo a los espejos.",
+            matofobia: "La matofobia es el miedo a las sombras.",
+            genofobia: "La genofobia es el miedo a la raza.",
+            teleofobia: "La teleofobia es el miedo al futuro.",
+            ergofobia: "La ergofobia es el miedo al trabajo.",
+            erythrofobia: "La erythrofobia es el miedo a sonrojarse.",
+            neofobia: "La neofobia es el miedo a lo nuevo.",
+            hippopotomonstrosesquippedaliofobia: "La hippopotomonstrosesquippedaliofobia es el miedo a las palabras largas.",
+            zootrofobia: "La zootrofobia es el miedo a los animales en general.",
+            phasmophobia: "La phasmophobia es el miedo a los fantasmas.",
+            "fobia al éxito": "La fobia al éxito es el miedo a triunfar o a tener éxito.",
+            deipnofobia: "La deipnofobia es el miedo a las conversaciones durante las comidas.",
+            opiophobia: "La opiophobia es el miedo a las medicinas o a la medicina.",
+            gymnofobia: "La gymnofobia es el miedo a estar desnudo.",
+            gaphophobia: "La gaphophobia es el miedo a las agujas o a los pinchazos.",
+            monofobia: "La monofobia es el miedo a la soledad.",
+            iatrofobia: "La iatrofobia es el miedo a los médicos.",
+            amaxofobia: "La amaxofobia es el miedo a conducir.",
+            optofobia: "La optofobia es el miedo a abrir los ojos.",
+            phonophobia: "La phonophobia es el miedo a los sonidos.",
+            selacofobia: "La selacofobia es el miedo a los tiburones.",
+            siderodromofobia: "La siderodromofobia es el miedo a los trenes.",
+            pediophobia: "La pediophobia es el miedo a los muñecos o a los bebés.",
+            heterofobia: "La heterofobia es el miedo a las personas del sexo opuesto.",
+            toxofobia: "La toxofobia es el miedo a las toxinas o a los venenos.",
+            hidrofobia: "La hidrofobia es el miedo al agua."
+        };
+        
+
+const fobiaLower = fobia.toLowerCase();
+
+        if (fobias[fobiaLower]) {
+            otorgarCreditosFobia();
+            typeMessage(`${fobias[fobiaLower]} Esta fobia tiene una dinámica para superarla.`);
+        
+            // Crear botón para superar la fobia
+            const botonSuperarFobia = document.createElement("button");
+            botonSuperarFobia.innerText = "Superar esta fobia";
+            botonSuperarFobia.onclick = () => {
+                mostrarDinamicaFobia(fobiaLower); // Mostrar la dinámica correspondiente
+            };
+        
+            // Agregar el botón al DOM (esto depende de cómo manejes los elementos en tu aplicación)
+            chatLog.appendChild(botonSuperarFobia);
+        
+            // Preguntar si el usuario quiere ver otra fobia
+            typeMessage("¿Quieres ver otra fobia?");
+    
+            // Crear botón para ver otra fobia
+            const botonVerOtraFobia = document.createElement("button");
+            botonVerOtraFobia.innerText = "Ver otra fobia";
+            botonVerOtraFobia.onclick = () => {
+                // Mostrar el input para introducir una nueva fobia
+                mostrarInputFobia();
+            };
+        
+            // Agregar el botón al DOM
+            chatLog.appendChild(botonVerOtraFobia);
+        } else {
+                            // Convertir la fobia ingresada a minúsculas
+const fobiaKey = fobia.trim().toLowerCase();
+
+// Verificar si la fobia ingresada existe en el objeto fobias
+if (fobias[fobiaKey]) {
+    typeMessage(fobias[fobiaKey]); // Mostrar la descripción de la fobia
+} else {
+    typeMessage("Lo siento, no reconozco esa fobia. Por favor, ingrese una fobia válida."); // Mensaje de error genérico
+}
+}
+
+// Función para mostrar el input donde el usuario puede escribir otra fobia
+        function mostrarInputFobia() {
+            const inputFobia = document.createElement("input");
+            inputFobia.setAttribute("type", "text");
+            inputFobia.setAttribute("placeholder", "Escribe otra fobia");
+        
+            // Botón para confirmar la nueva fobia
+            const botonConfirmarFobia = document.createElement("button");
+            botonConfirmarFobia.innerText = "Confirmar fobia";
+            botonConfirmarFobia.onclick = () => {
+                const nuevaFobia = inputFobia.value;
+                if (nuevaFobia) {
+                    handleFobiaCommand(nuevaFobia);
+                }
+            };
+        
+            // Agregar el input y el botón al DOM
+            chatLog.appendChild(inputFobia);
+            chatLog.appendChild(botonConfirmarFobia);
+        }
+    }
+
+
+function mostrarDinamicaFobia(fobiaLower) {
+    // Lógica para mostrar la dinámica según la fobia
+    switch (fobiaLower) {
+        case "claustrofobia":
+            typeMessage("Te enfrentarás a una simulación de una habitación pequeña.");
+            mostrarSimulacionHabitacionPequena();
+            break;
+        case "acrofobia":
+            typeMessage("Te enfrentarás a una simulación de alturas.");
+            mostrarSimulacionAlturas();
+            break;
+        case "talasofobia":
+            typeMessage("Te enfrentarás a una simulación de las profundidades del océano.");
+            mostrarSimulacionOceano();
+            break;
+        case "aracnofobia":
+            typeMessage("Te enfrentarás a una imagen de una araña.");
+            mostrarImagenAraña();
+            break;
+        // Agrega más casos para otras fobias que tengan dinámica
+        default:
+            typeMessage("No hay una dinámica específica para esta fobia, pero has superado tu miedo.");
+            otorgarCreditosFobia();
+            break;
+    }
+}
+
+function otorgarCreditosFobia() {
+    const creditos = Math.floor(Math.random() * (770 - 75 + 1)) + 75;
+    saldoCreditosFobia += creditos;
+    typeMessage(`Has ganado ${creditos} Créditos de Fobia. Saldo actual: ${saldoCreditosFobia}`);
+    mostrarMonedas();
+}
+
+function mostrarSaldoFobia() {
+    typeMessage(`Tienes ${saldoCreditosFobia} Créditos de Fobia y ${dolaresAnimal.toFixed(2)}  Animal Tokens.`);
+    
+    const tokensPosibles = Math.floor(saldoCreditosFobia / ratioConversion);
+    
+    if (tokensPosibles >= 1) {
+        typeMessage(`Puedes convertir ${tokensPosibles} Animal Tokens.`);
+        
+        // Mostrar botón de conversión
+        const botonConvertir = document.createElement("button");
+        botonConvertir.innerText = "Convertir Créditos de Fobia a Animal Tokens";
+        botonConvertir.onclick = () => convertirFobiaTokens(tokensPosibles);
+        
+        // Agregar el botón al DOM (ajusta según cómo manejas tu DOM)
+        chatLog.appendChild(botonConvertir);
+    } else {
+        typeMessage("No tienes suficientes Créditos de Fobia para convertir en Animal Tokens.");
+    }
+    mostrarMonedas();
+}
+
+function convertirFobiaTokens(tokensPosibles) {
+    if (tokensPosibles >= 1) {
+        saldoCreditosFobia -= tokensPosibles * ratioConversion;
+        dolaresAnimal += tokensPosibles;
+        typeMessage(`Has convertido ${tokensPosibles} Animal Tokens. Saldo actual: ${dolaresAnimal.toFixed(2)}  Animal Tokens y ${saldoCreditosFobia} Créditos de Fobia.`);
+    } else {
+        typeMessage("No tienes suficientes Créditos de Fobia para convertir.");
+    }
+}
+
+    
+// Función para mostrar una simulación de habitación pequeña para claustrofobia
+function mostrarSimulacionHabitacionPequena() {
+    const contenedor = document.createElement("div");
+    contenedor.style.width = "200px";
+    contenedor.style.height = "200px";
+    contenedor.style.border = "1px solid black";
+    contenedor.style.margin = "20px auto";
+    contenedor.style.backgroundColor = "#ddd";
+    contenedor.style.display = "flex";
+    contenedor.style.justifyContent = "center";
+    contenedor.style.alignItems = "center";
+
+    const texto = document.createElement("p");
+    texto.textContent = "Pequeña habitación simulada. Mantén la calma.";
+    contenedor.appendChild(texto);
+
+    chatLog.appendChild(contenedor);
+}
+
+// Función para mostrar una simulación de altura controlada para acrofobia
+function mostrarSimulacionAlturas() {
+    const contenedor = document.createElement("div");
+    contenedor.style.width = "100%";
+    contenedor.style.height = "300px";
+    contenedor.style.backgroundImage = "url('https://www.pexels.com/photo/view-from-a-mountain-cliff-1006204/download/')";
+    contenedor.style.backgroundSize = "cover";
+    contenedor.style.backgroundPosition = "center";
+    contenedor.style.display = "flex";
+    contenedor.style.justifyContent = "center";
+    contenedor.style.alignItems = "center";
+    contenedor.style.marginTop = "20px";
+
+    const texto = document.createElement("p");
+    texto.textContent = "Vista desde una altura segura. No hay peligro.";
+    texto.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
+    texto.style.padding = "10px";
+    contenedor.appendChild(texto);
+
+    chatLog.appendChild(contenedor);
+}
+
+// Función para mostrar una imagen relajante del océano para talasofobia
+function mostrarSimulacionOceano() {
+    const contenedor = document.createElement("div");
+    contenedor.style.width = "100%";
+    contenedor.style.height = "300px";
+    contenedor.style.backgroundImage = "url('https://www.lanacion.com.ar/resizer/v2/se-registraron-las-temperaturas-oceanicas-mas-W574D6JCMJGVFBCETCOUZW7CSU.png?auth=ce126aa68f08dc4758e714c71679602bbdde6d188d5848c3c39d5cdd65cf3e05&width=880&height=586&quality=70&smart=true')";
+    contenedor.style.backgroundSize = "cover";
+    contenedor.style.backgroundPosition = "center";
+    contenedor.style.display = "flex";
+    contenedor.style.justifyContent = "top";
+    contenedor.style.alignItems = "top";
+    contenedor.style.marginTop = "20px";
+
+    const texto = document.createElement("p");
+    texto.textContent = "El océano está en calma. Estás seguro en la orilla.";
+    texto.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
+    texto.style.padding = "10px";
+    contenedor.appendChild(texto);
+
+    chatLog.appendChild(contenedor);
+}
+
+// Modificar la función de superar fobia para incluir todas las dinámicas
+function handleSuperarFobia(fobia) {
+    const dinamicas = {
+        aracnofobia: "Estás viendo una imagen controlada de una pequeña araña. Respira profundo y relájate.",
+        claustrofobia: "Imagina que estás en una pequeña habitación, pero todo está bajo control. Respira y mantén la calma.",
+        acrofobia: "Observa una vista desde las alturas, pero estás seguro y estable. No hay peligro.",
+        talasofobia: "Estás viendo una imagen del océano, pero estás seguro en la orilla. Respira profundo y relájate."
+    };
+
+    const mensajeDinamica = dinamicas[fobia] || "No hay dinámica disponible para esta fobia.";
+    typeMessage(mensajeDinamica);
+
+    // Lógica para mostrar la dinámica específica según la fobia
+    if (fobia.toLowerCase() === "aracnofobia") {
+        mostrarImagenAraña();
+    } else if (fobia.toLowerCase() === "claustrofobia") {
+        mostrarSimulacionHabitacionPequena();
+    } else if (fobia.toLowerCase() === "acrofobia") {
+        mostrarSimulacionAlturas();
+    } else if (fobia.toLowerCase() === "talasofobia") {
+        mostrarSimulacionOceano();
+    }
+}
+
+// Función para mostrar la imagen de una araña
+function mostrarImagenAraña() {
+    const contenedorAraña = document.createElement("div");
+    contenedorAraña.style.display = "flex";
+    contenedorAraña.style.justifyContent = "center";
+    contenedorAraña.style.alignItems = "center";
+    contenedorAraña.style.margin = "20px 0";
+
+    const imagenAraña = document.createElement("img");
+    imagenAraña.src = "https://images.pexels.com/photos/51394/spin-web-nature-bug-51394.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+    imagenAraña.alt = "Imagen de una araña";
+    imagenAraña.style.width = "400px";
+    imagenAraña.style.border = "2px solid #000";
+    imagenAraña.style.borderRadius = "10px";
+
+    contenedorAraña.appendChild(imagenAraña);
+    chatLog.appendChild(contenedorAraña);
+}
 
 
 const commands = {
@@ -576,7 +1173,83 @@ const commands = {
     'animal-ai-research': iniciarAnimalAIResearch,
     'notificaciones': ejecutarComandoNotificaciones,
     'Cria-Calabazas': ejecutarComandoCriaCalabazas,
+    'Ectoplasma': verSaldoEctoplasma,
+    'Calabazas': verSaldoCalabazas,
+    'Dulces': verSaldoDulces,
+    'intercambiar-dulces': handleConvertirDulcesADolares,
+    'intercambiar-calabazas': handleConvertirCalabazasADolares,
+    'intercambiar-ectoplasma': handleConvertirEctoplasmaADolares,
+    'caceria-de-dulces': iniciarCaceriaDeDulces,
 };
+
+
+
+
+
+// Función para actualizar y mostrar el saldo de Dulces en pantalla
+function actualizarSaldoDulces() {
+    typeMessage(`Tu saldo actual de Dulces es: ${saldoDulces}.`);
+}
+
+// Función para generar una cantidad aleatoria de Dulces (1 - 200)
+function generarDulcesAleatorios() {
+    return Math.floor(Math.random() * 200) + 1;
+}
+
+
+
+
+// Función para iniciar el minijuego de la cacería de dulces
+function iniciarCaceriaDeDulces() {
+    // Crear contenedor para las calabazas
+    const dulcesContainer = document.createElement('div');
+    dulcesContainer.id = 'dulcesContainer';
+    dulcesContainer.style.display = 'flex';
+    dulcesContainer.style.justifyContent = 'space-around';
+    dulcesContainer.style.padding = '20px';
+    dulcesContainer.style.position = 'relative';
+    
+    // Agregar el contenedor al body (o al contenedor principal que estés usando)
+    chatLog.appendChild(dulcesContainer);
+
+    // Crear calabazas de dulces
+    for (let i = 0; i < 5; i++) {
+        const calabaza = document.createElement('div');
+        calabaza.classList.add('calabaza');
+
+        // Etiqueta de cantidad de dulces en la calabaza
+        const dulcesLabel = document.createElement('div');
+        dulcesLabel.classList.add('dulcesLabel');
+        dulcesLabel.textContent = `🎃 Dulces`;
+
+        calabaza.appendChild(dulcesLabel);
+        dulcesContainer.appendChild(calabaza);
+
+        let haSidoClicada = false; // Flag para verificar si la calabaza ha sido clickeada
+
+        // Generar una cantidad aleatoria de Dulces al hacer clic
+        calabaza.onclick = function () {
+            if (!haSidoClicada) { // Solo ejecutar si no ha sido clickeada antes
+                haSidoClicada = true; // Marcar como clickeada
+                const dulcesGanados = generarDulcesAleatorios();
+                saldoDulces += dulcesGanados;
+                typeMessage(`¡Ganaste ${dulcesGanados} Dulces! 🎉 Tu saldo de Dulces es: ${saldoDulces}`);
+                mostrarMonedas();
+                calabaza.remove(); // Elimina la calabaza después de hacer clic
+            }
+        };
+
+        // Animación de derrame de dulces después de 5 segundos
+        setTimeout(() => {
+            if (!haSidoClicada && document.body.contains(calabaza)) {
+                calabaza.classList.add('derrama'); // Agregar la animación de derrame
+                setTimeout(() => calabaza.remove(), 1000); // Eliminar después de la animación
+                typeMessage("No has actuado a tiempo, los dulces se han derramado😢⌛"); // Mostrar mensaje de derrame
+            }
+        }, 5000);
+    }
+}
+
 
 
 
@@ -1007,14 +1680,18 @@ function convertirADNaDolaresAnimal(cantidadADN) {
 }
 
 
+
 // Array de las monedas del juego, con su icono y la cantidad
 const monedas = [
     { nombre: 'Calabazas', icono: 'https://i.pinimg.com/564x/58/01/8e/58018e2ca2d23f731f30885952346e9c.jpg', cantidad: saldoCalabazas },
     { nombre: 'Dulces', icono: 'https://i.pinimg.com/564x/af/57/d4/af57d40bb32c19f65a6a4011ae99e427.jpg', cantidad: saldoDulces },
     { nombre: 'Ectoplasma', icono: 'https://i.pinimg.com/564x/a1/66/a9/a166a92619a87b8a7995c5b634adb175.jpg', cantidad: saldoEctoplasma },
     { nombre: 'ADN', icono: 'https://i.pinimg.com/control/564x/ba/4d/f4/ba4df4b069b7044ce8f0b0845fa20c37.jpg', cantidad: saldoADN },
-    { nombre: 'Dolar Animal', icono: 'https://i.pinimg.com/564x/5e/cd/84/5ecd847af96e20ebe2c6d89cae85a2e5.jpg', cantidad: dolaresAnimal }
+    { nombre: 'Dolar Animal', icono: 'https://i.pinimg.com/564x/5e/cd/84/5ecd847af96e20ebe2c6d89cae85a2e5.jpg', cantidad: dolaresAnimal },
+    { nombre: 'Creditos de Asesino', icono: 'https://i.pinimg.com/736x/b3/73/cb/b373cbe11610c9bdb6fa39b8fbf5f861.jpg', cantidad: creditosDeAsesino },
+    { nombre: 'Creditos de Fobias', icono: 'https://i.pinimg.com/736x/0e/75/27/0e752798119bf1e794ad6326c28b9f29.jpg', cantidad: saldoCreditosFobia }, 
 ];
+
 
 // Función para actualizar las cantidades en el array de monedas antes de mostrarlas
 function actualizarSaldosMonedas() {
@@ -1023,6 +1700,8 @@ function actualizarSaldosMonedas() {
     monedas[2].cantidad = saldoEctoplasma;  // Actualizar el saldo de Ectoplasma
     monedas[3].cantidad = saldoADN;         // Actualizar el saldo de ADN
     monedas[4].cantidad = dolaresAnimal;    // Actualizar el saldo de Dólares de Animal
+    monedas[5].cantidad = creditosDeAsesino;    // Actualizar el saldo de Creditos de Asesino
+    monedas[6].cantidad = saldoCreditosFobia;    // Actualizar el saldo de Creditos de Fobias
 }
 
 
@@ -1525,6 +2204,13 @@ const comandosConRarezas = [
     { nombre: "/animal-ai-research", rareza: "Épico" },
     { nombre: "/notificaciones", rareza: "Común" },
     { nombre: "/Cria-Calabazas", rareza: "Legendario" },
+    { nombre: "/Ectoplasma", rareza: "Raro" },
+    { nombre: "/Calabazas", rareza: "Raro" },
+    { nombre: "/Dulces", rareza: "Raro" },
+    { nombre: "/intercambiar-dulces", rareza: "Épico" },
+    { nombre: "/intercambiar-calabazas", rareza: "Épico" },
+    { nombre: "/intercambiar-ectoplasma", rareza: "Épico" },
+    { nombre: "/caceria-de-dulces", rareza: "Legendario" },
 ];
 
 
@@ -2610,6 +3296,13 @@ const listaComandos2 = [
 'animal-ai-research',
 'notificaciones',
 'Cria-Calabazas',
+'Ectoplasma',
+    'Calabazas',
+    'Dulces',
+    'intercambiar-dulces',
+    'intercambiar-calabazas',
+    'intercambiar-ectoplasma',
+    'caceria-de-dulces'
 ];
 
 
@@ -3762,7 +4455,7 @@ function cerrarModal(modal) {
 }
 
 // Variable de estado para comprobar la disponibilidad de Animal AI
-let animalAIDisponible = false; // Cambia esto a true o false según la lógica de tu aplicación
+let animalAIDisponible = true; // Cambia esto a true o false según la lógica de tu aplicación
 
 
 
@@ -4347,172 +5040,7 @@ function cerrarModal(modal) {
 
   
  
- // Definir los roles disponibles
-const roles = ['asesino', 'sheriff', 'inocente'];
-
-// Variables globales para manejo del juego
-let creditosDeAsesino = 0;
-let heroe = null; // Para rastrear si hay un héroe
-let partidaTerminada = false;
-let intervaloAsesinoSheriff;
-let intervaloHeroe;
-
-// Función para iniciar el juego de Murder Mystery 2
-function iniciarMurderMystery() {
-    typeMessage("¡Bienvenido a Murder Mystery 2! Se están asignando roles...");
-
-    // Asignar un rol aleatorio al jugador
-    const rolJugador = roles[Math.floor(Math.random() * roles.length)];
-    typeMessage(`Tu rol es: ${rolJugador.toUpperCase()}`);
-
-    // Iniciar intervalos de ataque entre asesino y sheriff
-    if (rolJugador === 'asesino' || rolJugador === 'sheriff') {
-        iniciarAtaquesAsesinoSheriff(rolJugador);
-    }
-
-    // Lógica según el rol asignado
-    if (rolJugador === 'asesino') {
-        typeMessage("Tu objetivo es eliminar a todos los inocentes y al sheriff sin ser descubierto.");
-        otorgarCreditosDeAsesino(25);  // El asesino comienza con más créditos
-
-        // Mostrar botón para hacer un ataque como asesino
-        const botonAtacar = document.createElement("button");
-        botonAtacar.innerText = "Atacar a un jugador";
-        botonAtacar.onclick = () => {
-            atacarJugador(rolJugador);  // Función para atacar
-        };
-        chatLog.appendChild(botonAtacar);
-
-        // Iniciar intervalo para intentar convertir a un inocente en héroe
-        iniciarConversionHeroe();
-    } else if (rolJugador === 'sheriff') {
-        typeMessage("Eres el sheriff. Encuentra al asesino y protégelos a todos.");
-        otorgarCreditosDeAsesino(5);  // El sheriff comienza con algunos créditos
-
-        // Mostrar botón para intentar capturar al asesino
-        const botonCapturar = document.createElement("button");
-        botonCapturar.innerText = "Intentar capturar al asesino";
-        botonCapturar.onclick = () => {
-            capturarAsesino();  // Función para capturar al asesino
-        };
-        chatLog.appendChild(botonCapturar);
-    } else {
-        typeMessage("Eres un inocente. Sobrevive y evita al asesino.");
-        otorgarCreditosDeAsesino(2);  // Los inocentes empiezan con menos créditos
-
-        // Mostrar botón para esconderse
-        const botonEsconderse = document.createElement("button");
-        botonEsconderse.innerText = "Esconderse";
-        botonEsconderse.onclick = () => {
-            esconderseAsesino();  // Función para esconderse
-        };
-        chatLog.appendChild(botonEsconderse);
-    }
-
-    // Al final, preguntar si quieren jugar otra partida
-    const botonNuevaPartida = document.createElement("button");
-    botonNuevaPartida.innerText = "Jugar otra partida";
-    botonNuevaPartida.onclick = iniciarMurderMystery;  // Volver a iniciar el juego
-    chatLog.appendChild(botonNuevaPartida);
-}
-
-// Función para otorgar créditos
-function otorgarCreditosDeAsesino(cantidad) {
-    creditosDeAsesino += cantidad;
-    typeMessage(`Has ganado ${cantidad} Créditos de Asesino. Total actual: ${creditosDeAsesino}.`);
-}
-
-// Función para ataques automáticos entre asesino y sheriff
-function iniciarAtaquesAsesinoSheriff(rolJugador) {
-    intervaloAsesinoSheriff = setInterval(() => {
-        if (rolJugador === 'asesino' && !partidaTerminada) {
-            const resultado = Math.random() < 0.55 ? 'eliminaste al sheriff' : 'fallaste';
-            typeMessage(`Intentaste matar al sheriff y... ${resultado}.`);
-
-            if (resultado === 'eliminaste al sheriff') {
-                typeMessage('¡Has matado al sheriff!');
-                finalizarPartida('Asesino');
-                clearInterval(intervaloAsesinoSheriff);  // Detener el intervalo
-            }
-        } else if (rolJugador === 'sheriff' && !partidaTerminada) {
-            const resultado = Math.random() < 0.55 ? 'mataste al asesino' : 'fallaste';
-            typeMessage(`Intentaste matar al asesino y... ${resultado}.`);
-
-            if (resultado === 'mataste al asesino') {
-                typeMessage('¡Has matado al asesino!');
-                finalizarPartida('Sheriff');
-                clearInterval(intervaloAsesinoSheriff);  // Detener el intervalo
-            }
-        }
-    }, 25000); // Cada 25 segundos
-}
-
-// Función para iniciar el intervalo de conversión a héroe
-function iniciarConversionHeroe() {
-    intervaloHeroe = setInterval(() => {
-        if (!heroe && Math.random() < 0.35 && !partidaTerminada) {
-            heroe = 'inocente';
-            typeMessage('¡Un inocente se ha convertido en héroe y ha matado al asesino!');
-            finalizarPartida('Héroe');
-            clearInterval(intervaloHeroe);  // Detener el intervalo
-        }
-    }, 15000); // Cada 15 segundos
-}
-
-// Función para atacar (solo para el asesino)
-function atacarJugador(rolJugador) {
-    if (rolJugador === 'asesino' && !partidaTerminada) {
-        const resultado = Math.random() < 0.5 ? 'fallaste' : 'eliminaste a un jugador';
-        typeMessage(`Intentaste atacar y... ${resultado}.`);
-
-        if (resultado === 'eliminaste a un jugador') {
-            otorgarCreditosDeAsesino(5); // Ganar créditos por eliminar a un jugador
-        }
-    }
-}
-
-// Función para capturar al asesino (solo para el sheriff)
-function capturarAsesino() {
-    if (!partidaTerminada) {
-        const resultado = Math.random() < 0.76 ? 'capturaste al asesino' : 'fallaste';
-        typeMessage(`Intentaste capturar al asesino y... ${resultado}.`);
-
-        if (resultado === 'capturaste al asesino') {
-            otorgarCreditosDeAsesino(20);  // El sheriff gana muchos créditos si atrapa al asesino
-            finalizarPartida('Sheriff');
-        }
-    }
-}
-
-// Función para esconderse (solo para inocentes)
-function esconderseAsesino() {
-    if (!partidaTerminada) {
-        const resultado = Math.random() < 0.7 ? 'te escondiste exitosamente' : 'el asesino te encontró';
-        typeMessage(`Intentaste esconderte y... ${resultado}.`);
-
-        if (resultado === 'te escondiste exitosamente') {
-            otorgarCreditosDeAsesino(3); // Ganar algunos créditos por sobrevivir
-        }
-    }
-}
-
-// Función para finalizar la partida y mostrar el ganador
-function finalizarPartida(ganador) {
-    partidaTerminada = true;
-    typeMessage(`¡Partida Terminada! Ganó el ${ganador}.`);
-
-    // Detener todos los intervalos
-    clearInterval(intervaloAsesinoSheriff);
-    clearInterval(intervaloHeroe);
-}
-
-// Mostrar el input para iniciar el juego
-function mostrarInputMurderMystery() {
-    const botonIniciar = document.createElement("button");
-    botonIniciar.innerText = "Iniciar Murder Mystery 2";
-    botonIniciar.onclick = iniciarMurderMystery;
-    chatLog.appendChild(botonIniciar);
-}
+ 
 
     
     // Array que contiene los comandos próximos
@@ -6592,7 +7120,14 @@ document.head.appendChild(style);
 'ataque-fantasma',
 'animal-ai-research',
 'notificaciones',
-'Cria-Calabazas'
+'Cria-Calabazas',
+'Ectoplasma',
+    'Calabazas',
+    'Dulces',
+    'intercambiar-dulces',
+    'intercambiar-calabazas',
+    'intercambiar-ectoplasma',
+    'caceria-de-dulces'
     ];
     
 
@@ -7355,8 +7890,17 @@ function handleUltraFuncionalidad() {
         { nombre: "/animal-ai-research", estado: "juego" },
         { nombre: "/notificaciones", estado: "funcionalverde" },
         { nombre: "/Cria-Calabazas", estado: "juego" },
+        { nombre: "/Ectoplasma", estado: "verde" },
+        { nombre: "/Calabazas", estado: "verde" },
+        { nombre: "/Dulces", estado: "verde" },
+        { nombre: "/intercambiar-dulces", estado: "funcionalverde" },
+        { nombre: "/intercambiar-calabazas", estado: "funcionalverde" },
+        { nombre: "/intercambiar-ectoplasma", estado: "funcionalverde" },
+        { nombre: "/caceria-de-dulces", estado: "juego" },
     ];
     
+    
+
 
 
 
@@ -7888,400 +8432,7 @@ function generarEventos() {
 
 
     
-    function handleFobiaStart() {
-        const mensajesFobias = [
-            "Por favor, ingrese una fobia de las disponibles:",
-            "Aracnofobia",
-            "Claustrofobia",
-            "Agorafobia",
-            "Megalofobia",
-            "Talasofobia",
-            "Cacofobia",
-            "Emetofobia",
-            "Crometofobia",
-            "Nyctofobia",
-            "Chionofobia",
-            "Hoplofobia",
-            "Taphofobia",
-            "Fobia social",
-            "Zoofobia",
-            "Antrofobia",
-            "Aviophobia",
-            "Necrofobia",
-            "Brontofobia",     // Nueva
-            "Hemofobia",       // Nueva
-            "Aerofobia",       // Nueva
-            "Misofobia",       // Nueva
-            "Xenofobia",       // Nueva
-            "Nictofobia",      // Nueva
-            "Tanatofobia",     // Nueva
-            "Ofidiofobia",     // Nueva
-            "Acuafobia",       // Nueva
-            "Coulrofobia",     // Nueva
-            "Sicosis",         // Nueva
-            "Dendrofobia",     // Nueva
-            "Entomofobia",     // Nueva
-            "Haphephobia",     // Nueva
-            "Ablutofobia",     // Nueva
-            "Phobofobia",      // Nueva
-            "Telefobia",       // Nueva
-            "Papafobia",       // Nueva
-            "Chronofobia",     // Nueva
-            "Malaxofobia",     // Nueva
-            "Turofobia",       // Nueva
-            "Erotofobia",      // Nueva
-            "Bibliophobia",    // Nueva
-            "Globofobia",      // Nueva
-            "Triskaidekafobia",// Nueva
-            "Atelofobia",      // Nueva
-            "Catoptrofobia",   // Nueva
-            "Matofobia",       // Nueva
-            "Genofobia",       // Nueva
-            "Teleofobia",      // Nueva
-            "Ergofobia",       // Nueva
-            "Erythrofobia",    // Nueva
-            "Neofobia",        // Nueva
-            "Hippopotomonstrosesquippedaliofobia", // Nueva
-            "Zootrofobia",     // Nueva
-            "Phasmophobia",    // Nueva
-            "Fobia al éxito",  // Nueva
-            "Deipnofobia",     // Nueva
-            "Ophiophobia",     // Nueva
-            "Gymnofobia",      // Nueva
-            "Gaphophobia",     // Nueva
-            "Monofobia",       // Nueva
-            "Iatrofobia",      // Nueva
-            "Amaxofobia",      // Nueva
-            "Optofobia",       // Nueva
-            "Phonophobia",     // Nueva
-            "Selacofobia",     // Nueva
-            "Siderodromofobia",// Nueva
-            "Pediophobia",     // Nueva
-            "Heterofobia",     // Nueva
-            "Toxofobia",       // Nueva
-            "Hidrofobia"       // Nueva
-        ];
-    
-        mensajesFobias.forEach((mensaje, index) => {
-            setTimeout(() => typeMessage(mensaje), index * 500);
-        });
-    
-        setTimeout(() => switchToDynamicInput(handleFobiaCommand), mensajesFobias.length * 500);
 
-
-    }
-    
-    let saldoCreditosFobia = 0;
-const ratioConversion = 300; // 1000 Créditos de Fobia = 1 Animal Token
-
-        function handleFobiaCommand(fobia) {
-            const fobias = {
-                aracnofobia: "La aracnofobia es el miedo a las arañas.",
-                claustrofobia: "La claustrofobia es el miedo a los espacios cerrados.",
-                agorafobia: "La agorafobia es el miedo a los lugares abiertos o a estar en situaciones donde escapar podría ser difícil.",
-                megalofobia: "La megalofobia es el miedo a objetos grandes.",
-                talasofobia: "La talasofobia es el miedo al mar o a las profundidades del océano.",
-                cacofobia: "La cacofobia es el miedo a lo feo.",
-                emetofobia: "La emetofobia es el miedo a vomitar.",
-                crometofobia: "La crometofobia es el miedo a los colores.",
-                nyctofobia: "La nyctofobia es el miedo a la oscuridad.",
-                chionofobia: "La chionofobia es el miedo a la nieve.",
-                hoplofobia: "La hoplofobia es el miedo a las armas.",
-                taphofobia: "La taphofobia es el miedo a ser enterrado vivo.",
-                "fobia social": "La fobia social es el miedo intenso a ser juzgado o evaluado negativamente en situaciones sociales.",
-                zoofobia: "La zoofobia es el miedo a los animales.",
-                antrofobia: "La antrofobia es el miedo a las flores.",
-                aviophobia: "La aviophobia es el miedo a volar.",
-                necrofobia: "La necrofobia es el miedo a la muerte o a los muertos.",
-                brontofobia: "La brontofobia es el miedo a los truenos.",
-                hemofobia: "La hemofobia es el miedo a la sangre.",
-                aerofobia: "La aerofobia es el miedo a volar.",
-                misofobia: "La misofobia es el miedo a los gérmenes o a la suciedad.",
-                xenofobia: "La xenofobia es el miedo a los extranjeros o a lo desconocido.",
-                nictofobia: "La nictofobia es el miedo a la noche.",
-                tanatofobia: "La tanatofobia es el miedo a la muerte.",
-                ofidiofobia: "La ofidiofobia es el miedo a las serpientes.",
-                acuafobia: "La acuafobia es el miedo al agua.",
-                coulrofobia: "La coulrofobia es el miedo a los payasos.",
-                sicosis: "La sicosis es el miedo a la locura.",
-                dendrofobia: "La dendrofobia es el miedo a los árboles.",
-                entomofobia: "La entomofobia es el miedo a los insectos.",
-                haphephobia: "La haphephobia es el miedo a ser tocado.",
-                ablutofobia: "La ablutofobia es el miedo a lavarse o a bañarse.",
-                phobofobia: "La phobofobia es el miedo a las fobias.",
-                telefobia: "La telefobia es el miedo a los teléfonos o a las llamadas telefónicas.",
-                papafobia: "La papafobia es el miedo a los padres.",
-                chronofobia: "La chronofobia es el miedo al tiempo.",
-                malaxofobia: "La malaxofobia es el miedo a ser tocado por otros.",
-                turofobia: "La turofobia es el miedo al queso.",
-                erotofobia: "La erotofobia es el miedo a la sexualidad.",
-                bibliophobia: "La bibliophobia es el miedo a los libros.",
-                globofobia: "La globofobia es el miedo a los globos.",
-                triskaidekafobia: "La triskaidekafobia es el miedo al número 13.",
-                atelofobia: "La atelofobia es el miedo a la imperfección.",
-                catoptrofobia: "La catoptrofobia es el miedo a los espejos.",
-                matofobia: "La matofobia es el miedo a las sombras.",
-                genofobia: "La genofobia es el miedo a la raza.",
-                teleofobia: "La teleofobia es el miedo al futuro.",
-                ergofobia: "La ergofobia es el miedo al trabajo.",
-                erythrofobia: "La erythrofobia es el miedo a sonrojarse.",
-                neofobia: "La neofobia es el miedo a lo nuevo.",
-                hippopotomonstrosesquippedaliofobia: "La hippopotomonstrosesquippedaliofobia es el miedo a las palabras largas.",
-                zootrofobia: "La zootrofobia es el miedo a los animales en general.",
-                phasmophobia: "La phasmophobia es el miedo a los fantasmas.",
-                "fobia al éxito": "La fobia al éxito es el miedo a triunfar o a tener éxito.",
-                deipnofobia: "La deipnofobia es el miedo a las conversaciones durante las comidas.",
-                opiophobia: "La opiophobia es el miedo a las medicinas o a la medicina.",
-                gymnofobia: "La gymnofobia es el miedo a estar desnudo.",
-                gaphophobia: "La gaphophobia es el miedo a las agujas o a los pinchazos.",
-                monofobia: "La monofobia es el miedo a la soledad.",
-                iatrofobia: "La iatrofobia es el miedo a los médicos.",
-                amaxofobia: "La amaxofobia es el miedo a conducir.",
-                optofobia: "La optofobia es el miedo a abrir los ojos.",
-                phonophobia: "La phonophobia es el miedo a los sonidos.",
-                selacofobia: "La selacofobia es el miedo a los tiburones.",
-                siderodromofobia: "La siderodromofobia es el miedo a los trenes.",
-                pediophobia: "La pediophobia es el miedo a los muñecos o a los bebés.",
-                heterofobia: "La heterofobia es el miedo a las personas del sexo opuesto.",
-                toxofobia: "La toxofobia es el miedo a las toxinas o a los venenos.",
-                hidrofobia: "La hidrofobia es el miedo al agua."
-            };
-            
-
-const fobiaLower = fobia.toLowerCase();
-
-            if (fobias[fobiaLower]) {
-                otorgarCreditosFobia();
-                typeMessage(`${fobias[fobiaLower]} Esta fobia tiene una dinámica para superarla.`);
-            
-                // Crear botón para superar la fobia
-                const botonSuperarFobia = document.createElement("button");
-                botonSuperarFobia.innerText = "Superar esta fobia";
-                botonSuperarFobia.onclick = () => {
-                    mostrarDinamicaFobia(fobiaLower); // Mostrar la dinámica correspondiente
-                };
-            
-                // Agregar el botón al DOM (esto depende de cómo manejes los elementos en tu aplicación)
-                chatLog.appendChild(botonSuperarFobia);
-            
-                // Preguntar si el usuario quiere ver otra fobia
-                typeMessage("¿Quieres ver otra fobia?");
-        
-                // Crear botón para ver otra fobia
-                const botonVerOtraFobia = document.createElement("button");
-                botonVerOtraFobia.innerText = "Ver otra fobia";
-                botonVerOtraFobia.onclick = () => {
-                    // Mostrar el input para introducir una nueva fobia
-                    mostrarInputFobia();
-                };
-            
-                // Agregar el botón al DOM
-                chatLog.appendChild(botonVerOtraFobia);
-            } else {
-                                // Convertir la fobia ingresada a minúsculas
-    const fobiaKey = fobia.trim().toLowerCase();
-
-    // Verificar si la fobia ingresada existe en el objeto fobias
-    if (fobias[fobiaKey]) {
-        typeMessage(fobias[fobiaKey]); // Mostrar la descripción de la fobia
-    } else {
-        typeMessage("Lo siento, no reconozco esa fobia. Por favor, ingrese una fobia válida."); // Mensaje de error genérico
-}
-}
-
-    // Función para mostrar el input donde el usuario puede escribir otra fobia
-            function mostrarInputFobia() {
-                const inputFobia = document.createElement("input");
-                inputFobia.setAttribute("type", "text");
-                inputFobia.setAttribute("placeholder", "Escribe otra fobia");
-            
-                // Botón para confirmar la nueva fobia
-                const botonConfirmarFobia = document.createElement("button");
-                botonConfirmarFobia.innerText = "Confirmar fobia";
-                botonConfirmarFobia.onclick = () => {
-                    const nuevaFobia = inputFobia.value;
-                    if (nuevaFobia) {
-                        handleFobiaCommand(nuevaFobia);
-                    }
-                };
-            
-                // Agregar el input y el botón al DOM
-                chatLog.appendChild(inputFobia);
-                chatLog.appendChild(botonConfirmarFobia);
-            }
-        }
-    
-    
-    function mostrarDinamicaFobia(fobiaLower) {
-        // Lógica para mostrar la dinámica según la fobia
-        switch (fobiaLower) {
-            case "claustrofobia":
-                typeMessage("Te enfrentarás a una simulación de una habitación pequeña.");
-                mostrarSimulacionHabitacionPequena();
-                break;
-            case "acrofobia":
-                typeMessage("Te enfrentarás a una simulación de alturas.");
-                mostrarSimulacionAlturas();
-                break;
-            case "talasofobia":
-                typeMessage("Te enfrentarás a una simulación de las profundidades del océano.");
-                mostrarSimulacionOceano();
-                break;
-            case "aracnofobia":
-                typeMessage("Te enfrentarás a una imagen de una araña.");
-                mostrarImagenAraña();
-                break;
-            // Agrega más casos para otras fobias que tengan dinámica
-            default:
-                typeMessage("No hay una dinámica específica para esta fobia, pero has superado tu miedo.");
-                otorgarCreditosFobia();
-                break;
-        }
-    }
-    
-    function otorgarCreditosFobia() {
-        const creditos = Math.floor(Math.random() * (770 - 75 + 1)) + 75;
-        saldoCreditosFobia += creditos;
-        typeMessage(`Has ganado ${creditos} Créditos de Fobia. Saldo actual: ${saldoCreditosFobia}`);
-    }
-    
-    function mostrarSaldoFobia() {
-        typeMessage(`Tienes ${saldoCreditosFobia} Créditos de Fobia y ${dolaresAnimal.toFixed(2)}  Animal Tokens.`);
-        
-        const tokensPosibles = Math.floor(saldoCreditosFobia / ratioConversion);
-        
-        if (tokensPosibles >= 1) {
-            typeMessage(`Puedes convertir ${tokensPosibles} Animal Tokens.`);
-            
-            // Mostrar botón de conversión
-            const botonConvertir = document.createElement("button");
-            botonConvertir.innerText = "Convertir Créditos de Fobia a Animal Tokens";
-            botonConvertir.onclick = () => convertirFobiaTokens(tokensPosibles);
-            
-            // Agregar el botón al DOM (ajusta según cómo manejas tu DOM)
-            chatLog.appendChild(botonConvertir);
-        } else {
-            typeMessage("No tienes suficientes Créditos de Fobia para convertir en Animal Tokens.");
-        }
-    }
-
-    function convertirFobiaTokens(tokensPosibles) {
-        if (tokensPosibles >= 1) {
-            saldoCreditosFobia -= tokensPosibles * ratioConversion;
-            dolaresAnimal += tokensPosibles;
-            typeMessage(`Has convertido ${tokensPosibles} Animal Tokens. Saldo actual: ${dolaresAnimal.toFixed(2)}  Animal Tokens y ${saldoCreditosFobia} Créditos de Fobia.`);
-        } else {
-            typeMessage("No tienes suficientes Créditos de Fobia para convertir.");
-        }
-    }
-
-        
-    // Función para mostrar una simulación de habitación pequeña para claustrofobia
-    function mostrarSimulacionHabitacionPequena() {
-        const contenedor = document.createElement("div");
-        contenedor.style.width = "200px";
-        contenedor.style.height = "200px";
-        contenedor.style.border = "1px solid black";
-        contenedor.style.margin = "20px auto";
-        contenedor.style.backgroundColor = "#ddd";
-        contenedor.style.display = "flex";
-        contenedor.style.justifyContent = "center";
-        contenedor.style.alignItems = "center";
-    
-        const texto = document.createElement("p");
-        texto.textContent = "Pequeña habitación simulada. Mantén la calma.";
-        contenedor.appendChild(texto);
-    
-        chatLog.appendChild(contenedor);
-    }
-    
-    // Función para mostrar una simulación de altura controlada para acrofobia
-    function mostrarSimulacionAlturas() {
-        const contenedor = document.createElement("div");
-        contenedor.style.width = "100%";
-        contenedor.style.height = "300px";
-        contenedor.style.backgroundImage = "url('https://www.pexels.com/photo/view-from-a-mountain-cliff-1006204/download/')";
-        contenedor.style.backgroundSize = "cover";
-        contenedor.style.backgroundPosition = "center";
-        contenedor.style.display = "flex";
-        contenedor.style.justifyContent = "center";
-        contenedor.style.alignItems = "center";
-        contenedor.style.marginTop = "20px";
-    
-        const texto = document.createElement("p");
-        texto.textContent = "Vista desde una altura segura. No hay peligro.";
-        texto.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
-        texto.style.padding = "10px";
-        contenedor.appendChild(texto);
-    
-        chatLog.appendChild(contenedor);
-    }
-    
-    // Función para mostrar una imagen relajante del océano para talasofobia
-    function mostrarSimulacionOceano() {
-        const contenedor = document.createElement("div");
-        contenedor.style.width = "100%";
-        contenedor.style.height = "300px";
-        contenedor.style.backgroundImage = "url('https://www.lanacion.com.ar/resizer/v2/se-registraron-las-temperaturas-oceanicas-mas-W574D6JCMJGVFBCETCOUZW7CSU.png?auth=ce126aa68f08dc4758e714c71679602bbdde6d188d5848c3c39d5cdd65cf3e05&width=880&height=586&quality=70&smart=true')";
-        contenedor.style.backgroundSize = "cover";
-        contenedor.style.backgroundPosition = "center";
-        contenedor.style.display = "flex";
-        contenedor.style.justifyContent = "top";
-        contenedor.style.alignItems = "top";
-        contenedor.style.marginTop = "20px";
-    
-        const texto = document.createElement("p");
-        texto.textContent = "El océano está en calma. Estás seguro en la orilla.";
-        texto.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
-        texto.style.padding = "10px";
-        contenedor.appendChild(texto);
-    
-        chatLog.appendChild(contenedor);
-    }
-    
-    // Modificar la función de superar fobia para incluir todas las dinámicas
-    function handleSuperarFobia(fobia) {
-        const dinamicas = {
-            aracnofobia: "Estás viendo una imagen controlada de una pequeña araña. Respira profundo y relájate.",
-            claustrofobia: "Imagina que estás en una pequeña habitación, pero todo está bajo control. Respira y mantén la calma.",
-            acrofobia: "Observa una vista desde las alturas, pero estás seguro y estable. No hay peligro.",
-            talasofobia: "Estás viendo una imagen del océano, pero estás seguro en la orilla. Respira profundo y relájate."
-        };
-    
-        const mensajeDinamica = dinamicas[fobia] || "No hay dinámica disponible para esta fobia.";
-        typeMessage(mensajeDinamica);
-    
-        // Lógica para mostrar la dinámica específica según la fobia
-        if (fobia.toLowerCase() === "aracnofobia") {
-            mostrarImagenAraña();
-        } else if (fobia.toLowerCase() === "claustrofobia") {
-            mostrarSimulacionHabitacionPequena();
-        } else if (fobia.toLowerCase() === "acrofobia") {
-            mostrarSimulacionAlturas();
-        } else if (fobia.toLowerCase() === "talasofobia") {
-            mostrarSimulacionOceano();
-        }
-    }
-    
-    // Función para mostrar la imagen de una araña
-    function mostrarImagenAraña() {
-        const contenedorAraña = document.createElement("div");
-        contenedorAraña.style.display = "flex";
-        contenedorAraña.style.justifyContent = "center";
-        contenedorAraña.style.alignItems = "center";
-        contenedorAraña.style.margin = "20px 0";
-    
-        const imagenAraña = document.createElement("img");
-        imagenAraña.src = "https://images.pexels.com/photos/51394/spin-web-nature-bug-51394.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-        imagenAraña.alt = "Imagen de una araña";
-        imagenAraña.style.width = "400px";
-        imagenAraña.style.border = "2px solid #000";
-        imagenAraña.style.borderRadius = "10px";
-    
-        contenedorAraña.appendChild(imagenAraña);
-        chatLog.appendChild(contenedorAraña);
-    }
-    
     
     
     
