@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
         blogForm.style.display = 'none';
     }
     const chatContainer = document.getElementById('chat-container');
+    const chatContainer2 = document.getElementById('chat-container2');
     const modalContainer2 = document.getElementById('modalContainer');
 
 // Definición de la imagen de la moneda
@@ -150,6 +151,261 @@ document.body.addEventListener('mouseleave', function () {
     
 
 
+
+
+// Variables para almacenar notificaciones y el contador
+let notifications = [];
+let notificationCount = 0;
+const maxVisibleNotifications = 7; // Máximo de notificaciones visibles antes de mostrar el deslizador
+
+// Elementos del DOM
+const notificationIcon = document.getElementById('notification-icon');
+const notificationCounter = document.getElementById('notification-counter');
+const notificationList = document.getElementById('notification-list');
+const notificationsUl = document.getElementById('notifications');
+
+// Función para agregar una notificación con mensaje, fecha y hora, y botones de acción
+function addNotification(message, timestamp = null, actions = []) {
+    const formattedTimestamp = timestamp || getFormattedTimestamp();
+    notifications.push({ message, timestamp: formattedTimestamp, actions, read: false });
+    notificationCount++;
+    updateNotificationDisplay();
+}
+
+// Función para obtener la fecha y hora actual en formato legible
+function getFormattedTimestamp() {
+    const now = new Date();
+    const date = now.toLocaleDateString();
+    const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return `${date} ${time}`;
+}
+
+// Función para borrar todas las notificaciones
+function clearNotifications() {
+    notifications = [];
+    notificationCount = 0;
+    updateNotificationDisplay();
+}
+
+// Función para marcar una notificación como leída
+function markNotificationAsRead(index) {
+    if (!notifications[index].read) {
+        notifications[index].read = true;
+        notificationCount--;
+        updateNotificationDisplay();
+    }
+}
+
+// Función para marcar todas las notificaciones como leídas
+function markAllAsRead() {
+    notifications.forEach(notification => notification.read = true);
+    notificationCount = 0;
+    updateNotificationDisplay();
+}
+
+// Función para actualizar el icono y el contador
+function updateNotificationDisplay() {
+    // Actualizar el contador en el icono
+    if (notificationCount > 0) {
+        notificationCounter.style.display = 'block';
+        notificationCounter.textContent = notificationCount;
+    } else {
+        notificationCounter.style.display = 'none';
+    }
+
+    // Actualizar la lista de notificaciones
+    notificationsUl.innerHTML = ''; // Limpiar la lista actual
+
+    // Botón "Marcar como leído todo" si hay notificaciones sin leer
+    if (notificationCount > 0) {
+        const markAllButton = document.createElement('button');
+        markAllButton.textContent = "Marcar como leído todo";
+        markAllButton.classList.add('mark-all-button');
+        markAllButton.addEventListener('click', markAllAsRead);
+        notificationsUl.appendChild(markAllButton);
+    }
+
+    // Mostrar un máximo de notificaciones visibles
+    const visibleNotifications = notifications.slice(-maxVisibleNotifications);
+    visibleNotifications.forEach((notification, index) => {
+        const listItem = document.createElement('li');
+        listItem.classList.add('notification-item');
+        
+        const messageText = document.createElement('p');
+        messageText.textContent = notification.message;
+        
+        const timestampText = document.createElement('small');
+        timestampText.classList.add('timestamp');
+        timestampText.textContent = `Fecha y hora: ${notification.timestamp}`;
+        
+        listItem.appendChild(messageText);
+        listItem.appendChild(timestampText);
+        
+        // Botones de acción personalizados
+        if (notification.actions && notification.actions.length > 0) {
+            const actionsContainer = document.createElement('div');
+            actionsContainer.classList.add('actions-container');
+            
+            notification.actions.forEach(action => {
+                const actionButton = document.createElement('button');
+                actionButton.textContent = action.text;
+                actionButton.classList.add('action-button');
+                actionButton.addEventListener('click', action.handler);
+                
+                actionsContainer.appendChild(actionButton);
+            });
+            
+            listItem.appendChild(actionsContainer);
+        }
+
+        // Botón "Marcar como leído"
+        const markAsReadButton = document.createElement('button');
+        markAsReadButton.textContent = "Marcar como leído";
+        markAsReadButton.classList.add('mark-as-read-button');
+        markAsReadButton.addEventListener('click', () => markNotificationAsRead(index));
+        listItem.appendChild(markAsReadButton);
+
+        notificationsUl.appendChild(listItem);
+    });
+}
+
+// Mostrar u ocultar la lista de notificaciones al hacer clic en el icono
+notificationIcon.addEventListener('click', () => {
+    notificationList.style.display = notificationList.style.display === 'none' ? 'block' : 'none';
+});
+
+// Función para agregar una notificación con mensaje, fecha y hora, y botones de acción
+function addNotification(message, timestamp = null, actions = []) {
+    const formattedTimestamp = timestamp || getFormattedTimestamp();
+    notifications.push({ message, timestamp: formattedTimestamp, actions, read: false });
+    notificationCount++;
+    updateNotificationDisplay();
+
+    // Crear el contenedor de la notificación
+    const notification = document.createElement('div');
+    notification.style.border = '1px solid #ccc';
+    notification.style.borderRadius = '5px';
+    notification.style.padding = '15px';
+    notification.style.margin = '10px 0';
+    notification.style.backgroundColor = '#f1f1f1';
+    notification.style.display = 'flex';
+    notification.style.justifyContent = 'space-between';
+
+    // Crear el texto de la notificación
+    const messageText = document.createElement('span');
+    messageText.textContent = `${message} - ${formattedTimestamp}`;
+    notification.appendChild(messageText);
+
+    // Añadir botones de acción
+    actions.forEach(action => {
+        const actionButton = document.createElement('button');
+        actionButton.textContent = action.text;
+        actionButton.style.marginLeft = '10px';
+        actionButton.style.padding = '5px 10px';
+        actionButton.style.cursor = 'pointer';
+
+        if (typeof action.handler === 'function') {
+            actionButton.addEventListener('click', action.handler);
+        }
+
+        notification.appendChild(actionButton);
+    });
+
+    notificationsUl.appendChild(notification);
+}
+
+
+
+// Función para mostrar el modal con un contenedor que contiene texto adicional
+function mostrarModalInfo() {
+    // Crear el modal
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+    modal.style.display = 'flex';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+
+    // Crear el contenido del modal
+    const modalContent = document.createElement('div');
+    modalContent.style.backgroundColor = '#fff';
+    modalContent.style.borderRadius = '8px';
+    modalContent.style.width = '80%';
+    modalContent.style.maxWidth = '500px';
+    modalContent.style.padding = '20px';
+    modalContent.style.position = 'relative';
+
+    // Crear botón de cerrar
+    const closeButton = document.createElement('span');
+    closeButton.textContent = '✖';
+    closeButton.style.position = 'absolute';
+    closeButton.style.top = '10px';
+    closeButton.style.right = '10px';
+    closeButton.style.cursor = 'pointer';
+    closeButton.style.fontSize = '1.5em';
+    closeButton.addEventListener('click', () => document.body.removeChild(modal));
+
+    // Texto de información adicional
+    const infoText = document.createElement('p');
+    infoText.style.padding = '15px';
+    infoText.style.boxSizing = 'border-box';
+    infoText.textContent = "Mañana estaremos implementando mejoras clave en Animal AI para optimizar tu experiencia. Entre los cambios más destacados, se incluirán mejoras en la velocidad de carga, ajustes en la interfaz para una navegación más intuitiva, y optimización de la respuesta en algunos comandos populares. Estas mejoras se centran en hacer que Animal AI sea aún más rápido, dinámico y fácil de usar, asegurando que puedas aprovechar al máximo todas sus funcionalidades. ¡Estén atentos para disfrutar de una experiencia aún mejor en Animal AI!";
+
+    // Agregar elementos al modal
+    modalContent.appendChild(closeButton);
+    modalContent.appendChild(infoText);
+    modal.appendChild(modalContent);
+
+    // Mostrar el modal
+    document.body.appendChild(modal);
+}
+
+
+
+// Llamar a la función de ejemplo con "Más Info" que abre el modal
+addNotification("Mañana se vendrán mejoras y cosas más realistas...1894623.1300.231", "30/10/2024 20:30", [
+    { text: "Más Info", handler: mostrarModalInfo }
+]);
+
+addNotification("NUEVO!: CAMINO EVOLUTIVO. Esta funcion te permitira ver todas las fechas de lanzamiento de los comandos (comandos a partir del 30/10/2024 solo se contaran).", "30/10/2024 20:34");
+addNotification("El comando /proximo-lanzamiento ha sido reemplazado por un panel, donde se encuentra el Camino Evolutivo.", "30/10/2024 20:32");
+
+// Ejemplos de agregar notificaciones con botones de acción
+addNotification("Visita nuestro discord.", "30/10/2024 20:30", [
+    { text: "Discord", handler: () => window.location.href = "https://discord.gg/kBwDwKrcTS" }
+]);
+
+// Ejemplos de agregar notificaciones con botones de acción
+addNotification("Mejoras en la lista de notificaciones en general.", "30/10/2024 19:06", [
+    { text: "Discord", handler: () => window.location.href = "https://discord.gg/kBwDwKrcTS" }
+]);
+
+addNotification("Sistema actualizado.", "29/10/2024 20:15", [
+    { text: "Aceptar", handler: () => alert("Notificación aceptada") },
+    { text: "Descartar", handler: () => alert("Notificación descartada") }
+]);
+
+addNotification("Lista de notificaciones renovada", "29/10/2024 22:51");
+
+// CSS para el contenedor de notificaciones y el deslizador
+document.head.insertAdjacentHTML("beforeend", `
+<style>
+  #notifications {
+      max-height: 200px; /* Altura máxima para el deslizador */
+      overflow-y: auto;  /* Activar el deslizador */
+  }
+  .mark-all-button, .mark-as-read-button {
+      margin: 5px;
+      font-size: 0.9em;
+  }
+</style>
+`);
+
+
     
     // Función para crear botones dinámicos
     const createButton = (buttonText, onClickHandler) => {
@@ -216,6 +472,158 @@ document.body.addEventListener('mouseleave', function () {
 
 
  
+
+// Variables para el Camino Evolutivo
+const evolutionPathContainer = document.getElementById('evolution-path');
+const countdownContainer = document.getElementById('countdown-container');
+const maxVisibleSteps = 3; // Número máximo de etapas visibles en el deslizador
+let currentStartIndex = 0;
+let evolutionSteps = [];
+
+// Función para agregar una etapa al Camino Evolutivo con texto y fecha
+function addEvolutionStep(text, date) {
+    evolutionSteps.push({ text, date });
+    renderEvolutionSteps();
+}
+
+// Función para renderizar las etapas limitadas en el deslizador
+function renderEvolutionSteps() {
+    // Limpiar solo el contenedor de etapas, no los controles
+    evolutionPathContainer.querySelectorAll('.step-container, hr').forEach(el => el.remove());
+    
+    const visibleSteps = evolutionSteps.slice(currentStartIndex, currentStartIndex + maxVisibleSteps);
+    
+    visibleSteps.forEach(step => {
+        const stepContainer = document.createElement('div');
+        stepContainer.classList.add('step-container');
+        
+        const stepText = document.createElement('p');
+        stepText.textContent = step.text;
+        
+        const stepDate = document.createElement('small');
+        stepDate.classList.add('step-date');
+        stepDate.textContent = `Fecha: ${step.date}`;
+        
+        stepContainer.appendChild(stepText);
+        stepContainer.appendChild(stepDate);
+        evolutionPathContainer.appendChild(stepContainer);
+        
+        const separator = document.createElement('hr');
+        evolutionPathContainer.appendChild(separator);
+    });
+}
+
+// Función para cambiar el índice del deslizador y mostrar las etapas
+function slideEvolutionSteps(direction) {
+    currentStartIndex += direction;
+    if (currentStartIndex < 0) currentStartIndex = 0;
+    if (currentStartIndex > evolutionSteps.length - maxVisibleSteps) {
+        currentStartIndex = evolutionSteps.length - maxVisibleSteps;
+    }
+    renderEvolutionSteps();
+}
+
+// Función para establecer una cuenta regresiva
+function setCountdown(endDate, nextCommand) {
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = endDate - now;
+        
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+        countdownContainer.innerHTML = `
+            <p>Proximo: ${nextCommand}</p>
+            <p>Se lanza en: ${days}d ${hours}h ${minutes}m ${seconds}s</p>
+            <p>Fecha de Lanzamiento: ${new Date(endDate).toLocaleString()}</p>
+        `;
+
+        if (distance < 0) {
+            clearInterval(countdownInterval);
+            countdownContainer.textContent = `¡${nextCommand} ha sido lanzado!`;
+        }
+    }
+
+    const countdownInterval = setInterval(updateCountdown, 1000);
+    updateCountdown();
+}
+
+// Ejemplos de uso
+setCountdown(new Date("2024-10-31T15:00:00").getTime(), "/crear-mapas-conceptuales");
+
+addEvolutionStep("/crear-mapas-conceptuales", "31/10/2024")
+
+// Controles del deslizador
+const sliderControls = document.createElement('div');
+sliderControls.classList.add('slider-controls');
+
+const prevButton = document.createElement('button');
+prevButton.textContent = "Anterior";
+prevButton.addEventListener('click', () => slideEvolutionSteps(-1));
+
+const nextButton = document.createElement('button');
+nextButton.textContent = "Siguiente";
+nextButton.addEventListener('click', () => slideEvolutionSteps(1));
+
+sliderControls.appendChild(prevButton);
+sliderControls.appendChild(nextButton);
+evolutionPathContainer.appendChild(sliderControls);
+
+// CSS para el diseño
+document.head.insertAdjacentHTML("beforeend", `
+<style>
+  #countdown-container {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+  }
+  #evolution-path {
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      max-width: 400px;
+      min-height: 150px;
+  }
+  .step-container {
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+  }
+  .step-date {
+      font-size: 0.9em;
+      color: #777;
+      margin-top: 5px;
+      display: block;
+  }
+  .slider-controls {
+      display: flex;
+      justify-content: space-between;
+      max-width: 400px;
+      margin-top: 10px;
+  }
+  .slider-controls button {
+      padding: 8px 12px;
+      border: none;
+      background-color: #007BFF;
+      color: white;
+      font-size: 1em;
+      border-radius: 5px;
+      cursor: pointer;
+  }
+  .slider-controls button:hover {
+      background-color: #0056b3;
+  }
+</style>
+`);
+
 
 
 
@@ -406,6 +814,153 @@ function ejemploDeFuncion(param1, param2) {
     typeMessage(`¡Ejecutando el comando con los parámetros: ${param1} y ${param2}!`);
 
 }
+
+
+// Función para crear una notificación dinámica
+function crearNotificacion(tipo, titulo, mensaje, botones) {
+    // Contenedor principal
+    const notificationContainer = document.createElement('div');
+    notificationContainer.classList.add('notification', tipo);
+
+    // Icono
+    const icon = document.createElement('div');
+    icon.classList.add('notification-icon');
+    icon.textContent = tipo === 'advertencia' ? '⚠️' : tipo === 'error' ? '❌' : tipo === 'informacion' ? 'ℹ️' : '⬆️';
+    notificationContainer.appendChild(icon);
+
+    // Contenido de la notificación
+    const content = document.createElement('div');
+    content.classList.add('notification-content');
+
+    const titleElement = document.createElement('strong');
+    titleElement.textContent = titulo;
+    content.appendChild(titleElement);
+
+    const messageElement = document.createElement('p');
+    messageElement.textContent = mensaje;
+    content.appendChild(messageElement);
+
+    // Fecha y hora
+    const timestamp = document.createElement('small');
+    timestamp.classList.add('timestamp');
+    timestamp.textContent = `Fecha y hora: ${getFormattedTimestamp()}`;
+    content.appendChild(timestamp);
+
+    notificationContainer.appendChild(content);
+
+    // Botones personalizados
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('button-container');
+
+    botones.forEach(boton => {
+        const button = document.createElement('button');
+        button.textContent = boton.texto;
+        button.classList.add('notification-button');
+        button.addEventListener('click', boton.accion);
+        buttonContainer.appendChild(button);
+    });
+
+    // Botón de cierre
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'X';
+    closeButton.classList.add('close-button');
+    closeButton.addEventListener('click', () => cerrarNotificacion(notificationContainer));
+    buttonContainer.appendChild(closeButton);
+
+    notificationContainer.appendChild(buttonContainer);
+
+    // Añadir notificación al cuerpo del documento
+    chatContainer2.appendChild(notificationContainer);
+
+    // Estilos CSS
+    applyNotificationStyles();
+}
+
+// Función para cerrar notificación
+function cerrarNotificacion(notificationElement) {
+    notificationElement.remove();
+}
+
+// Función para obtener la fecha y hora actual en formato legible
+function getFormattedTimestamp() {
+    const now = new Date();
+    const date = now.toLocaleDateString();
+    const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return `${date} ${time}`;
+}
+
+// Estilos CSS para las notificaciones
+function applyNotificationStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .notification {
+            display: flex;
+            align-items: center;
+            background-color: #2d2f35;
+            color: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 10px;
+            max-width: 400px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .notification-icon {
+            font-size: 24px;
+            margin-right: 12px;
+        }
+
+        .notification-content {
+            flex-grow: 1;
+        }
+
+        .notification-content strong {
+            font-size: 16px;
+        }
+
+        .notification-content p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .notification-content small {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .notification-button {
+            background: none;
+            border: none;
+            color: #4CAF50;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            color: #FF0000;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .advertencia { border-left: 4px solid #FFC107; }
+        .error { border-left: 4px solid #F44336; }
+        .informacion { border-left: 4px solid #03A9F4; }
+        .actualizacion { border-left: 4px solid #03A9F4; }
+    `;
+    document.head.appendChild(style);
+}
+
+
 
 
 
@@ -1090,6 +1645,122 @@ function mostrarImagenAraña() {
     chatLog.appendChild(contenedorAraña);
 }
 
+// Crear el botón y el modal dinámicamente
+const ecoButton = document.createElement('button');
+ecoButton.id = 'eco-btn';
+ecoButton.textContent = 'Camino Ecológico';
+chatContainer.appendChild(ecoButton);
+
+// Contenedor del modal
+const ecoModal = document.createElement('div');
+ecoModal.id = 'eco-modal';
+
+// Título del modal
+const modalTitle = document.createElement('h2');
+modalTitle.textContent = 'Camino Ecológico';
+ecoModal.appendChild(modalTitle);
+
+// Contenedor de rectángulos
+const rectanglesContainer = document.createElement('div');
+rectanglesContainer.id = 'rectangles-container';
+ecoModal.appendChild(rectanglesContainer);
+
+// Botón para reclamar EcoCréditos
+const claimButton = document.createElement('button');
+claimButton.id = 'claim-btn';
+claimButton.textContent = 'Reclamar 10 EcoCréditos';
+ecoModal.appendChild(claimButton);
+
+// Agregar el modal al cuerpo del documento
+document.body.appendChild(ecoModal);
+
+// Lista de comandos con rarezas y costos
+const rectangulos = [
+    { name: '/comando-comun', ecoCreditos: 10, className: 'common' },
+    { name: '/comando-poco-comun', ecoCreditos: 50, className: 'uncommon' },
+    { name: '/comando-raro', ecoCreditos: 100, className: 'rare' },
+    { name: '/comando-epico', ecoCreditos: 200, className: 'epic' },
+    { name: '/comando-legendario', ecoCreditos: 500, className: 'legendary' },
+];
+
+// Última vez que se reclamó EcoCréditos
+let lastClaimTime = null;
+let ecoCreditos = 0; // Variable para almacenar EcoCréditos
+
+// Función para abrir el modal
+ecoButton.addEventListener('click', () => {
+    ecoModal.style.display = 'block';
+    renderRectangles();
+});
+
+// Renderizar rectángulos según la rareza y costo
+function renderRectangles() {
+    rectanglesContainer.innerHTML = ''; // Limpiar contenido previo
+
+    rectangulos.forEach((rect, index) => {
+        if (rect.ecoCreditos <= ecoCreditos) {
+            // Crear un div para cada rectángulo de comando
+            const rectangle = document.createElement('div');
+            rectangle.classList.add('rectangulo', rect.className);
+            rectangle.dataset.index = index;
+
+            // Crear el contenido de cada rectángulo
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = rect.name;
+
+            const costSpan = document.createElement('span');
+            costSpan.textContent = `Costo: ${rect.ecoCreditos} EcoCréditos`;
+
+            // Agregar contenido al rectángulo y el rectángulo al contenedor
+            rectangle.appendChild(nameSpan);
+            rectangle.appendChild(costSpan);
+            rectanglesContainer.appendChild(rectangle);
+
+            // Añadir un evento para desbloquear el comando y fragmentación
+            rectangle.addEventListener('click', () => unlockCommand(rectangle, index));
+        }
+    });
+}
+
+// Función para desbloquear comando con animación de fragmentación
+function unlockCommand(rectangle, index) {
+    alert(`¡Has desbloqueado el comando ${rectangulos[index].name}!`);
+
+    // Animación de fragmentación (simulación)
+    rectangle.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+    rectangle.style.transform = 'scale(0.5) rotate(15deg)';
+    rectangle.style.opacity = '0';
+
+    setTimeout(() => {
+        rectangle.remove(); // Eliminar el rectángulo después de la animación
+    }, 300);
+}
+
+// Función para reclamar EcoCréditos cada hora
+claimButton.addEventListener('click', () => {
+    const now = new Date();
+
+    if (!lastClaimTime || now - lastClaimTime >= 60 * 60 * 1000) { // 1 hora en milisegundos
+        ecoCreditos += 10; // Incrementar EcoCréditos
+        lastClaimTime = now;
+        renderRectangles(); // Volver a renderizar rectángulos actualizados
+    } else {
+        const minutesLeft = Math.ceil((60 * 60 * 1000 - (now - lastClaimTime)) / 60000);
+        alert(`Debes esperar ${minutesLeft} minutos más para reclamar.`);
+    }
+});
+
+// Cerrar el modal al hacer clic fuera de él
+window.addEventListener('click', (e) => {
+    if (e.target === ecoModal) {
+        ecoModal.style.display = 'none';
+    }
+});
+
+
+
+
+
 
 const commands = {
     'saldo': handleSaldoCommand,
@@ -1133,8 +1804,8 @@ const commands = {
     'configuracion': mostrarConfiguracion,
     'enviar-notificaciones': solicitarPermisoNotificaciones,
     'crear-notificaciones': crearNotificacion,
-    'unirse': unirse,
-    'acceder': iniciarSesion,
+    'unirse': mostrarModalRegistro,
+    'acceder': mostrarModalInicioSesion,
     'usuarios': mostrarUsuariosVerificados,
     'boss-battle': handleEnfrentarJefe,
     'comandos-recomendados': handleComandosRecomendados, // Comando para buscar
@@ -1171,7 +1842,6 @@ const commands = {
     },
     'ataque-fantasma': handleAtaqueFantasma,
     'animal-ai-research': iniciarAnimalAIResearch,
-    'notificaciones': ejecutarComandoNotificaciones,
     'Cria-Calabazas': ejecutarComandoCriaCalabazas,
     'Ectoplasma': verSaldoEctoplasma,
     'Calabazas': verSaldoCalabazas,
@@ -1180,10 +1850,383 @@ const commands = {
     'intercambiar-calabazas': handleConvertirCalabazasADolares,
     'intercambiar-ectoplasma': handleConvertirEctoplasmaADolares,
     'caceria-de-dulces': iniciarCaceriaDeDulces,
+    'minijuegos': handleMinijuegos,
 };
 
 
 
+
+
+
+
+
+// Lista de minijuegos disponibles
+const minijuegos = [
+    { name: 'Adivina el Número', action: () => alert("Iniciando 'Adivina el Número'...") },
+    { name: 'Memoria', action: () => alert("Iniciando 'Memoria'...") },
+    { name: 'Serpiente', action: () => alert("Iniciando 'Serpiente'...") },
+    { name: 'Trivia', action: () => alert("Iniciando 'Trivia'...") },
+    // Agrega más minijuegos según sea necesario
+];
+
+function handleMinijuegos() {
+// Crear contenedor principal
+const minijuegosContainer = document.createElement('div');
+minijuegosContainer.id = 'minijuegos-container';
+
+// Crear título
+const title = document.createElement('h2');
+title.textContent = 'Minijuegos Disponibles';
+minijuegosContainer.appendChild(title);
+
+// Crear lista de minijuegos
+const minijuegosList = document.createElement('ul');
+minijuegosList.id = 'minijuegos-list';
+minijuegos.forEach(game => {
+    const listItem = document.createElement('li');
+    listItem.textContent = game.name;
+    minijuegosList.appendChild(listItem);
+});
+minijuegosContainer.appendChild(minijuegosList);
+
+// Crear campo de entrada para seleccionar un minijuego
+const minijuegoInput = document.createElement('input');
+minijuegoInput.type = 'text';
+minijuegoInput.id = 'minijuego-input';
+minijuegoInput.placeholder = 'Escribe un minijuego para jugar';
+minijuegosContainer.appendChild(minijuegoInput);
+
+// Crear botón para jugar
+const jugarBtn = document.createElement('button');
+jugarBtn.id = 'jugar-btn';
+jugarBtn.textContent = 'Jugar';
+minijuegosContainer.appendChild(jugarBtn);
+
+// Agregar el contenedor principal al cuerpo del documento
+chatLog.appendChild(minijuegosContainer);
+
+// Evento para el botón Jugar
+jugarBtn.addEventListener('click', () => {
+    const minijuegoSeleccionado = minijuegoInput.value.trim();
+    
+    // Buscar el minijuego en la lista
+    const juego = minijuegos.find(game => game.name.toLowerCase() === minijuegoSeleccionado.toLowerCase());
+
+    if (juego) {
+        // Ejecutar la función del minijuego si se encuentra
+        juego.action();
+    } else {
+        alert('Minijuego no encontrado. Intenta escribir el nombre correctamente.');
+    }
+});
+}
+
+
+
+function animalPayTransaction(costo, callback) {
+    // Crear texto animado de "Métodos de Pago"
+    const animText = document.createElement('div');
+    animText.id = 'animText';
+    animText.textContent = 'Métodos de Pago';
+    animText.style.animation = 'fadeIn 1.5s ease-in-out';
+    animText.style.fontSize = '24px';
+    animText.style.textAlign = 'center';
+    animText.style.marginTop = '20px';
+    animText.style.color = '#333';
+    document.body.appendChild(animText);
+
+    // Mostrar el modal después de 1.5 segundos
+    setTimeout(() => {
+        animText.remove();
+
+        const modaltransaction = document.createElement('div');
+        modaltransaction.classList.add('modal');
+
+        const modalContent = document.createElement('div');
+        modalContent.classList.add('modal-content');
+
+        // Cambiar título a "Checkout"
+        const title = document.createElement('h2');
+        title.textContent = 'Checkout';
+        modalContent.appendChild(title);
+
+        // Crear el saldo y costo
+        const saldoInfo = document.createElement('p');
+        saldoInfo.textContent = `Tu saldo: Dólares de Animal - $${dolaresAnimal}`;
+        saldoInfo.style.fontSize = '18px';
+        saldoInfo.style.marginBottom = '15px';
+        modalContent.appendChild(saldoInfo);
+
+        const costoInfo = document.createElement('p');
+        costoInfo.textContent = `Costo: $${costo}`;
+        costoInfo.style.fontSize = '18px';
+        costoInfo.style.marginBottom = '20px';
+        modalContent.appendChild(costoInfo);
+
+        // Texto de forma de pago
+        const paymentText = document.createElement('p');
+        paymentText.textContent = 'Pagar con OCEAN Currencies: Animal Dollars (Global)';
+        paymentText.style.fontSize = '16px';
+        paymentText.style.marginBottom = '15px';
+        modalContent.appendChild(paymentText);
+
+        // Dropdown para seleccionar divisa
+        const paymentDropdown = document.createElement('select');
+        paymentDropdown.classList.add('dropdown-payment');
+        paymentDropdown.style.marginBottom = '20px';
+        
+        // Opciones de divisas
+        const divisas = {
+            dolaresAnimal: { nombre: 'Dólares de Animal', saldo: dolaresAnimal },
+            saldoADN: { nombre: 'ADN', saldo: saldoADN },
+            saldoCalabazas: { nombre: 'Calabazas', saldo: saldoCalabazas },
+            saldoDulces: { nombre: 'Dulces', saldo: saldoDulces },
+            saldoCreditosFobia: { nombre: 'Créditos de Fobia', saldo: saldoCreditosFobia },
+            creditosDeAsesino: { nombre: 'Créditos de Asesino', saldo: creditosDeAsesino },
+            saldoEctoplasma: { nombre: 'Ectoplasma', saldo: saldoEctoplasma }
+        };
+
+        // Agregar opciones al dropdown
+        for (const key in divisas) {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = `${divisas[key].nombre} - Saldo: $${divisas[key].saldo.toFixed(2)}`;
+            paymentDropdown.appendChild(option);
+        }
+        
+        modalContent.appendChild(paymentDropdown); 
+
+        const hr = document.createElement('hr');
+        modalContent.appendChild(hr);
+          
+        // Botón Finalizar Compra
+        const finalizarButton = document.createElement('button');
+        finalizarButton.textContent = 'Finalizar Compra';
+        finalizarButton.classList.add('btn-finalizar-compra');
+        finalizarButton.style.borderRadius = '12px'; // Curva el botón
+        finalizarButton.style.padding = '10px 20px';
+        finalizarButton.style.fontSize = '16px';
+        finalizarButton.style.marginTop = '20px';
+        
+        // Evento al hacer clic en "Finalizar Compra"
+        finalizarButton.addEventListener('click', function () {
+            const selectedDivisa = paymentDropdown.value;
+            const divisa = divisas[selectedDivisa];
+
+            if (divisa.saldo >= costo) {
+                divisa.saldo -= costo; // Deduce el costo del saldo de la divisa
+                showSuccessAnimation(modaltransaction, divisa.nombre, costo.toFixed(2), function() {
+                    callback(true); // Indica que la transacción fue exitosa
+                });
+            } else {
+                alert(`❌ No tienes suficiente saldo en ${divisa.nombre}. Saldo actual: $${divisa.saldo.toFixed(2)}.`);
+                callback(false); // Indica que la transacción falló
+            }
+        });
+        
+        modalContent.appendChild(finalizarButton);
+
+        // Agregar todo al modal y mostrarlo
+        modaltransaction.appendChild(modalContent);
+        document.body.appendChild(modaltransaction);
+        modaltransaction.style.display = 'block';
+    }, 1500);
+}
+
+
+
+function showSuccessAnimation(modal, metodoPago, cantidad, callback) {
+    // Limpiar contenido del modal
+    const modalContent = modal.querySelector('.modal-content');
+    modalContent.innerHTML = '';
+
+    // Crear contenedor de éxito
+    const successContainer = document.createElement('div');
+    successContainer.classList.add('success-container');
+
+    // Crear círculo de animación
+    const circleContainer = document.createElement('div');
+    circleContainer.classList.add('circle-container');
+
+    const circle = document.createElement('div');
+    circle.classList.add('circle');
+
+    const checkIcon = document.createElement('span');
+    checkIcon.innerHTML = '&#10004;'; // Icono ✔️
+    checkIcon.classList.add('check-icon');
+
+    // Añadir círculo y icono de verificación
+    circleContainer.appendChild(circle);
+    circleContainer.appendChild(checkIcon);
+    successContainer.appendChild(circleContainer);
+    modalContent.appendChild(successContainer);
+
+    // Mensaje de éxito
+    const successMessage = document.createElement('p');
+    successMessage.textContent = `✅ Pago realizado exitosamente con ${metodoPago}. Cantidad: $${cantidad}.`;
+    successMessage.classList.add('success-message');
+    modalContent.appendChild(successMessage);
+
+    // Botón para cerrar modal
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'Cerrar';
+    closeButton.classList.add('btn-close');
+    modalContent.appendChild(closeButton);
+
+    closeButton.addEventListener('click', function () {
+        modal.style.display = 'none';
+    });
+
+    circle.classList.add('fill-circle-animation');
+
+    setTimeout(() => {
+        checkIcon.classList.add('show-check');
+    }, 1500);
+
+    setTimeout(() => {
+        callback(true);
+    }, 3000);
+}
+
+// Clase CSS sugerida para `btn-finalizar-compra`
+// .btn-finalizar-compra {
+//     padding: 10px 20px;
+//     background-color: #4CAF50;
+//     color: white;
+//     border: none;
+//     border-radius: 20px;
+//     cursor: pointer;
+//     font-size: 16px;
+// }
+// .btn-finalizar-compra:hover {
+//     background-color: #45a049;
+// }
+
+
+
+function setupTextoAdvertencia() {
+    // Crear botón para iniciar el proceso del comando
+    const textoAdvertenciaBtn = document.createElement('button');
+    textoAdvertenciaBtn.textContent = '/texto-advertencia';
+    textoAdvertenciaBtn.classList.add('btn');
+    chatLog.appendChild(textoAdvertenciaBtn);
+
+    // Agregar evento de clic para iniciar el proceso
+    textoAdvertenciaBtn.addEventListener('click', iniciarTextoAdvertencia);
+}
+
+// Función para manejar el flujo del comando /texto-advertencia
+function iniciarTextoAdvertencia() {
+    const textoInputDiv = document.createElement('div');
+    textoInputDiv.classList.add('mensaje');
+    textoInputDiv.textContent = 'Introduce un texto a mostrar:';
+    chatLog.appendChild(textoInputDiv);
+
+    const textoInput = document.createElement('input');
+    textoInput.setAttribute('type', 'text');
+    textoInput.classList.add('input-texto');
+    chatLog.appendChild(textoInput);
+
+    const confirmarTextoBtn = document.createElement('button');
+    confirmarTextoBtn.textContent = 'Confirmar texto';
+    confirmarTextoBtn.classList.add('btn');
+    chatLog.appendChild(confirmarTextoBtn);
+
+    confirmarTextoBtn.addEventListener('click', () => {
+        const texto = textoInput.value;
+
+        // Solicitar al usuario que elija las personalizaciones
+        mostrarOpcionesPersonalizacion(texto);
+        textoInputDiv.remove();
+        textoInput.remove();
+        confirmarTextoBtn.remove();
+    });
+}
+// Función para mostrar opciones de personalización
+function mostrarOpcionesPersonalizacion(texto, divisas) {
+    console.log('Divisas:', divisas); // Esto te ayudará a depurar
+    const personalizacionDiv = document.createElement('div');
+    personalizacionDiv.classList.add('mensaje');
+    personalizacionDiv.textContent = 'Seleccione la personalización deseada:';
+    chatLog.appendChild(personalizacionDiv);
+
+    const opciones = [
+        { label: 'Color Rojo (Gratis)', clase: 'texto-rojo', costo: 0 },
+        { label: 'Animación Parpadeo (2 Dólares de Animal)', clase: 'animacion-parpadeo', costo: 2 },
+        { label: 'Texto Subrayado (Gratis)', clase: 'texto-subrayado', costo: 0 },
+        { label: 'Animación Rotación (3 Dólares de Animal)', clase: 'animacion-rotacion', costo: 3 },
+        { label: 'Color Verde (Gratis)', clase: 'texto-verde', costo: 0 },
+        { label: 'Animación Oscilación (5 Dólares de Animal)', clase: 'animacion-oscilacion', costo: 5 }
+    ];
+
+    // Asegúrate de definir opcionesContainer aquí
+    const opcionesContainer = document.createElement('div');
+    chatLog.appendChild(opcionesContainer);
+
+    opciones.forEach(opcion => {
+        const checkbox = document.createElement('input');
+        checkbox.setAttribute('type', 'checkbox');
+        checkbox.setAttribute('value', opcion.clase);
+        checkbox.setAttribute('data-costo', opcion.costo);
+        
+        const label = document.createElement('label');
+        label.textContent = opcion.label;
+        label.appendChild(checkbox);
+        
+        opcionesContainer.appendChild(label);
+        opcionesContainer.appendChild(document.createElement('br'));
+    });
+
+    const saldoDiv = document.createElement('div');
+    saldoDiv.textContent = `Tu saldo actual es: $${dolaresAnimal.toFixed(2)} Dólares de Animal`;
+    chatLog.appendChild(saldoDiv);
+
+    const confirmarPersonalizacionBtn = document.createElement('button');
+    confirmarPersonalizacionBtn.textContent = 'Aplicar personalización';
+    confirmarPersonalizacionBtn.classList.add('btn');
+    chatLog.appendChild(confirmarPersonalizacionBtn);
+
+    confirmarPersonalizacionBtn.addEventListener('click', () => {
+        let costoTotal = 0;
+        const clasesSeleccionadas = [];
+
+        opcionesContainer.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            const costo = parseFloat(checkbox.getAttribute('data-costo'));
+            costoTotal += costo;
+            clasesSeleccionadas.push(checkbox.value);
+        });
+
+        if (costoTotal > dolaresAnimal) {
+            typeMessage('❌ No tienes suficientes Dólares de Animal para aplicar estas personalizaciones.');
+        } else {
+            // Realizar el pago utilizando la función animalPayTransaction
+            animalPayTransaction(costoTotal, divisas, (exito) => {
+                if (exito) {
+                    dolaresAnimal -= costoTotal; // Restar el costo si la transacción es exitosa
+                    saldoDiv.textContent = `Tu nuevo saldo es: $${dolaresAnimal.toFixed(2)} Dólares de Animal`;
+
+                    mostrarMonedas();
+                    // Mostrar el texto con las personalizaciones aplicadas
+                    mostrarTextoPersonalizado(texto, clasesSeleccionadas);
+                }
+            });
+        }
+
+        personalizacionDiv.remove();
+        opcionesContainer.remove();
+        confirmarPersonalizacionBtn.remove();
+    });
+}
+
+
+
+// Función para mostrar el texto personalizado
+function mostrarTextoPersonalizado(texto, clases) {
+    const textoFinalDiv = document.createElement('div');
+    textoFinalDiv.classList.add('mensaje', ...clases);
+    textoFinalDiv.textContent = texto;
+    chatLog.appendChild(textoFinalDiv);
+}
 
 
 // Función para actualizar y mostrar el saldo de Dulces en pantalla
@@ -1397,75 +2440,7 @@ chatLog.appendChild(badgeContador);
 }
 
 
-// Función para verificar el código de administrador
-function verificarAdminCodigo(listaNotificaciones) {
-    const codigo = prompt('Ingrese el código de administrador para crear una notificación:');
-    const codigoAdmin = '1234'; // Cambiar a un código real seguro
 
-    if (codigo === codigoAdmin) {
-        const mensaje = prompt('Ingrese el mensaje de la notificación:');
-        if (mensaje) {
-            crearNotificacion(mensaje, listaNotificaciones);
-        } else {
-            alert('Mensaje no puede estar vacío.');
-        }
-    } else {
-        alert('Código de administrador incorrecto.');
-    }
-}
-
-// Función para crear una nueva notificación
-function crearNotificacion(mensaje, listaNotificaciones) {
-    const fecha = new Date();
-    const nuevaNotificacion = {
-        mensaje: mensaje,
-        fecha: fecha.toLocaleDateString(),
-        hora: fecha.toLocaleTimeString(),
-    };
-
-    // Agregar la notificación a la lista interna y al DOM
-    notificacionesLista.push(nuevaNotificacion);
-    agregarNotificacionAlDOM(nuevaNotificacion, listaNotificaciones);
-}
-
-// Función para agregar notificación al DOM en la lista de notificaciones
-function agregarNotificacionAlDOM(notificacion, listaNotificaciones) {
-    const notificacionElemento = document.createElement('div');
-    notificacionElemento.classList.add('notificacion-item');
-    notificacionElemento.innerHTML = `
-        <span class="notificacion-fecha">${notificacion.fecha} ${notificacion.hora}</span>
-        <p class="notificacion-mensaje">${notificacion.mensaje}</p>
-    `;
-    listaNotificaciones.appendChild(notificacionElemento);
-}
-
-// Función para cargar notificaciones de la lista interna al DOM
-function cargarNotificaciones(listaNotificaciones) {
-    listaNotificaciones.innerHTML = ''; // Limpiar lista de notificaciones
-
-    // Agregar cada notificación al DOM
-    notificacionesLista.forEach((notificacion) => {
-        agregarNotificacionAlDOM(notificacion, listaNotificaciones);
-    });
-}
-
-// Función para actualizar el badge del contador de notificaciones
-function actualizarBadgeContador() {
-    const badgeContador = document.getElementById('badge-contador');
-
-    if (contadorNotificaciones > 0) {
-        badgeContador.textContent = contadorNotificaciones;
-        badgeContador.style.display = 'inline-block';
-    } else {
-        badgeContador.style.display = 'none';
-    }
-}
-
-
-// Llamar al comando para abrir el panel de notificaciones
-function ejecutarComandoNotificaciones() {
-    mostrarNotificaciones();
-}
 
 // Variables globales
 let energiaPorComando = 0; // Energía en W
@@ -1859,6 +2834,8 @@ function realizarPagoTratamiento(enfermedad) {
                 // Mostrar el saldo restante después del pago
                 typeMessage(`Saldo restante: ${dolaresAnimal.toFixed(2)} Dólares de Animal`);
 
+                mostrarMonedas();
+
                 // Crear botón para hacer otro diagnóstico
                 const otroDiagnosticoBtn = document.createElement('button');
                 otroDiagnosticoBtn.textContent = 'Hacer otro diagnóstico';
@@ -1885,7 +2862,7 @@ function realizarPagoTratamiento(enfermedad) {
 
 
 function lluviaDeDolaresAnimal() {
-    const totalBurbujas = 10; // Número de burbujas que aparecerán
+    const totalBurbujas = 20; // Número de burbujas que aparecerán
     const burbujas = [];
     let totalGanado = 0; // Total de Dólares de Animal ganados
     const contenedorBurbujas = document.createElement('div');
@@ -1942,7 +2919,7 @@ function lluviaDeDolaresAnimal() {
         // Sumar el total ganado al saldo actual
         dolaresAnimal += totalGanado;
         typeMessage(`✅ Tu nuevo saldo es: $${dolaresAnimal.toFixed(2)} Dólares de Animal.`);
-        
+        mostrarMonedas();
         // Quitar el contenedor de burbujas
         contenedorBurbujas.remove();
     }, 15000); // 15 segundos para la lluvia de burbujas
@@ -1988,123 +2965,6 @@ function enviarPeticionWhatsApp() {
 
 
 
-function setupTextoAdvertencia() {
-    // Crear botón para iniciar el proceso del comando
-    const textoAdvertenciaBtn = document.createElement('button');
-    textoAdvertenciaBtn.textContent = '/texto-advertencia';
-    textoAdvertenciaBtn.classList.add('btn');
-    chatLog.appendChild(textoAdvertenciaBtn);
-
-    // Agregar evento de clic para iniciar el proceso
-    textoAdvertenciaBtn.addEventListener('click', iniciarTextoAdvertencia);
-}
-
-// Función para manejar el flujo del comando /texto-advertencia
-function iniciarTextoAdvertencia() {
-    const textoInputDiv = document.createElement('div');
-    textoInputDiv.classList.add('mensaje');
-    textoInputDiv.textContent = 'Introduce un texto a mostrar:';
-    chatLog.appendChild(textoInputDiv);
-
-    const textoInput = document.createElement('input');
-    textoInput.setAttribute('type', 'text');
-    textoInput.classList.add('input-texto');
-    chatLog.appendChild(textoInput);
-
-    const confirmarTextoBtn = document.createElement('button');
-    confirmarTextoBtn.textContent = 'Confirmar texto';
-    confirmarTextoBtn.classList.add('btn');
-    chatLog.appendChild(confirmarTextoBtn);
-
-    confirmarTextoBtn.addEventListener('click', () => {
-        const texto = textoInput.value;
-
-        // Solicitar al usuario que elija las personalizaciones
-        mostrarOpcionesPersonalizacion(texto);
-        textoInputDiv.remove();
-        textoInput.remove();
-        confirmarTextoBtn.remove();
-    });
-}
-
-// Función para mostrar opciones de personalización
-function mostrarOpcionesPersonalizacion(texto) {
-    const personalizacionDiv = document.createElement('div');
-    personalizacionDiv.classList.add('mensaje');
-    personalizacionDiv.textContent = 'Seleccione la personalización deseada:';
-    chatLog.appendChild(personalizacionDiv);
-
-    const opciones = [
-        { label: 'Color Rojo (Gratis)', clase: 'texto-rojo', costo: 0 },
-        { label: 'Animación Parpadeo (2 Dólares de Animal)', clase: 'animacion-parpadeo', costo: 2 },
-        { label: 'Texto Subrayado (Gratis)', clase: 'texto-subrayado', costo: 0 },
-        { label: 'Animación Rotación (3 Dólares de Animal)', clase: 'animacion-rotacion', costo: 3 },
-        { label: 'Color Verde (Gratis)', clase: 'texto-verde', costo: 0 },
-        { label: 'Animación Oscilación (5 Dólares de Animal)', clase: 'animacion-oscilacion', costo: 5 }
-    ];
-
-    const opcionesContainer = document.createElement('div');
-    chatLog.appendChild(opcionesContainer);
-
-    opciones.forEach(opcion => {
-        const checkbox = document.createElement('input');
-        checkbox.setAttribute('type', 'checkbox');
-        checkbox.setAttribute('value', opcion.clase);
-        checkbox.setAttribute('data-costo', opcion.costo);
-        const label = document.createElement('label');
-        label.textContent = opcion.label;
-        label.appendChild(checkbox);
-        opcionesContainer.appendChild(label);
-        opcionesContainer.appendChild(document.createElement('br'));
-    });
-
-    const saldoDiv = document.createElement('div');
-    saldoDiv.textContent = `Tu saldo actual es: $${dolaresAnimal.toFixed(2)} Dólares de Animal`;
-    chatLog.appendChild(saldoDiv);
-
-    const confirmarPersonalizacionBtn = document.createElement('button');
-    confirmarPersonalizacionBtn.textContent = 'Aplicar personalización';
-    confirmarPersonalizacionBtn.classList.add('btn');
-    chatLog.appendChild(confirmarPersonalizacionBtn);
-
-    confirmarPersonalizacionBtn.addEventListener('click', () => {
-        let costoTotal = 0;
-        const clasesSeleccionadas = [];
-
-        opcionesContainer.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-            const costo = parseFloat(checkbox.getAttribute('data-costo'));
-            costoTotal += costo;
-            clasesSeleccionadas.push(checkbox.value);
-        });
-
-        if (costoTotal > dolaresAnimal) {
-            typeMessage('❌ No tienes suficientes Dólares de Animal para aplicar estas personalizaciones.');
-        } else {
-            // Realizar el pago utilizando la función animalPayTransaction
-            animalPayTransaction(costoTotal, dolaresAnimal, (exito) => {
-                if (exito) {
-                    dolaresAnimal -= costoTotal; // Restar el costo si la transacción es exitosa
-                    saldoDiv.textContent = `Tu nuevo saldo es: $${dolaresAnimal.toFixed(2)} Dólares de Animal`;
-
-                    // Mostrar el texto con las personalizaciones aplicadas
-                    mostrarTextoPersonalizado(texto, clasesSeleccionadas);
-                }
-            });
-        }
-
-        personalizacionDiv.remove();
-        opcionesContainer.remove();
-        confirmarPersonalizacionBtn.remove();
-    });
-}
-
-// Función para mostrar el texto personalizado
-function mostrarTextoPersonalizado(texto, clases) {
-    const textoFinalDiv = document.createElement('div');
-    textoFinalDiv.classList.add('mensaje', ...clases);
-    textoFinalDiv.textContent = texto;
-    chatLog.appendChild(textoFinalDiv);
-}
 
 // Lista de comandos con su estado de despertado
 const awkCommands = [
@@ -2118,18 +2978,18 @@ awkCommands.forEach(command => {
     const listItem = document.createElement('li');
     listItem.innerText = `${command.name} - ${command.isAwakened ? 'Despertado' : 'No Despertado'}`;
     
-    // Aplicar estilos directamente según el estado
+    // Aplicar clases para los estilos según el estado
     if (command.isAwakened) {
-        listItem.style.color = '#FF4500'; // Rojo llameante
-        listItem.style.fontWeight = 'bold'; // Negrita
+        listItem.classList.add('despertado'); // Añadir clase para comandos despertados
     } else {
-        listItem.style.color = '#1E90FF'; // Azul oceánico
-        listItem.style.fontStyle = 'italic'; // Cursiva
+        listItem.classList.add('no-despertado'); // Añadir clase para comandos no despertados
     }
+
+    // Personalización adicional (si es necesario)
+    listItem.style.position = 'relative'; // Para asegurar el posicionamiento de pseudo-elementos
 
     awkList.appendChild(listItem);
 });
-
 
 
 // Lista de comandos con sus rarezas
@@ -2907,7 +3767,7 @@ function crearCuentaRegresiva() {
 
     // Crear el título del comando (h1)
     const comandoTitulo = document.createElement('h1');
-    comandoTitulo.textContent = "/proximo-lanzamiento"; // El nombre del comando
+    comandoTitulo.textContent = "/minijuegos"; // El nombre del comando
     comandoTitulo.classList.add('comando-titulo');
     contenedor.appendChild(comandoTitulo);
 
@@ -2963,7 +3823,7 @@ function crearCuentaRegresiva() {
 
 // Función para iniciar la cuenta regresiva
 function iniciarCuentaRegresiva(ejecutarComandoBtn) {
-    const lanzamiento = new Date("October 25, 2024 12:00:00").getTime();
+    const lanzamiento = new Date("November 3, 2024 12:00:00").getTime();
     document.getElementById('launch-date').textContent = new Date(lanzamiento).toLocaleString();
 
     const interval = setInterval(function() {
@@ -2973,7 +3833,7 @@ function iniciarCuentaRegresiva(ejecutarComandoBtn) {
         const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
         const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
-        const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
+        const segundos = Math.floor((distancia % (1000 * 60)) / 1000); 
 
         document.getElementById("days").textContent = dias < 10 ? `0${dias}` : dias;
         document.getElementById("hours").textContent = horas < 10 ? `0${horas}` : horas;
@@ -4125,6 +4985,22 @@ const usuarios = [
 function mostrarUsuariosVerificados() {
     typeMessage("Lista de usuarios verificados:");
 
+    // Crear el modal y su contenido
+    const modalUsuarios = document.createElement('div');
+    modalUsuarios.classList.add('modal'); // Clase para los estilos del modal
+    
+    const modalContent = document.createElement('div');
+    modalContent.classList.add('modal-content'); // Clase para el contenido del modal
+    
+    const closeButton = document.createElement('span');
+    closeButton.classList.add('close-button'); // Clase para el botón de cerrar
+    closeButton.innerHTML = '&times;';
+    closeButton.onclick = () => modalUsuarios.style.display = 'none';
+
+    const title = document.createElement('h2');
+    title.innerText = 'Lista de Usuarios Verificados';
+
+    // Contenedor de usuarios
     const listaUsuarios = document.createElement('div');
     listaUsuarios.style.display = 'flex';
     listaUsuarios.style.flexDirection = 'column';
@@ -4140,17 +5016,16 @@ function mostrarUsuariosVerificados() {
         nombreUsuario.innerText = usuario.nombreUsuario;
         nombreUsuario.style.fontWeight = 'bold';
 
-        // Si el usuario está baneado, agregar la etiqueta de "Baneado"
-        const estatusBaneado = usuario.baneado ? 
+        const estatusBaneado = usuario.baneado ?
             `<span style="color: red; font-weight: bold;">(Baneado)</span>` : '';
 
-        const iconoVerificado = usuario.verificado ? 
+        const iconoVerificado = usuario.verificado ?
             `<img src="https://i.ibb.co/NyC8Y1W/Captura-de-pantalla-2024-10-13-191335.png" alt="Verificado Azul" style="width: 20px; height: 20px;" title="Cuenta verificada desde el ${usuario.fechaVerificacion}">` : '';
 
-        const iconoVerificadoEmpresa = usuario.verificacionEmpresa ? 
+        const iconoVerificadoEmpresa = usuario.verificacionEmpresa ?
             `<img src="https://i.ibb.co/vkyZVfM/Captura-de-pantalla-2024-10-13-191054.png" alt="Verificado Dorado" style="width: 20px; height: 20px;" title="Cuenta de empresa verificada desde el ${usuario.fechaVerificacionEmpresa}">` : '';
 
-        const iconoVerificadoAdmin = usuario.verificacionAdmin ? 
+        const iconoVerificadoAdmin = usuario.verificacionAdmin ?
             `<img src="https://i.ibb.co/vmJKTpY/Captura-de-pantalla-2024-10-13-195931.png" alt="Verificado Admin" style="width: 20px; height: 20px;" title="Cuenta de Admin verificada desde el ${usuario.fechaVerificacionAdmin}">` : '';
 
         usuarioDiv.innerHTML = `
@@ -4161,30 +5036,53 @@ function mostrarUsuariosVerificados() {
         listaUsuarios.appendChild(usuarioDiv);
     });
 
-    chatLog.appendChild(listaUsuarios);
+    // Construir el modal
+    modalContent.appendChild(closeButton);
+    modalContent.appendChild(title);
+    modalContent.appendChild(listaUsuarios);
+    modalUsuarios.appendChild(modalContent);
+    document.body.appendChild(modalUsuarios);
+
+    // Mostrar el modal
+    modalUsuarios.style.display = 'block';
 }
 
 
 
-
-function unirse() {
-    typeMessage("Por favor, introduce un Nombre de Usuario para registrarte:");
-
+function mostrarModalRegistro() {
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+    
+    const modalContent = document.createElement('div');
+    modalContent.classList.add('modal-content');
+    
+    const title = document.createElement('h2');
+    title.textContent = "Registro de Usuario";
+    
     const inputUsuario = document.createElement('input');
     inputUsuario.placeholder = "Nombre de Usuario";
     inputUsuario.id = "input-usuario";
-    chatLog.appendChild(inputUsuario);
 
     const inputContrasena = document.createElement('input');
     inputContrasena.placeholder = "Contraseña";
     inputContrasena.type = "password";
     inputContrasena.id = "input-contrasena";
-    chatLog.appendChild(inputContrasena);
 
     const buttonEnviar = document.createElement('button');
     buttonEnviar.innerText = "Enviar";
-    buttonEnviar.onclick = () => redirigirWhatsApp(inputUsuario.value, inputContrasena.value);
-    chatLog.appendChild(buttonEnviar);
+    buttonEnviar.onclick = () => {
+        redirigirWhatsApp(inputUsuario.value, inputContrasena.value);
+        modal.style.display = 'none';
+    };
+
+    modalContent.appendChild(title);
+    modalContent.appendChild(inputUsuario);
+    modalContent.appendChild(inputContrasena);
+    modalContent.appendChild(buttonEnviar);
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+
+    modal.style.display = 'block';
 }
 
 function redirigirWhatsApp(nombreUsuario, contrasena) {
@@ -4193,38 +5091,50 @@ function redirigirWhatsApp(nombreUsuario, contrasena) {
         return;
     }
 
-    // Mensaje de redirección
     typeMessage("Redirigiendo a WhatsApp...");
-
-    // Aquí se simula la redirección y la construcción del mensaje
     const numeroTelefono = "598099685536";
     const mensajeWhatsApp = `Nombre de Usuario: ${nombreUsuario}, Contraseña: ${contrasena}`;
     const urlWhatsApp = `https://wa.me/${numeroTelefono}?text=${encodeURIComponent(mensajeWhatsApp)}`;
     
-    // Simular redirección
     setTimeout(() => {
         window.open(urlWhatsApp, "_blank");
-    }, 2000); // Esperar 2 segundos antes de redirigir a WhatsApp
+    }, 2000);
 }
 
-function iniciarSesion() {
-    typeMessage("Introduce tu Nombre de Usuario y Contraseña:", true);
+function mostrarModalInicioSesion() {
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+    
+    const modalContent = document.createElement('div');
+    modalContent.classList.add('modal-content');
+    
+    const title = document.createElement('h2');
+    title.textContent = "Iniciar Sesión";
     
     const inputUsuario = document.createElement('input');
     inputUsuario.placeholder = "Nombre de Usuario";
     inputUsuario.id = "input-usuario";
-    chatLog.appendChild(inputUsuario);
 
     const inputContrasena = document.createElement('input');
     inputContrasena.placeholder = "Contraseña";
     inputContrasena.type = "password";
     inputContrasena.id = "input-contrasena";
-    chatLog.appendChild(inputContrasena);
 
     const buttonAcceder = document.createElement('button');
     buttonAcceder.innerText = "Acceder";
-    buttonAcceder.onclick = () => verificarCredenciales(inputUsuario.value, inputContrasena.value);
-    chatLog.appendChild(buttonAcceder);
+    buttonAcceder.onclick = () => {
+        verificarCredenciales(inputUsuario.value, inputContrasena.value);
+        modal.style.display = 'none';
+    };
+
+    modalContent.appendChild(title);
+    modalContent.appendChild(inputUsuario);
+    modalContent.appendChild(inputContrasena);
+    modalContent.appendChild(buttonAcceder);
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+
+    modal.style.display = 'block';
 }
 
 function verificarCredenciales(nombreUsuario, contrasena) {
@@ -4399,6 +5309,7 @@ function mostrarVerificacionAdmin(usuario) {
     }, 3000); // Esperar 3 segundos después de mostrar el mensaje inicial
 }
 
+mostrarModalInicioSesion();
 
     // Función para mostrar el modal de verificación de edad
 function mostrarModalVerificacionEdad() {
@@ -5710,42 +6621,6 @@ function cerrarModal(modal) {
     document.body.removeChild(modal);
 }
 
-// Función para crear una notificación
-function crearNotificacion() {
-    try {
-        if (Notification.permission === "granted") {
-            // Pedir al usuario que ingrese un mensaje
-            const mensaje = "Escribe el mensaje para la notificación:";
-            const modalConfig = {
-                titulo: "Crear Notificación",
-                descripcion: "Escribe el mensaje para la notificación:"
-            };
-
-            responderConPreferencia(mensaje, modalConfig);
-
-            // Capturar el mensaje del usuario
-            const input = prompt("Ingresa el mensaje de la notificación:");
-            if (input) {
-                // Crear la notificación
-                new Notification("Animal AI", {
-                    body: input,
-                    icon: 'https://example.com/icon.png' // Puedes usar una URL válida para el icono
-                });
-                responderConPreferencia("Notificación enviada con éxito.", {
-                    titulo: "Notificación Enviada",
-                    descripcion: `Tu notificación fue enviada con el mensaje: ${input}`
-                });
-            }
-        } else {
-            responderConPreferencia("No tienes permiso para enviar notificaciones. Primero permite las notificaciones.", {
-                titulo: "Sin Permiso",
-                descripcion: "Debes permitir las notificaciones antes de crearlas."
-            });
-        }
-    } catch (error) {
-        mostrarModalErrorComando('crearNotificacion', 'Error al crear la notificación.', error.message);
-    }
-}
 
 // Función para cerrar el modal
 function cerrarModal(modal) {
@@ -5928,7 +6803,7 @@ function cerrarModal(modal) {
         const jugadaIA = opciones[Math.floor(Math.random() * opciones.length)];
     
         // Realizar la transacción de los Dólares de Animal
-        animalPayTransaction(costo, saldoActual, function(transaccionExitosa) {
+        animalPayTransaction(costo, function(transaccionExitosa) {
             if (transaccionExitosa) {
                 // La transacción fue exitosa, ahora determinar si ganaste o perdiste
                 let resultado;
@@ -5953,6 +6828,7 @@ function cerrarModal(modal) {
                     setTimeout(() => {
                         dolaresAnimal += 10.0; // Añadir los 10 Dólares de Animal al saldo
                         typeMessage(`✅ Transacción inversa completada. Tu nuevo saldo es $${dolaresAnimal.toFixed(2)} Dólares de Animal.`);
+                        mostrarMonedas();
                     }, 1000);
                 } else if (resultado === 'perder') {
                     // Perdiste: Se deducen otros 5.0 Dólares de Animal adicionales
@@ -5960,6 +6836,7 @@ function cerrarModal(modal) {
                         typeMessage(`😢 ¡Perdiste! Se te deducirán otros $5.00 Dólares de Animal.`);
                         dolaresAnimal -= 5.0; // Deducir los 5 Dólares adicionales
                         typeMessage(`❌ Has perdido otros $5.00 Dólares de Animal. Tu nuevo saldo es $${dolaresAnimal.toFixed(2)} Dólares de Animal.`);
+                        mostrarMonedas();
                     }, 1000);
                 }
             } else {
@@ -6155,114 +7032,7 @@ function validateCardLogin(cardNumber) {
         }
     });
 
-    function animalPayTransaction(costo, saldoActual, callback) {
-        const modaltransaction = document.createElement('div');
-        modaltransaction.classList.add('modal');
-        
-        const modalContent = document.createElement('div');
-        modalContent.classList.add('modal-content');
-        
-        const title = document.createElement('h2');
-        title.textContent = 'Completa tu transacción';
-        
-        const emailInput = document.createElement('input');
-        emailInput.type = 'email';
-        emailInput.placeholder = 'Ingresa tu correo electrónico';
-        emailInput.required = true;
-        
-        const btnDolarAnimal = document.createElement('button');
-        btnDolarAnimal.textContent = 'Pagar con Dólares de Animal';
-        btnDolarAnimal.classList.add('btn-dolar-animal'); // Clase para estilos personalizados
-        
-        modalContent.appendChild(title);
-        modalContent.appendChild(emailInput);
-        modalContent.appendChild(btnDolarAnimal);
-        modaltransaction.appendChild(modalContent);
-        document.body.appendChild(modaltransaction);
-        
-        // Mostrar el modal
-        modaltransaction.style.display = 'block';
-        
-        // Evento para pagar con Dólares de Animal
-        btnDolarAnimal.addEventListener('click', function () {
-            const email = emailInput.value.trim();
-            if (saldoActual >= costo && validateEmail(email)) {
-                // Deduce los Dólares de Animal
-                saldoActual -= costo;
-        
-                // Mostrar animación de éxito
-                showSuccessAnimation(modaltransaction, 'Dólares de Animal', costo.toFixed(2), email, function() {
-                    callback(true); // Llamar el callback indicando éxito
-                });
-            } else {
-                alert(`❌ No tienes suficientes Dólares de Animal o el correo es inválido. Saldo actual: $${saldoActual.toFixed(2)}.`);
-                callback(false); // Llamar el callback indicando que la transacción falló
-            }
-        });
-    }
-    
-    
-    
-    function showSuccessAnimation(modal, metodoPago, cantidad, email, callback) {
-        // Limpiar contenido del modal
-        const modalContent = modal.querySelector('.modal-content');
-        modalContent.innerHTML = '';
-    
-        // Crear el contenedor de animación
-        const successContainer = document.createElement('div');
-        successContainer.classList.add('success-container');
-    
-        // Crear el círculo de animación
-        const circleContainer = document.createElement('div'); // Nuevo contenedor para centrar el círculo y el icono
-        circleContainer.classList.add('circle-container');
-    
-        const circle = document.createElement('div');
-        circle.classList.add('circle');
-    
-        // Crear el ícono de verificación (check)
-        const checkIcon = document.createElement('span');
-        checkIcon.innerHTML = '&#10004;'; // Icono ✔️ usando HTML entity para mejor compatibilidad
-        checkIcon.classList.add('check-icon');
-    
-        // Agregar el círculo y el ícono de verificación al contenedor del círculo
-        circleContainer.appendChild(circle);
-        circleContainer.appendChild(checkIcon);
-        successContainer.appendChild(circleContainer);
-        modalContent.appendChild(successContainer);
-    
-        // Agregar mensaje de éxito
-        const successMessage = document.createElement('p');
-        successMessage.textContent = `✅ Pago realizado exitosamente con ${metodoPago}. Cantidad: $${cantidad}.`;
-        successMessage.classList.add('success-message');
-        modalContent.appendChild(successMessage);
-    
-        // Botón para cerrar el modal
-        const closeButton = document.createElement('button');
-        closeButton.textContent = 'Cerrar';
-        closeButton.classList.add('btn-close');
-        modalContent.appendChild(closeButton);
-    
-        // Cerrar modal al hacer clic en el botón
-        closeButton.addEventListener('click', function () {
-            modal.style.display = 'none';
-        });
-    
-        // Agregar animación al círculo
-        circle.classList.add('fill-circle-animation');
-    
-        // Mostrar el ícono de verificación después de que el círculo esté completamente lleno
-        setTimeout(() => {
-            checkIcon.classList.add('show-check');
-        }, 1500); // Mostrar el ícono después de 1.5 segundos (al completar el relleno)
-    
-        // Simular el envío de correo al completar la transacción
-        setTimeout(() => {
-            sendEmailConfirmation(email, metodoPago, cantidad);
-            callback(true); // Transacción exitosa
-        }, 3000); // 3 segundos para completar la transacción y enviar el correo
-    }
-    
-    
+
     
     // Función para validar el correo electrónico
     function validateEmail(email) {
@@ -7391,7 +8161,7 @@ const modelosIA = [
                 if (transaccionExitosa) {
                     // La transacción fue exitosa, el saldo ya ha sido deducido en animalPayTransaction
                     typeMessage(`✅ Has adquirido ${modelo.nombre} exitosamente! Se han removido ${modelo.costo} Dolares de Animal de tu saldo. Tu saldo actual es: ${dolaresAnimal.toFixed(2)}  Dolares de Animal.`);
-                    
+                    mostrarMonedas();
                     // Ejecutar la funcionalidad específica del modelo seleccionado
                     modelo.funcionalidad();
                 } else {

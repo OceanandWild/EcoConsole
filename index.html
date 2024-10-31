@@ -43,9 +43,25 @@
     
    
     <div id="main-container">
-       
+        
         <!-- Contenedor del chat -->
         <div id="chat-container" class="grid-item chat">
+            <div id="chat-container2" class="grid-item chat">
+                <div id="notification-container" style="display: flex; justify-content: center; margin-top: 20px;">
+                    <div id="notification-icon" style="position: relative;">
+                        <span id="notification-counter" style="display: none;">0</span>
+                        <img src="https://cdn-icons-png.freepik.com/512/9449/9449196.png?ga=GA1.1.596051647.1730249376" alt="Notification Icon" width="32" height="32">
+                    </div>
+                </div>
+                
+                <div id="notification-list" style="display: none; background-color: white; border: 1px solid #ccc; padding: 10px; max-width: 250px;">
+                    <h3>Notificaciones</h3>
+                    <ul id="notifications"></ul>
+                </div>
+                       
+                <div id="evolution-path"></div>
+                <div id="countdown-container"></div>
+            </div>
 
             <div id="estado-usuario"></div>
             <div id="chatLog">

@@ -305,30 +305,79 @@ body2 {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Sombra más profunda en hover */
 }
 
+/* Efecto de llamas y rayos para comandos despertados */
 .despertado {
     color: #FF4500; /* Rojo llameante para comandos despertados */
     font-weight: bold; /* Negrita */
+    position: relative; /* Necesario para el posicionamiento de pseudo-elementos */
+    overflow: hidden; /* Para ocultar efectos fuera del contenedor */
 }
 
+.despertado::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    width: 300%; /* Ampliar el ancho para cubrir el texto */
+    height: 50px; /* Altura de las llamas */
+    background: linear-gradient(to bottom, rgba(255, 69, 0, 0.7), rgba(255, 165, 0, 0.5));
+    animation: flames 1s infinite alternate; /* Animación de llama */
+    z-index: -1; /* Colocar detrás del texto */
+}
+
+/* Animación de llamas */
+@keyframes flames {
+    0% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-50%) translateY(-20px);
+        opacity: 0;
+    }
+}
+
+/* Efecto de rayos para comandos no despertados */
 .no-despertado {
     color: #1E90FF; /* Azul oceánico para comandos no despertados */
     font-style: italic; /* Cursiva */
+    position: relative; /* Para asegurar el posicionamiento de pseudo-elementos */
 }
 
+.no-despertado::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    width: 300%; /* Ampliar el ancho para cubrir el texto */
+    height: 5px; /* Grosor del rayo */
+    background: linear-gradient(to right, rgba(30, 144, 255, 0.7), rgba(0, 255, 255, 0.5)); /* Degradado de rayos */
+    animation: lightning 1s infinite alternate; /* Animación de rayos */
+    z-index: -1; /* Colocar detrás del texto */
+}
+
+/* Animación de rayos */
+@keyframes lightning {
+    0% {
+        transform: translateX(-50%) scaleY(1);
+    }
+    100% {
+        transform: translateX(-50%) scaleY(1.5); /* Aumento en la escala vertical */
+    }
+}
 
 /* Personalización extrema para los elementos de la lista de comandos */
 #awk-list li {
     list-style: none; /* Sin viñetas */
     padding: 15px;
     margin-bottom: 15px;
-    color: #fff; /* Color de texto blanco */
     font-size: 16px; /* Tamaño de letra más grande */
-    font-weight: bold; /* Negrita para resaltar */
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Sombra de texto */
     border-radius: 8px; /* Bordes redondeados */
-    border-left: 8px solid; /* Borde izquierdo más grueso según la rareza */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Sombra fuerte para destacar */
     transition: all 0.3s ease; /* Transiciones suaves para cambios de estilo */
+    transform: translateY(-8px) rotate(-1deg); /* Movimiento ligero al pasar el ratón */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada */
+    background-image: linear-gradient(135deg, #4b79a1, #283e51); /* Degradado de fondo más estilizado */
 }
 
 /* Efecto hover más sofisticado */
@@ -338,6 +387,7 @@ body2 {
     background-image: linear-gradient(135deg, #4b79a1, #283e51); /* Degradado de fondo más estilizado */
     cursor: pointer; /* Cambiar el cursor a pointer */
 }
+
 
 /* Personalización extrema para las rarezas */
 #awk-list li.legendario {
@@ -2419,3 +2469,189 @@ input, textarea {
     0% { transform: translateY(0); }
     100% { transform: translateY(100px); opacity: 0; }
   }
+
+  /* Estilo de los botones de divisa */
+.btn-divisa {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-divisa:hover {
+    background-color: #45a049;
+}
+/* Animación de "Métodos de Pago" */
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* Contenedor general */
+#minijuegos-container {
+    width: 300px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    background: #f5f5f5;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+/* Lista de minijuegos */
+#minijuegos-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 15px;
+}
+
+#minijuegos-list li {
+    padding: 5px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+/* Input y botón */
+#minijuego-input {
+    width: 80%;
+    padding: 8px;
+    margin-top: 10px;
+}
+
+#jugar-btn {
+    padding: 8px 15px;
+    margin-top: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#jugar-btn:hover {
+    background-color: #45a049;
+}
+
+/* Estilo para el botón con brillo y latido */
+#eco-btn {
+    padding: 10px 20px;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    animation: pulse 1.5s infinite;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.7);
+}
+
+#eco-btn:hover {
+    box-shadow: 0 0 25px rgba(76, 175, 80, 1);
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Estilo del modal */
+#eco-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 500px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    z-index: 1000;
+    text-align: center;
+}
+
+#eco-modal h2 {
+    color: #2E8B57;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Contenedor para rectángulos */
+#rectangles-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/* Estilos para rectángulos de rarezas */
+.rectangulo {
+    padding: 15px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.common { background-color: #a8e6cf; }     /* Común */
+.uncommon { background-color: #ffd3b6; }   /* Poco común */
+.rare { background-color: #ff8b94; }       /* Raro */
+.epic { background-color: #dcedc1; }       /* Épico */
+.legendary { background-color: #ffaaa5; }  /* Legendario */
+
+/* Botón de reclamar */
+#claim-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    color: #fff;
+    background-color: #32CD32;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    animation: pulse 1.5s infinite;
+}
+
+#claim-btn:disabled {
+    background-color: #888;
+    cursor: not-allowed;
+}
+
+#notification-counter {
+    position: absolute;
+    top: 0px; /* Alineado cercano al borde superior */
+    right: 0px; /* Alineado cercano al borde derecho */
+    background-color: red;
+    color: white;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(50%, -50%); /* Ajusta para asegurar que el contador quede justo en la esquina */
+}
+
+#notification-list {
+    position: absolute;
+    top: 45px; /* Ajusta para centrar debajo del ícono */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
