@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     const chatContainer = document.getElementById('chat-container');
     const chatContainer2 = document.getElementById('chat-container2');
+    const chatContainer3 = document.getElementById('chat-container3');
     const modalContainer2 = document.getElementById('modalContainer');
 
 // Definición de la imagen de la moneda
@@ -155,8 +156,10 @@ document.body.addEventListener('mouseleave', function () {
 
 // Variables para almacenar notificaciones y el contador
 let notifications = [];
+let systemNotifications = [];
 let notificationCount = 0;
-const maxVisibleNotifications = 7; // Máximo de notificaciones visibles antes de mostrar el deslizador
+let systemNotificationCount = 0;
+const maxVisibleNotifications = 10; // Máximo de notificaciones visibles antes de mostrar el deslizador
 
 // Elementos del DOM
 const notificationIcon = document.getElementById('notification-icon');
@@ -164,13 +167,35 @@ const notificationCounter = document.getElementById('notification-counter');
 const notificationList = document.getElementById('notification-list');
 const notificationsUl = document.getElementById('notifications');
 
-// Función para agregar una notificación con mensaje, fecha y hora, y botones de acción
+// Crear contenedor para Notificaciones del Sistema
+const systemNotificationList = document.createElement('div');
+systemNotificationList.setAttribute('id', 'system-notification-list');
+document.body.appendChild(systemNotificationList);
+
+const systemNotificationsUl = document.createElement('ul');
+systemNotificationsUl.setAttribute('id', 'system-notifications');
+systemNotificationList.appendChild(systemNotificationsUl);
+
+// Función para agregar notificación estándar
 function addNotification(message, timestamp = null, actions = []) {
     const formattedTimestamp = timestamp || getFormattedTimestamp();
     notifications.push({ message, timestamp: formattedTimestamp, actions, read: false });
     notificationCount++;
     updateNotificationDisplay();
 }
+
+// Función para agregar notificación del sistema
+function addSystemNotification(message, timestamp = null, actions = []) {
+    const formattedTimestamp = timestamp || getFormattedTimestamp();
+    systemNotifications.push({ message, timestamp: formattedTimestamp, actions, read: false });
+    systemNotificationCount++;
+    updateSystemNotificationDisplay();
+}
+
+notificationIcon.addEventListener('click', () => {
+    notificationList.style.display = notificationList.style.display === 'none' ? 'block' : 'none';
+});
+
 
 // Función para obtener la fecha y hora actual en formato legible
 function getFormattedTimestamp() {
@@ -180,14 +205,85 @@ function getFormattedTimestamp() {
     return `${date} ${time}`;
 }
 
-// Función para borrar todas las notificaciones
-function clearNotifications() {
-    notifications = [];
-    notificationCount = 0;
-    updateNotificationDisplay();
+// Función para actualizar notificaciones estándar
+function updateNotificationDisplay() {
+    notificationCounter.style.display = notificationCount > 0 ? 'block' : 'none';
+    notificationCounter.textContent = notificationCount;
+    notificationsUl.innerHTML = '';
+
+    if (notificationCount > 0) {
+        const markAllButton = document.createElement('button');
+        markAllButton.textContent = "Marcar todo como leído";
+        markAllButton.classList.add('mark-all-button');
+        markAllButton.addEventListener('click', markAllAsRead);
+        notificationsUl.appendChild(markAllButton);
+    }
+
+    notifications.slice(-maxVisibleNotifications).forEach((notification, index) => {
+        const listItem = createNotificationItem(notification, index, markNotificationAsRead);
+        notificationsUl.appendChild(listItem);
+    });
 }
 
-// Función para marcar una notificación como leída
+// Función para actualizar notificaciones del sistema
+function updateSystemNotificationDisplay() {
+    systemNotificationsUl.innerHTML = '';
+
+    if (systemNotificationCount > 0) {
+        const markAllSystemButton = document.createElement('button');
+        markAllSystemButton.textContent = "Marcar todo como leído";
+        markAllSystemButton.classList.add('mark-all-button');
+        markAllSystemButton.addEventListener('click', markAllSystemAsRead);
+        systemNotificationsUl.appendChild(markAllSystemButton);
+    }
+
+    systemNotifications.slice(-maxVisibleNotifications).forEach((notification, index) => {
+        const listItem = createNotificationItem(notification, index, markSystemNotificationAsRead);
+        systemNotificationsUl.appendChild(listItem);
+    });
+}
+
+// Función para crear un elemento de notificación
+function createNotificationItem(notification, index, markAsReadHandler) {
+    const listItem = document.createElement('li');
+    listItem.classList.add('notification-item');
+    
+    const messageText = document.createElement('p');
+    messageText.textContent = notification.message;
+    
+    const timestampText = document.createElement('small');
+    timestampText.classList.add('timestamp');
+    timestampText.textContent = `Fecha y hora: ${notification.timestamp}`;
+    
+    listItem.appendChild(messageText);
+    listItem.appendChild(timestampText);
+    
+    if (notification.actions && notification.actions.length > 0) {
+        const actionsContainer = document.createElement('div');
+        actionsContainer.classList.add('actions-container');
+        
+        notification.actions.forEach(action => {
+            const actionButton = document.createElement('button');
+            actionButton.textContent = action.text;
+            actionButton.classList.add('action-button');
+            actionButton.addEventListener('click', action.handler);
+            
+            actionsContainer.appendChild(actionButton);
+        });
+        
+        listItem.appendChild(actionsContainer);
+    }
+
+    const markAsReadButton = document.createElement('button');
+    markAsReadButton.textContent = "Marcar como leído";
+    markAsReadButton.classList.add('mark-as-read-button');
+    markAsReadButton.addEventListener('click', () => markAsReadHandler(index));
+    listItem.appendChild(markAsReadButton);
+
+    return listItem;
+}
+
+// Función para marcar una notificación estándar como leída
 function markNotificationAsRead(index) {
     if (!notifications[index].read) {
         notifications[index].read = true;
@@ -196,125 +292,42 @@ function markNotificationAsRead(index) {
     }
 }
 
-// Función para marcar todas las notificaciones como leídas
+// Función para marcar una notificación del sistema como leída
+function markSystemNotificationAsRead(index) {
+    if (!systemNotifications[index].read) {
+        systemNotifications[index].read = true;
+        systemNotificationCount--;
+        updateSystemNotificationDisplay();
+    }
+}
+
+// Función para marcar todas las notificaciones estándar como leídas
 function markAllAsRead() {
     notifications.forEach(notification => notification.read = true);
     notificationCount = 0;
     updateNotificationDisplay();
 }
 
-// Función para actualizar el icono y el contador
-function updateNotificationDisplay() {
-    // Actualizar el contador en el icono
-    if (notificationCount > 0) {
-        notificationCounter.style.display = 'block';
-        notificationCounter.textContent = notificationCount;
-    } else {
-        notificationCounter.style.display = 'none';
-    }
-
-    // Actualizar la lista de notificaciones
-    notificationsUl.innerHTML = ''; // Limpiar la lista actual
-
-    // Botón "Marcar como leído todo" si hay notificaciones sin leer
-    if (notificationCount > 0) {
-        const markAllButton = document.createElement('button');
-        markAllButton.textContent = "Marcar como leído todo";
-        markAllButton.classList.add('mark-all-button');
-        markAllButton.addEventListener('click', markAllAsRead);
-        notificationsUl.appendChild(markAllButton);
-    }
-
-    // Mostrar un máximo de notificaciones visibles
-    const visibleNotifications = notifications.slice(-maxVisibleNotifications);
-    visibleNotifications.forEach((notification, index) => {
-        const listItem = document.createElement('li');
-        listItem.classList.add('notification-item');
-        
-        const messageText = document.createElement('p');
-        messageText.textContent = notification.message;
-        
-        const timestampText = document.createElement('small');
-        timestampText.classList.add('timestamp');
-        timestampText.textContent = `Fecha y hora: ${notification.timestamp}`;
-        
-        listItem.appendChild(messageText);
-        listItem.appendChild(timestampText);
-        
-        // Botones de acción personalizados
-        if (notification.actions && notification.actions.length > 0) {
-            const actionsContainer = document.createElement('div');
-            actionsContainer.classList.add('actions-container');
-            
-            notification.actions.forEach(action => {
-                const actionButton = document.createElement('button');
-                actionButton.textContent = action.text;
-                actionButton.classList.add('action-button');
-                actionButton.addEventListener('click', action.handler);
-                
-                actionsContainer.appendChild(actionButton);
-            });
-            
-            listItem.appendChild(actionsContainer);
-        }
-
-        // Botón "Marcar como leído"
-        const markAsReadButton = document.createElement('button');
-        markAsReadButton.textContent = "Marcar como leído";
-        markAsReadButton.classList.add('mark-as-read-button');
-        markAsReadButton.addEventListener('click', () => markNotificationAsRead(index));
-        listItem.appendChild(markAsReadButton);
-
-        notificationsUl.appendChild(listItem);
-    });
+// Función para marcar todas las notificaciones del sistema como leídas
+function markAllSystemAsRead() {
+    systemNotifications.forEach(notification => notification.read = true);
+    systemNotificationCount = 0;
+    updateSystemNotificationDisplay();
 }
 
-// Mostrar u ocultar la lista de notificaciones al hacer clic en el icono
-notificationIcon.addEventListener('click', () => {
-    notificationList.style.display = notificationList.style.display === 'none' ? 'block' : 'none';
-});
-
-// Función para agregar una notificación con mensaje, fecha y hora, y botones de acción
-function addNotification(message, timestamp = null, actions = []) {
-    const formattedTimestamp = timestamp || getFormattedTimestamp();
-    notifications.push({ message, timestamp: formattedTimestamp, actions, read: false });
-    notificationCount++;
-    updateNotificationDisplay();
-
-    // Crear el contenedor de la notificación
-    const notification = document.createElement('div');
-    notification.style.border = '1px solid #ccc';
-    notification.style.borderRadius = '5px';
-    notification.style.padding = '15px';
-    notification.style.margin = '10px 0';
-    notification.style.backgroundColor = '#f1f1f1';
-    notification.style.display = 'flex';
-    notification.style.justifyContent = 'space-between';
-
-    // Crear el texto de la notificación
-    const messageText = document.createElement('span');
-    messageText.textContent = `${message} - ${formattedTimestamp}`;
-    notification.appendChild(messageText);
-
-    // Añadir botones de acción
-    actions.forEach(action => {
-        const actionButton = document.createElement('button');
-        actionButton.textContent = action.text;
-        actionButton.style.marginLeft = '10px';
-        actionButton.style.padding = '5px 10px';
-        actionButton.style.cursor = 'pointer';
-
-        if (typeof action.handler === 'function') {
-            actionButton.addEventListener('click', action.handler);
-        }
-
-        notification.appendChild(actionButton);
-    });
-
-    notificationsUl.appendChild(notification);
-}
-
-
+// CSS para los contenedores de notificaciones y el deslizador
+document.head.insertAdjacentHTML("beforeend", `
+<style>
+  #notifications, #system-notifications {
+      max-height: 200px;
+      overflow-y: auto;
+  }
+  .mark-all-button, .mark-as-read-button {
+      margin: 5px;
+      font-size: 0.9em;
+  }
+</style>
+`);
 
 // Función para mostrar el modal con un contenedor que contiene texto adicional
 function mostrarModalInfo() {
@@ -364,8 +377,7 @@ function mostrarModalInfo() {
     document.body.appendChild(modal);
 }
 
-
-
+addNotification("Mantenimento del 11/11/2024 - 23/11/2024", "8/11/2024 22:35");
 // Llamar a la función de ejemplo con "Más Info" que abre el modal
 addNotification("Mañana se vendrán mejoras y cosas más realistas...1894623.1300.231", "30/10/2024 20:30", [
     { text: "Más Info", handler: mostrarModalInfo }
@@ -390,21 +402,6 @@ addNotification("Sistema actualizado.", "29/10/2024 20:15", [
 ]);
 
 addNotification("Lista de notificaciones renovada", "29/10/2024 22:51");
-
-// CSS para el contenedor de notificaciones y el deslizador
-document.head.insertAdjacentHTML("beforeend", `
-<style>
-  #notifications {
-      max-height: 200px; /* Altura máxima para el deslizador */
-      overflow-y: auto;  /* Activar el deslizador */
-  }
-  .mark-all-button, .mark-as-read-button {
-      margin: 5px;
-      font-size: 0.9em;
-  }
-</style>
-`);
-
 
     
     // Función para crear botones dinámicos
@@ -1645,20 +1642,248 @@ function mostrarImagenAraña() {
     chatLog.appendChild(contenedorAraña);
 }
 
+function mostrarCargandoCircular() {
+    // Crear el contenedor del spinner
+    const spinnerContainer = document.createElement('div');
+    spinnerContainer.style.position = 'fixed';
+    spinnerContainer.style.top = '50%';
+    spinnerContainer.style.left = '50%';
+    spinnerContainer.style.transform = 'translate(-50%, -50%)';
+    spinnerContainer.style.zIndex = '1000';
+
+    // Crear el spinner circular
+    const spinner = document.createElement('div');
+    spinner.style.width = '50px';
+    spinner.style.height = '50px';
+    spinner.style.border = '6px solid #ccc'; // Color del borde del spinner
+    spinner.style.borderTop = '6px solid #4CAF50'; // Color de la parte animada
+    spinner.style.borderRadius = '50%';
+    spinner.style.animation = 'spin 1s linear infinite';
+
+    // Agregar el spinner al contenedor y el contenedor al cuerpo del documento
+    spinnerContainer.appendChild(spinner);
+    document.body.appendChild(spinnerContainer);
+
+    // Generar un tiempo aleatorio entre 1 y 10 segundos
+    const tiempoAleatorio = Math.floor(Math.random() * 10) + 1;
+
+    // Remover el spinner después del tiempo aleatorio
+    setTimeout(() => {
+        spinnerContainer.remove();
+    }, tiempoAleatorio * 1000);
+}
+
+
+
+// CSS para la animación de giro
+document.head.insertAdjacentHTML("beforeend", `
+<style>
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+</style>
+`);
+
+
+
+// Crear el botón para abrir el modal de Premium
+const premiumButton = document.createElement('button');
+premiumButton.id = 'premium-btn';
+premiumButton.textContent = 'Obten Premium';
+document.body.appendChild(premiumButton);
+
+// Crear el botón para mostrar los beneficios de Premium y la cuenta regresiva
+const premiumBenefitsButton = document.createElement('p');
+premiumBenefitsButton.id = 'premium-benefits-btn';
+premiumBenefitsButton.style.display = 'none'; // Ocultarlo inicialmente
+chatContainer2.appendChild(premiumBenefitsButton);
+
+// Crear el contenedor del modal de Premium
+const premiumModal = document.createElement('div');
+premiumModal.id = 'premium-modal';
+premiumModal.style.display = 'none'; // Ocultarlo inicialmente
+
+// Agregar título y descripción del modal
+const premiumTitle = document.createElement('h2');
+premiumTitle.textContent = 'Obten más con Premium';
+premiumModal.appendChild(premiumTitle);
+
+const premiumDescription = document.createElement('p');
+premiumDescription.innerHTML = `
+    ¡Desbloquea funciones avanzadas con Premium! Al adquirir Premium, podrás disfrutar de:
+    <ul>
+        <li>500 Dolares de Animal por hora!</li>
+        <li>Mas funciones pronto</li>
+    </ul>
+`;
+premiumModal.appendChild(premiumDescription);
+
+// Crear el botón para obtener Premium
+const obtainPremiumButton = document.createElement('button');
+obtainPremiumButton.textContent = 'Obten Premium';
+premiumModal.appendChild(obtainPremiumButton);
+
+// Crear el botón de cierre del modal
+const closeModalButton = document.createElement('button');
+closeModalButton.textContent = 'Cerrar';
+closeModalButton.id = 'close-modal-btn';
+premiumModal.appendChild(closeModalButton);
+
+// Agregar el modal al cuerpo del documento
+document.body.appendChild(premiumModal);
+
+let countdown;
+let countdownInterval;
+
+// Función para actualizar el botón de beneficios Premium con la cuenta regresiva
+function updateCountdown() {
+    let timeRemaining = countdown;
+    const hours = Math.floor(timeRemaining / 3600);
+    const minutes = Math.floor((timeRemaining % 3600) / 60);
+    const seconds = timeRemaining % 60;
+    premiumBenefitsButton.textContent = `Beneficios del Premium: +500 Dólares de Animal en ${hours}:${minutes}:${seconds}`;
+
+    // Reducir el contador en 1 segundo
+    countdown--;
+
+    // Si llega a cero, agregar 500 Dólares de Animal y reiniciar el contador
+    if (countdown < 0) {
+        dolaresAnimal += 500;
+        countdown = 5400; // Reiniciar a 1.5 horas en segundos
+        alert(`¡Has recibido 500 Dólares de Animal! Tu saldo actual es: ${dolaresAnimal}`);
+    }
+}
+
+// Evento para abrir el modal de Premium
+premiumButton.addEventListener('click', () => {
+    premiumModal.style.display = 'block'; // Mostrar el modal
+    mostrarCargandoCircular();
+});
+
+// Evento para cerrar el modal de Premium al hacer clic fuera del modal
+window.addEventListener('click', (e) => {
+    if (e.target === premiumModal) {
+        premiumModal.style.display = 'none'; // Ocultar el modal
+    }
+});
+
+// Evento para cerrar el modal al hacer clic en el botón de cierre
+closeModalButton.addEventListener('click', () => {
+    premiumModal.style.display = 'none'; // Ocultar el modal
+});
+
+
+// Evento para iniciar la transacción con animalPayTransaction
+obtainPremiumButton.addEventListener('click', () => {
+    animalPayTransaction(1000, (success) => {
+        if (success) {
+            alert("¡Felicidades! Ahora tienes Premium y puedes disfrutar de beneficios exclusivos.");
+            premiumModal.style.display = 'none'; // Cerrar el modal tras la compra
+
+            // Mostrar el botón de beneficios y empezar el temporizador de 1.5 horas
+            premiumBenefitsButton.style.display = 'inline-block';
+            countdown = 5400; // 1.5 horas en segundos
+
+            // Iniciar el intervalo para actualizar el temporizador cada segundo
+            clearInterval(countdownInterval); // Limpiar el intervalo anterior si existe
+            countdownInterval = setInterval(updateCountdown, 1000);
+        }
+    });
+});
+
+// CSS para el modal y el botón de Premium
+document.head.insertAdjacentHTML("beforeend", `
+<style>
+    #premium-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 80%;
+        max-width: 400px;
+        z-index: 1000;
+    }
+    #premium-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    #premium-modal h2 {
+        margin-top: 0;
+        text-align: center;
+        font-size: 1.8em;
+    }
+    #premium-modal p {
+        font-size: 1em;
+        margin: 20px 0;
+    }
+    #premium-modal button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        font-size: 1.2em;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    #premium-modal ul {
+        list-style: none;
+        padding: 0;
+    }
+    #premium-modal li {
+        margin: 5px 0;
+    }
+</style>
+`);
+
+
 // Crear el botón y el modal dinámicamente
 const ecoButton = document.createElement('button');
 ecoButton.id = 'eco-btn';
 ecoButton.textContent = 'Camino Ecológico';
-chatContainer.appendChild(ecoButton);
+chatContainer3.appendChild(ecoButton);
 
 // Contenedor del modal
 const ecoModal = document.createElement('div');
 ecoModal.id = 'eco-modal';
+ecoModal.style.display = 'none'; // Asegúrate de que esté oculto inicialmente
+
+
 
 // Título del modal
 const modalTitle = document.createElement('h2');
 modalTitle.textContent = 'Camino Ecológico';
 ecoModal.appendChild(modalTitle);
+
+// Botón de cierre del modal
+const closeButton = document.createElement('button');
+closeButton.id = 'close-btn';
+closeButton.textContent = 'X';
+ecoModal.appendChild(closeButton);
+
+// Mostrador de EcoCréditos
+const ecoCreditosDisplay = document.createElement('p');
+ecoCreditosDisplay.id = 'eco-creditos-display';
+ecoModal.appendChild(ecoCreditosDisplay);
+
+// Mostrador de Comandos Desbloqueados
+const comandosDesbloqueadosDisplay = document.createElement('p');
+comandosDesbloqueadosDisplay.id = 'comandos-desbloqueados-display';
+ecoModal.appendChild(comandosDesbloqueadosDisplay);
 
 // Contenedor de rectángulos
 const rectanglesContainer = document.createElement('div');
@@ -1671,94 +1896,211 @@ claimButton.id = 'claim-btn';
 claimButton.textContent = 'Reclamar 10 EcoCréditos';
 ecoModal.appendChild(claimButton);
 
+// Botones de navegación
+const prevButton2 = document.createElement('button');
+prevButton2.textContent = 'Página Anterior';
+ecoModal.appendChild(prevButton2);
+
+const nextButton2 = document.createElement('button');
+nextButton2.textContent = 'Página Siguiente';
+ecoModal.appendChild(nextButton2);
+
 // Agregar el modal al cuerpo del documento
 document.body.appendChild(ecoModal);
 
+// Variables para paginación
+const comandosPorPagina2 = 3; // Límite de comandos por página
+let paginaActual2 = 0;
+
 // Lista de comandos con rarezas y costos
 const rectangulos = [
-    { name: '/comando-comun', ecoCreditos: 10, className: 'common' },
-    { name: '/comando-poco-comun', ecoCreditos: 50, className: 'uncommon' },
-    { name: '/comando-raro', ecoCreditos: 100, className: 'rare' },
-    { name: '/comando-epico', ecoCreditos: 200, className: 'epic' },
-    { name: '/comando-legendario', ecoCreditos: 500, className: 'legendary' },
+    { name: '/lluvia-de-dolares', ecoCreditos: 10, className: 'Comun' },
+    { name: '/comprar-moneda', ecoCreditos: 30, className: 'PocoComun' },
+    { name: '/comandos-existentes', ecoCreditos: 70, className: 'Raro' },
+    { name: '/comando-epico', ecoCreditos: 100, className: 'Epico' },
+    { name: '/comando-legendario', ecoCreditos: 150, className: 'Legendario' },
+    { name: '/comando-mitico', ecoCreditos: 200, className: 'Mitico' },
 ];
 
-// Última vez que se reclamó EcoCréditos
+let ecoCreditos = 0;
 let lastClaimTime = null;
-let ecoCreditos = 0; // Variable para almacenar EcoCréditos
+const comandosDesbloqueados = {}; // Guardará los comandos desbloqueados
 
-// Función para abrir el modal
-ecoButton.addEventListener('click', () => {
-    ecoModal.style.display = 'block';
-    renderRectangles();
-});
+// Actualizar la cantidad de EcoCréditos en pantalla
+function updateEcoCreditosDisplay() {
+    ecoCreditosDisplay.textContent = `EcoCréditos: ${ecoCreditos}`;
+}
 
-// Renderizar rectángulos según la rareza y costo
+// Función para actualizar el contador de comandos desbloqueados
+function updateComandosDesbloqueadosDisplay() {
+    const totalComandos = rectangulos.length;
+    const comandosActuales = Object.keys(comandosDesbloqueados).length;
+    comandosDesbloqueadosDisplay.textContent = `${comandosActuales}/${totalComandos} Comandos Desbloqueados`;
+}
+
+// Renderizar rectángulos de comandos
 function renderRectangles() {
     rectanglesContainer.innerHTML = ''; // Limpiar contenido previo
 
-    rectangulos.forEach((rect, index) => {
-        if (rect.ecoCreditos <= ecoCreditos) {
-            // Crear un div para cada rectángulo de comando
-            const rectangle = document.createElement('div');
-            rectangle.classList.add('rectangulo', rect.className);
-            rectangle.dataset.index = index;
+    // Calcular índices de inicio y fin para la página actual
+    const availableCommands = rectangulos
+        .filter(rect => !comandosDesbloqueados[rect.name] && rect.ecoCreditos <= ecoCreditos); // Filtrar comandos disponibles
 
-            // Crear el contenido de cada rectángulo
-            const nameSpan = document.createElement('span');
-            nameSpan.textContent = rect.name;
+    const startIndex = paginaActual2 * comandosPorPagina2;
+    const endIndex = startIndex + comandosPorPagina2;
 
-            const costSpan = document.createElement('span');
-            costSpan.textContent = `Costo: ${rect.ecoCreditos} EcoCréditos`;
+    availableCommands.slice(startIndex, endIndex).forEach((rect, index) => {
+        const rectangle = document.createElement('div');
+        rectangle.classList.add('rectangulo', rect.className);
+        rectangle.dataset.index = startIndex + index; // Ajustar el índice según la página
 
-            // Agregar contenido al rectángulo y el rectángulo al contenedor
-            rectangle.appendChild(nameSpan);
-            rectangle.appendChild(costSpan);
-            rectanglesContainer.appendChild(rectangle);
+        // Mostrar el nombre y el costo
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = rect.name;
 
-            // Añadir un evento para desbloquear el comando y fragmentación
-            rectangle.addEventListener('click', () => unlockCommand(rectangle, index));
-        }
+        const costSpan = document.createElement('span');
+        costSpan.textContent = `Costo: ${rect.ecoCreditos} EcoCréditos`;
+
+        rectangle.appendChild(nameSpan);
+        rectangle.appendChild(costSpan);
+        rectanglesContainer.appendChild(rectangle);
+
+        // Evento para desbloquear comando
+        rectangle.addEventListener('click', () => unlockCommand(rectangle, startIndex + index));
     });
+
+    // Deshabilitar botones según la página actual
+    prevButton2.disabled = paginaActual2 === 0;
+    nextButton2.disabled = endIndex >= availableCommands.length;
 }
 
-// Función para desbloquear comando con animación de fragmentación
-function unlockCommand(rectangle, index) {
-    alert(`¡Has desbloqueado el comando ${rectangulos[index].name}!`);
 
-    // Animación de fragmentación (simulación)
-    rectangle.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
-    rectangle.style.transform = 'scale(0.5) rotate(15deg)';
-    rectangle.style.opacity = '0';
-
-    setTimeout(() => {
-        rectangle.remove(); // Eliminar el rectángulo después de la animación
-    }, 300);
-}
-
-// Función para reclamar EcoCréditos cada hora
-claimButton.addEventListener('click', () => {
-    const now = new Date();
-
-    if (!lastClaimTime || now - lastClaimTime >= 60 * 60 * 1000) { // 1 hora en milisegundos
-        ecoCreditos += 10; // Incrementar EcoCréditos
-        lastClaimTime = now;
-        renderRectangles(); // Volver a renderizar rectángulos actualizados
-    } else {
-        const minutesLeft = Math.ceil((60 * 60 * 1000 - (now - lastClaimTime)) / 60000);
-        alert(`Debes esperar ${minutesLeft} minutos más para reclamar.`);
+// Navegar a la página anterior
+prevButton2.addEventListener('click', () => {
+    if (paginaActual2 > 0) {
+        paginaActual2--;
+        renderRectangles();
     }
 });
 
-// Cerrar el modal al hacer clic fuera de él
+// Navegar a la página siguiente
+nextButton2.addEventListener('click', () => {
+    if ((paginaActual2 + 1) * comandosPorPagina2 < rectangulos.length) {
+        paginaActual2++;
+        renderRectangles();
+    }
+});
+
+function unlockCommand(rectangle, index) {
+    const command = rectangulos[index];
+    if (ecoCreditos >= command.ecoCreditos) {
+        ecoCreditos -= command.ecoCreditos; // Descontar EcoCréditos
+        updateEcoCreditosDisplay();
+        comandosDesbloqueados[command.name] = true; // Marcar como desbloqueado
+
+        // Mostrar animación de texto giratorio
+        showUnlockAnimation(command.name, command.className, command.ecoCreditos);
+
+        // Actualizar el display de comandos desbloqueados
+        updateComandosDesbloqueadosDisplay();
+
+        // Eliminar rectángulo tras la animación
+        rectangle.remove(); // Elimina el rectángulo después de desbloquear
+        mostrarMonedas();
+    } else {
+        alert("No tienes suficientes EcoCréditos para desbloquear este comando.");
+    }
+}
+
+// Reclamar EcoCréditos
+claimButton.addEventListener('click', () => {
+    const now = new Date();
+    if (!lastClaimTime || now - lastClaimTime >= 60 * 60 * 1000) {
+        ecoCreditos += 10;
+        lastClaimTime = now;
+        updateEcoCreditosDisplay();
+        renderRectangles();
+        mostrarMonedas();
+    } else {
+        const minutesLeft = Math.ceil((60 * 60 * 1000 - (now - lastClaimTime)) / 60000);
+        claimButton.textContent = `Debes esperar ${minutesLeft} minutos más para reclamar.`;
+    }
+});
+
+// Mostrar animación de desbloqueo
+function showUnlockAnimation(name, rarity, cost) {
+    const modalContent = document.createElement('div');
+    modalContent.classList.add('unlock-animation');
+
+    // Texto giratorio
+    const rotatingText = document.createElement('div');
+    rotatingText.classList.add('rotating-text');
+    rotatingText.textContent = name;
+    modalContent.appendChild(rotatingText);
+
+    // Información de comando
+    const infoDiv = document.createElement('div');
+    infoDiv.classList.add('command-info');
+    infoDiv.innerHTML = `
+        <p>Nombre: ${name}</p>
+        <p>Rareza: ${rarity}</p>
+        <p>Costo: ${cost} EcoCréditos</p>
+    `;
+    modalContent.appendChild(infoDiv);
+
+    ecoModal.appendChild(modalContent);
+
+    setTimeout(() => {
+        modalContent.remove();
+    }, 3000); // Remover después de 3 segundos
+}
+
+// Cerrar modal al hacer clic fuera de él
 window.addEventListener('click', (e) => {
     if (e.target === ecoModal) {
         ecoModal.style.display = 'none';
     }
 });
 
+// Mostrar el modal al hacer clic en el botón de Camino Ecológico
+ecoButton.addEventListener('click', () => {
+    ecoModal.style.display = 'block'; // Mostrar el modal
+    updateEcoCreditosDisplay(); // Actualizar la visualización de EcoCréditos al abrir el modal
+    updateComandosDesbloqueadosDisplay(); // Actualizar la visualización de comandos desbloqueados al abrir el modal
+    mostrarCargandoCircular();
+});
 
+// Cerrar modal al hacer clic en el botón de cierre
+closeButton.addEventListener('click', () => {
+    ecoModal.style.display = 'none'; // Ocultar el modal
+});
 
+ 
+// CSS para animación de texto giratorio y estilo del modal
+document.head.insertAdjacentHTML("beforeend", `
+<style>
+    .rotating-text {
+        font-size: 1.5em;
+        animation: spin 2s infinite linear;
+        text-align: center;
+        margin-top: 10px;
+    }
+    .command-info p {
+        margin: 5px 0;
+        text-align: center;
+    }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+        /* Estilo para el contenedor de comandos desbloqueados */
+    #comandos-desbloqueados-display {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+</style>
+`);
 
 
 
@@ -1826,8 +2168,6 @@ const commands = {
    'recompensa-diaria/semanal': handleRecompensaCommand,
    'patch-notes': ejecutarPatchNotes,
    'tienda': abrirTiendaModal,
-   'proximo-lanzamiento': crearCuentaRegresiva,
-   'ultimo-lanzamiento': crearCuentaHaciaAdelante,
    'notificar-nuevopost': abrirModalNotificarPost,
    'enviar-post': abrirModalPosts,
    'ver-documentacion': setupInstalacionDocumentacion,
@@ -1851,15 +2191,86 @@ const commands = {
     'intercambiar-ectoplasma': handleConvertirEctoplasmaADolares,
     'caceria-de-dulces': iniciarCaceriaDeDulces,
     'minijuegos': handleMinijuegos,
+    'crear-comando': promote,
 };
 
 
 
+function promote() {
+    // Crear botón para sugerir un nuevo comando
+    const suggestButton = document.createElement('button');
+    suggestButton.textContent = 'Sugerir Comando';
+    chatLog.appendChild(suggestButton);
 
+    // Contenedor del input y mensajes
+    const suggestModal = document.createElement('div');
+    suggestModal.id = 'suggest-modal';
+    suggestModal.style.display = 'none'; // Ocultar inicialmente
+    chatLog.appendChild(suggestModal);
 
+    // Agregar input para el comando sugerido
+    const commandInput = document.createElement('input');
+    commandInput.type = 'text';
+    commandInput.placeholder = 'Ingresa el comando que te gustaría agregar';
+    suggestModal.appendChild(commandInput);
 
+    // Botón de envío para el comando sugerido
+    const submitButton = document.createElement('button');
+    submitButton.textContent = 'Enviar Sugerencia';
+    suggestModal.appendChild(submitButton);
 
+    // Mensaje de tipo (typeMessage) para mostrar mensajes en el modal
+    const messageElement = document.createElement('p');
+    suggestModal.appendChild(messageElement);
 
+    // Evento para el botón de sugerir comando
+    suggestButton.addEventListener('click', () => {
+        suggestModal.style.display = 'block'; // Mostrar el modal
+        commandInput.value = ''; // Limpiar el input
+        messageElement.textContent = ''; // Limpiar mensaje previo
+    });
+
+    // Evento para enviar la sugerencia de comando
+    submitButton.addEventListener('click', () => {
+        const suggestedCommand = commandInput.value.trim();
+        if (!suggestedCommand) {
+            alert('Por favor, ingresa un comando para sugerir.');
+            return;
+        }
+
+        // Mostrar mensaje de redireccionamiento usando tu función typeMessage
+        typeMessage('Redireccionando a WhatsApp...', messageElement);
+
+        // Redirigir a WhatsApp después de 5 segundos
+        setTimeout(() => {
+            window.open('https://wa.me/598099685536?text=Hola! Me gustaría sugerir el comando: ' + encodeURIComponent(suggestedCommand), '_blank');
+        }, 5000);
+
+        // Preguntar si quiere promocionar
+        setTimeout(() => {
+            // Crear el botón para promocionar
+            const promoteButton = document.createElement('button');
+            promoteButton.textContent = 'Promocionarlo';
+            suggestModal.appendChild(promoteButton);
+
+            // Mostrar mensaje de promoción usando typeMessage
+            typeMessage('¿Quieres promocionarlo?', messageElement);
+
+            // Evento para promocionar y redirigir a PayPal
+            promoteButton.addEventListener('click', () => {
+                window.location.href = 'https://paypal.me/JBarboza111?country.x=UY&locale.x=es_XC'; // URL de PayPal
+                typeMessage('Después de realizar la compra por favor, envía mensaje a +598 099 685 536 en cuanto la compra haya sido completada así en alrededor de 24 horas o menos tu comando estará siendo promocionado', messageElement);
+            });
+        }, 7000); // Mostrar el botón después de 7 segundos
+    });
+
+    // Cerrar modal al hacer clic fuera de él
+    window.addEventListener('click', (e) => {
+        if (e.target === suggestModal) {
+            suggestModal.style.display = 'none';
+        }
+    });
+}
 // Lista de minijuegos disponibles
 const minijuegos = [
     { name: 'Adivina el Número', action: () => alert("Iniciando 'Adivina el Número'...") },
@@ -1983,7 +2394,8 @@ function animalPayTransaction(costo, callback) {
             saldoDulces: { nombre: 'Dulces', saldo: saldoDulces },
             saldoCreditosFobia: { nombre: 'Créditos de Fobia', saldo: saldoCreditosFobia },
             creditosDeAsesino: { nombre: 'Créditos de Asesino', saldo: creditosDeAsesino },
-            saldoEctoplasma: { nombre: 'Ectoplasma', saldo: saldoEctoplasma }
+            saldoEctoplasma: { nombre: 'Ectoplasma', saldo: saldoEctoplasma },
+            ecoCreditos: { nombre: 'EcoCreditos', saldo: ecoCreditos }
         };
 
         // Agregar opciones al dropdown
@@ -2036,15 +2448,27 @@ function animalPayTransaction(costo, callback) {
 
 
 function showSuccessAnimation(modal, metodoPago, cantidad, callback) {
-    // Limpiar contenido del modal
+    // Verificar si el modal y el contenido del modal existen
+    if (!modal) {
+        console.error("El elemento modal no existe.");
+        return;
+    }
+
     const modalContent = modal.querySelector('.modal-content');
+    
+    if (!modalContent) {
+        console.error("El elemento modal no contiene un elemento .modal-content.");
+        return;
+    }
+
+    // Limpiar contenido del modal
     modalContent.innerHTML = '';
 
-    // Crear contenedor de éxito
+    // Contenedor de éxito
     const successContainer = document.createElement('div');
     successContainer.classList.add('success-container');
 
-    // Crear círculo de animación
+    // Círculo de animación
     const circleContainer = document.createElement('div');
     circleContainer.classList.add('circle-container');
 
@@ -2055,7 +2479,7 @@ function showSuccessAnimation(modal, metodoPago, cantidad, callback) {
     checkIcon.innerHTML = '&#10004;'; // Icono ✔️
     checkIcon.classList.add('check-icon');
 
-    // Añadir círculo y icono de verificación
+    // Añadir círculo e icono de verificación
     circleContainer.appendChild(circle);
     circleContainer.appendChild(checkIcon);
     successContainer.appendChild(circleContainer);
@@ -2067,7 +2491,7 @@ function showSuccessAnimation(modal, metodoPago, cantidad, callback) {
     successMessage.classList.add('success-message');
     modalContent.appendChild(successMessage);
 
-    // Botón para cerrar modal
+    // Botón para cerrar el modal
     const closeButton = document.createElement('button');
     closeButton.textContent = 'Cerrar';
     closeButton.classList.add('btn-close');
@@ -2077,30 +2501,101 @@ function showSuccessAnimation(modal, metodoPago, cantidad, callback) {
         modal.style.display = 'none';
     });
 
+    // Activar animación del círculo y mostrar el icono de verificación
     circle.classList.add('fill-circle-animation');
-
     setTimeout(() => {
         checkIcon.classList.add('show-check');
+        successMessage.classList.add('fade-in');
     }, 1500);
 
+    // Ejecutar el callback después de mostrar la animación
     setTimeout(() => {
         callback(true);
     }, 3000);
 }
 
-// Clase CSS sugerida para `btn-finalizar-compra`
-// .btn-finalizar-compra {
-//     padding: 10px 20px;
-//     background-color: #4CAF50;
-//     color: white;
-//     border: none;
-//     border-radius: 20px;
-//     cursor: pointer;
-//     font-size: 16px;
-// }
-// .btn-finalizar-compra:hover {
-//     background-color: #45a049;
-// }
+
+// CSS sugerido para mejorar la animación
+document.head.insertAdjacentHTML("beforeend", `
+<style>
+    .success-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .circle-container {
+        position: relative;
+        display: inline-block;
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+        animation: popIn 0.5s ease-out;
+    }
+    .circle {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 8px solid #4CAF50;
+        position: absolute;
+        top: 0;
+        left: 0;
+        animation: circlePulse 2s infinite ease-in-out;
+    }
+    .check-icon {
+        color: #4CAF50;
+        font-size: 2em;
+        opacity: 0;
+        transform: scale(0.5);
+        transition: opacity 0.5s, transform 0.5s;
+    }
+    .show-check {
+        opacity: 1;
+        transform: scale(1);
+        animation: bounce 0.5s ease-out;
+    }
+    .success-message {
+        margin-top: 15px;
+        font-size: 1.1em;
+        color: #333;
+        opacity: 0;
+        transition: opacity 1s ease-in;
+    }
+    .fade-in {
+        opacity: 1;
+    }
+    .btn-close {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 15px;
+        animation: fadeIn 0.5s ease-out 1s;
+    }
+    .btn-close:hover {
+        background-color: #45a049;
+    }
+
+    /* Animaciones */
+    @keyframes popIn {
+        0% { transform: scale(0); }
+        100% { transform: scale(1); }
+    }
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes circlePulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+</style>
+`);
 
 
 
@@ -2665,6 +3160,7 @@ const monedas = [
     { nombre: 'Dolar Animal', icono: 'https://i.pinimg.com/564x/5e/cd/84/5ecd847af96e20ebe2c6d89cae85a2e5.jpg', cantidad: dolaresAnimal },
     { nombre: 'Creditos de Asesino', icono: 'https://i.pinimg.com/736x/b3/73/cb/b373cbe11610c9bdb6fa39b8fbf5f861.jpg', cantidad: creditosDeAsesino },
     { nombre: 'Creditos de Fobias', icono: 'https://i.pinimg.com/736x/0e/75/27/0e752798119bf1e794ad6326c28b9f29.jpg', cantidad: saldoCreditosFobia }, 
+    { nombre: 'EcoCreditos', icono: 'https://i.pinimg.com/736x/2b/a2/16/2ba216e6a3155a2e4472fd46958012a8.jpg', cantidad: ecoCreditos }, 
 ];
 
 
@@ -2677,6 +3173,7 @@ function actualizarSaldosMonedas() {
     monedas[4].cantidad = dolaresAnimal;    // Actualizar el saldo de Dólares de Animal
     monedas[5].cantidad = creditosDeAsesino;    // Actualizar el saldo de Creditos de Asesino
     monedas[6].cantidad = saldoCreditosFobia;    // Actualizar el saldo de Creditos de Fobias
+    monedas[7].cantidad = ecoCreditos;    // Actualizar el saldo de Creditos de Fobias
 }
 
 
@@ -2862,9 +3359,9 @@ function realizarPagoTratamiento(enfermedad) {
 
 
 function lluviaDeDolaresAnimal() {
-    const totalBurbujas = 20; // Número de burbujas que aparecerán
+    const totalBurbujas = 15; // Número de burbujas que aparecerán
     const burbujas = [];
-    let totalGanado = 0; // Total de Dólares de Animal ganados
+    let totalGanado = 1000; // Total de Dólares de Animal ganados
     const contenedorBurbujas = document.createElement('div');
     contenedorBurbujas.classList.add('contenedor-burbujas');
 
@@ -3028,7 +3525,7 @@ const comandosConRarezas = [
     { nombre: "/proximo-comando", rareza: "Raro" },
     { nombre: "/verificacion-final", rareza: "Raro" },
     { nombre: "/pase-de-temporada", rareza: "Raro" },
-    { nombre: "/comando-existente", rareza: "Raro" },
+    { nombre: "/comandos-existentes", rareza: "Raro" },
     { nombre: "/resumir-texto", rareza: "Común" },
     { nombre: "/gatitos", rareza: "Raro" },
     { nombre: "/reproductor-de-musica", rareza: "Raro" },
@@ -3071,6 +3568,8 @@ const comandosConRarezas = [
     { nombre: "/intercambiar-calabazas", rareza: "Épico" },
     { nombre: "/intercambiar-ectoplasma", rareza: "Épico" },
     { nombre: "/caceria-de-dulces", rareza: "Legendario" },
+    { nombre: "/minijuegos", rareza: "Común" },
+    { nombre: "/crear-comandos", rareza: "Poco Común" },
 ];
 
 
@@ -3081,7 +3580,7 @@ const coloresRarezas = {
     'Raro': '#9C27B0',          // Púrpura
     'Épico': '#FF9800',         // Naranja
     'Legendario': '#FFC107',    // Amarillo
-    'Mítico': 'red'         // Rosa
+    'Mítico': 'red'         // Rojo
 };
 
 // Función para contar cuántos comandos hay por rareza
@@ -3885,11 +4384,15 @@ function abrirTiendaModal() {
         { nombre: 'Patches', costo: 20, comando: 'patch-notes' }  // Cambié "command" a "comando"
     ]);
 
+    const seccionComprasConDineroReal = crearSeccionTienda('Dinero Real', [
+        { nombre: 'Compra de Prueba', costo: 10, comando: 'comando-comun' }  // Cambié "command" a "comando"
+    ]);
+
     // Añadir secciones al modal
     modalContent.appendChild(title);
     modalContent.appendChild(seccionProductos);
     modalContent.appendChild(seccionAccesoAnticipado);
-
+    modalContent.appendChild(seccionComprasConDineroReal);
     // Botón de cierre del modal
     const closeButton = document.createElement('button');
     closeButton.textContent = 'Cerrar';
@@ -4162,7 +4665,9 @@ const listaComandos2 = [
     'intercambiar-dulces',
     'intercambiar-calabazas',
     'intercambiar-ectoplasma',
-    'caceria-de-dulces'
+    'caceria-de-dulces',
+    'minijuegos',
+    'crear-comandos',
 ];
 
 
@@ -5390,10 +5895,10 @@ function mostrarModalNoDisponible() {
     modalContent.classList.add('modal-content');
 
     const title = document.createElement('h2');
-    title.textContent = 'Ups, Animal AI no está disponible en este momento.';
+    title.textContent = 'Animal AI esta indisponible, vuelva a intentarlo mas tarde.';
 
     const razon = document.createElement('p');
-    razon.textContent = 'Razón: Mantenimiento: 26/10/2024 17:10 - 26/10/2024 18:00.'; 
+    razon.textContent = 'Razón: Mantenimiento Inesperado 11/11/2024 - 23/11/2024.'; 
     const closeButton = document.createElement('button');
     closeButton.textContent = "🔄"; // Emoji de reinicio
 
@@ -6888,6 +7393,7 @@ function handleRetirarSaldoCommand(monto) {
 
 // Función para manejar el comando de saldo
 function handleSaldoCommand() {
+   
     const chatLog = document.getElementById('chat-log');
     
     typeMessage(`Tu saldo es $${dolaresAnimal.toFixed(2)} Dólares de Animal.`);
@@ -7281,57 +7787,27 @@ function validateCardLogin(cardNumber) {
             }
         }
     
-        // Función que se ejecuta al ejecutar un comando
-        function ejecutarComando(comando) {
-            const container = document.getElementById('container'); 
-            const comandoSinSlash = comando.startsWith("/") ? comando.substring(1) : comando;
-            const usuario = 'usuarioEjemplo'; // Supongamos que identificamos al usuario así por ahora
+
+
+
+// Función para ejecutar un comando desbloqueado
+function ejecutarComando(comando) {
+    const container = document.getElementById('container'); 
+    const comandoSinSlash = comando.startsWith("/") ? comando.substring(1) : comando;
     
-            // Actualizamos la última acción a la hora actual
-            ultimaAccion = Date.now();
-            clearTimeout(timeoutId); // Limpiamos cualquier temporizador anterior
-    
-            // Programamos el cambio de estado después de 30 segundos
-            timeoutId = setTimeout(() => {
-                const fecha = new Date(ultimaAccion);
-                estadoDiv.innerText = `Últ. vez: ${fecha.toLocaleDateString()} ${fecha.toLocaleTimeString()}`;
-            }, 3000);
-    
-            // Actualizamos el estado del usuario
-            actualizarEstadoUsuario();
-    
-            if (commands[comandoSinSlash]) {
-                // Verificamos si el comando es premium
-                if (comandosPremium.includes(comandoSinSlash)) {
-                    // Verificamos si el usuario tiene una suscripción activa
-                    if (verificarSuscripcion(usuario)) {
-                        // El usuario tiene suscripción activa, ejecutamos el comando premium
-                        commands[comandoSinSlash](container); 
-                        typeMessage(container, `Comando premium '${comandoSinSlash}' ejecutado para el usuario ${usuario}.`);
-                        actualizarProgresoEvento(comandoSinSlash, container); // Actualizamos el progreso del evento
-                    } else {
-                        // Si no tiene suscripción, pedimos el código de suscripción
-                        const codigo = prompt("Este comando requiere una suscripción premium. Ingresa el código que recibiste en WhatsApp. En el caso de que no tengas algún código pídelo por 099 685 536, tendrás que pagar el precio indicado por ese número, se le dará un código y tendrás que ponerlo aquí:");
-            
-                        if (activarSuscripcion(usuario, codigo)) {
-                            // Si el código es correcto y activamos la suscripción, ejecutamos el comando
-                            commands[comandoSinSlash](container);
-                            typeMessage(container, `Suscripción activada. Comando '${comandoSinSlash}' ejecutado.`);
-                            actualizarProgresoEvento(comandoSinSlash, container); // Actualizamos el progreso del evento
-                        } else {
-                            typeMessage(container, "No se ha podido activar la suscripción premium.");
-                            typeMessage(container, `El comando "/${comandoSinSlash}" requiere una suscripción premium válida.`);
-                        }
-                    }
-                } else {
-                    // Si el comando no es premium, simplemente lo ejecutamos
-                    commands[comandoSinSlash](container);
-                }
-            } else {
-                typeMessage(`Animal AI no reconocio este comando: "/${comandoSinSlash}"`);
-            }
-        }
-    
+    // Verificar si el comando está desbloqueado en el Camino Ecológico
+    if (!comandosDesbloqueados[comando]) {
+        typeMessage(`El comando "${comando}" no está desbloqueado en el Camino Ecológico. Desbloquéalo antes de ejecutarlo.`);
+        return; // Terminar la ejecución si el comando no está desbloqueado
+    }
+
+    if (commands[comandoSinSlash]) {
+        commands[comandoSinSlash](container);
+    } else {
+        typeMessage(`Animal AI no reconoció este comando: "/${comandoSinSlash}".`);
+    }
+}
+
         // Función para manejar el inicio de un comando
         function iniciarComando() {
             estadoDiv.innerText = "Escribiendo..."; // Cambiar el estado a "Escribiendo..."
@@ -7384,9 +7860,6 @@ function validateCardLogin(cardNumber) {
             return;
         }
     
-        // Cargar el sonido local
-        const typingSound = new Audio('https://screenapp.io/app/#/shared/ciRuLSxXx2?embed=true'); // Ruta al archivo de sonido
-        typingSound.volume = options.soundVolume || 0.5; // Control de volumen
     
         // Asegúrate de que el mensaje no esté vacío
         if (message) {
@@ -7409,11 +7882,7 @@ function validateCardLogin(cardNumber) {
     
                     index++;
     
-                    // Reproducir el sonido si está habilitado
-                    typingSound.currentTime = 0; // Reiniciar sonido desde el inicio
-                    typingSound.play().catch(error => {
-                        console.warn("No se pudo reproducir el sonido:", error);
-                    });
+                    
     
                     // Usar una velocidad de tipado variable para dar un efecto más natural
                     const typingSpeed = options.typingSpeed || 50;
@@ -7825,216 +8294,35 @@ document.head.appendChild(style);
 
     
     
-    // Lista de comandos que se instalarán
-    const listaComandos = [
-        'saldo',
-        'localizador',
-        'desactivar-localizador',
-        'salvador-de-animales',
-        'fobias',
-        'eventos',
-        'reto-de-pistas',
-        'inventario-de-tarjetas',
-        'actualizaciones',
-        'crear-cuenta-o-iniciar-sesion',
-        'servidor',
-        'desastres-naturales',
-        'last-update',
-        'resaltar-texto-infoanimalai',
-        'paquete-de-cartas',
-        'caza-megalodon',
-        'refugio-animales',
-        'mejorar-refugio',
-        'lineas',
-        'PPOT',
-        'limpieza',
-        'update',
-        'proximo-comando',
-        'verificacion-final',
-        'pase-de-temporada',
-        'comandos-existentes',
-        'reproductor-de-musica',
-        'animal-random',
-        'mantenimiento',
-        'proximos-comandos',
-        'intercambiador-de-moneda',
-        'sombra-asesina',
-        'configuracion',
-        'acceder',
-        'unirse',
-        'usuarios',
-        'boss-battle',
-        'comandos-recomendados',
-        'generar-imagenes',
-        'explora-biomas',
-        't-rex-friend',
-        'definiciones',
-        'frases-motivacionales',
-        'quiz-animal',
-        'leyenda-mitica',
-        'recompensa-diaria/semanal',
-        'patch-notes',
-        'tienda',
-        'proximo-lanzamiento',
-        'ultimo-lanzamiento',
-        'notificar-nuevopost',
-        'enviar-post',
-        'ver-documentacion',
-        'texto-advertencia',
-        'enviar-peticion',
-        'seleccionar-modelo',
-'lluvia-de-dolares',
-'chequeo-medico',
-'ADN',
-'intercambiar-adn',
-'ataque-fantasma',
-'animal-ai-research',
-'notificaciones',
-'Cria-Calabazas',
-'Ectoplasma',
-    'Calabazas',
-    'Dulces',
-    'intercambiar-dulces',
-    'intercambiar-calabazas',
-    'intercambiar-ectoplasma',
-    'caceria-de-dulces'
-    ];
-    
+// Función para iniciar la revisión del JSON y mostrar la actualización disponible
+function iniciarInstalacion() {
+    fetch('https://oceanandwild.github.io/NVA-Animal-AI/version.txt')
+        .then(response => response.json())
+        .then(data => {
+            // Verificar si hay una nueva actualización disponible
+            if (data.nuevaActualizacionDisponible) {
+                // Crear el mensaje de actualización
+                const mensaje = document.createElement('div');
+                mensaje.innerHTML = "¡Nueva Actualización Disponible!";
+                chatLog.appendChild(mensaje);
 
+                // Crear el botón para redirigir a la página de actualización
+                const botonActualizacion = document.createElement('button');
+                botonActualizacion.innerText = "Ver Actualización";
+                chatLog.appendChild(botonActualizacion);
 
-
-    const listaScripts = [
-        'animalSaver.js', 
-        'animalHandler.js', 
-        'animalHelper.js',
-        'phobiaStart.js', 
-        'phobiaHandler.js', 
-        'phobiaUtils.js',
-        'megalodonHunt.js', 
-        'megalodonHandler.js', 
-        'megalodonUI.js',
-        'animalShelterSetup.js', 
-        'animalShelterHandler.js', 
-        'animalShelterUI.js',
-        'lineCommandSetup.js', 
-        'lineCommandHandler.js', 
-        'lineCommandUI.js',
-        'PPOTHandler.js', 
-        'PPOTSimulator.js', 
-        'PPOTUI.js',
-        'configuration.js'
-    ];
-
-    // Variables globales
-let progressBar;
-let currentSize = 0;
-let sizePerElement = 75; // Cada comando o script añade 75 MB
-let cantidadTotalElementos = listaComandos.length + listaScripts.length; // Cantidad total de comandos y scripts
-
-// Tamaño total dinámico calculado a partir de la cantidad de elementos y el tamaño por elemento
-let totalSize = sizePerElement * cantidadTotalElementos; // Tamaño total en MB
-
-
-    // Función para iniciar la instalación de comandos y scripts
-    function iniciarInstalacion() {
-        // Ocultar el formulario al iniciar la instalación, pero solo si existe en el DOM
-        const blogForm = document.getElementById('blogForm');
-        if (blogForm) {
-            blogForm.style.display = 'none';
-        }
-    
-        // Limpiar el chat para mostrar solo la instalación
-        chatLog.innerHTML = "";
-    
-        // Mostrar el mensaje de instalación
-        typeMessage("Instalando Animal AI...");
-    
-        // Crear la barra de progreso
-        progressBar = document.createElement('progress'); // Asegúrate de que esto esté antes de usar progressBar
-        progressBar.setAttribute('max', listaComandos.length + listaScripts.length); // Total de comandos y scripts
-        progressBar.setAttribute('value', 0); // Comenzamos en 0
-        chatLog.appendChild(progressBar);
-    
-        // Crear el texto que indica el progreso de instalación
-        const textoInstalacion = document.createElement('div');
-        chatLog.appendChild(textoInstalacion);
-    
-        // Crear el texto que muestra el tamaño de los archivos
-        const textoTamano = document.createElement('div');
-        chatLog.appendChild(textoTamano);
-    
-        // Crear el botón de cancelar
-        const botonCancelar = document.createElement('button');
-        botonCancelar.innerText = "Cancelar instalación";
-        chatLog.appendChild(botonCancelar);
-    
-        // Actualizar el tamaño inicial en GB
-        textoTamano.innerText = `${(currentSize / 1000).toFixed(2)} GB / ${(totalSize / 1000).toFixed(2)} GB`;
-    
-        let indexComando = 0;
-    
-        function instalarComando() {
-            if (indexComando < listaComandos.length) {
-                // Simular la instalación del comando
-                currentSize += sizePerElement;
-                textoInstalacion.innerText = `Instalando ${listaComandos[indexComando]}...`;
-                textoTamano.innerText = `${(currentSize / 1000).toFixed(2)} GB / ${(totalSize / 1000).toFixed(2)} GB`;
-                progressBar.value = indexComando + 1;
-                indexComando++;
-    
-                // Instalar el siguiente comando después de un pequeño delay (500 ms)
-                setTimeout(instalarComando, 500); // Puedes ajustar el tiempo aquí
-            } else {
-                // Completada la instalación de comandos
-                textoInstalacion.innerText = "Instalación de comandos completada. Iniciando instalación de scripts...";
-                progressBar.value = listaComandos.length; // Completar la barra de comandos
-    
-                // Iniciar instalación de scripts después de 1 segundo
-                setTimeout(iniciarInstalacionScripts, 1000);
+                // Evento para redirigir al hacer clic
+                botonActualizacion.addEventListener('click', () => {
+                    window.location.href = data.urlActualizacion; // Redirige a la URL especificada en el JSON
+                });
             }
-        }
-    
-        // Ejecutar la instalación rápida de comandos
-        instalarComando();
-    
-        // Evento para el botón de cancelar
-        botonCancelar.addEventListener("click", () => {
-            cerrarAppConMensaje("Instalación cancelada.");
+        })
+        .catch(error => {
+            console.error("Error al obtener el archivo JSON:", error);
         });
-    
-        // Función para iniciar la instalación de scripts
-        function iniciarInstalacionScripts() {
-            const textoInstalacionScripts = document.createElement('div');
-            chatLog.appendChild(textoInstalacionScripts);
-            
-            let indexScript = 0;
-    
-            function instalarScript() {
-                if (indexScript < listaScripts.length) {
-                    // Simular instalación del script
-                    currentSize += sizePerElement;
-                    textoInstalacionScripts.innerText = `Instalando Scripts: ${listaScripts[indexScript]}...`;
-                    textoTamano.innerText = `${(currentSize / 1000).toFixed(2)} GB / ${(totalSize / 1000).toFixed(2)} GB`;
-                    progressBar.value = listaComandos.length + indexScript + 1; // Actualizar barra de progreso
-                    indexScript++;
-    
-                    // Instalar el siguiente script después de un pequeño delay (500 ms)
-                    setTimeout(instalarScript, 500); // Puedes ajustar el tiempo aquí
-                } else {
-                    // Instalación completada
-                    textoInstalacionScripts.innerText = "Instalación de scripts completada. ¡Animal AI está lista para usarse!";
-                    setTimeout(() => {
-                        handleSeleccionarModeloIA();
-                    }, 5000); // Esperar 5 segundos antes de seleccionar el modelo
-                }
-            }
-    
-            // Ejecutar la instalación de scripts
-            instalarScript();
-        }
-    }
+}
 
-    
+// Llamada a la función
 iniciarInstalacion();
 
 
@@ -8667,6 +8955,8 @@ function handleUltraFuncionalidad() {
         { nombre: "/intercambiar-calabazas", estado: "funcionalverde" },
         { nombre: "/intercambiar-ectoplasma", estado: "funcionalverde" },
         { nombre: "/caceria-de-dulces", estado: "juego" },
+        { nombre: "/minijuegos", estado: "juego" },
+        { nombre: "/crear-comandos", estado: "de-pago" },
     ];
     
     
