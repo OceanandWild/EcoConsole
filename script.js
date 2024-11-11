@@ -2104,6 +2104,36 @@ document.head.insertAdjacentHTML("beforeend", `
 
 
 
+// Función para actualizar la barra de progreso y las misiones
+function startMissionTimer(duration, progressBarId, rewardAmount) {
+    const progressBar = document.getElementById(progressBarId);
+    let timeLeft = duration;
+    const interval = setInterval(() => {
+        if (timeLeft <= 0) {
+            clearInterval(interval);
+            progressBar.style.width = '100%'; // Completa la barra
+            addEcoCreditos(rewardAmount); // Añade EcoCréditos al saldo
+            alert(`¡Misión completada! Has ganado ${rewardAmount} EcoCréditos.`);
+        } else {
+            timeLeft -= 1;
+            const progressPercentage = ((duration - timeLeft) / duration) * 100;
+            progressBar.style.width = `${progressPercentage}%`; // Actualiza la barra
+        }
+    }, 1000); // Actualiza cada segundo
+}
+
+// Función para añadir EcoCréditos al saldo
+function addEcoCreditos(amount) {
+    ecoCreditos += amount;
+    console.log(`EcoCréditos: ${ecoCreditos}`); // Muestra el saldo actualizado en la consola
+}
+
+// Inicia los temporizadores de las misiones
+startMissionTimer(300, 'progress-bar-5', 10); // 5 minutos (300 segundos)
+startMissionTimer(900, 'progress-bar-15', 30); // 15 minutos (900 segundos)
+startMissionTimer(1800, 'progress-bar-30', 50); // 30 minutos (1800 segundos)
+
+
 const commands = {
     'saldo': handleSaldoCommand,
     'localizador': handleEventoActivo,
@@ -5871,7 +5901,7 @@ function cerrarModal(modal) {
 }
 
 // Variable de estado para comprobar la disponibilidad de Animal AI
-let animalAIDisponible = true; // Cambia esto a true o false según la lógica de tu aplicación
+let animalAIDisponible = false; // Cambia esto a true o false según la lógica de tu aplicación
 
 
 

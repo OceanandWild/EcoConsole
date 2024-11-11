@@ -196,6 +196,158 @@ body2 {
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Transición suave */
 }
 
+/* Estilo específico para el contenedor de misiones con un fondo oceánico */
+#missions-list-container {
+    flex: 1;
+    margin: 0 10px;
+    min-width: 300px;
+    padding: 20px;
+    background-color: #e0f7fa; /* Un color azul claro para el fondo */
+    background-image: url('https://i.pinimg.com/736x/b5/43/52/b5435222e5564268e588b31485e7217e.jpg'); /* Reemplaza con la ruta de tu imagen */
+    background-size: cover; /* Cubre todo el contenedor */
+    background-position: center; /* Centra la imagen */
+    border-radius: 12px;
+    border: 2px solid #00aaff; /* Borde azul para un tema oceánico */
+    box-shadow: 0 0 15px rgba(0, 170, 255, 0.3); /* Sombra azul suave */
+    color: #003366; /* Color de texto oscuro para contraste */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* Estilo para el título */
+#missions-list-container h1 {
+    color: #0077b6; /* Azul vibrante para el título */
+    font-family: 'Verdana', sans-serif;
+    text-shadow: 1px 1px 2px rgba(0, 51, 102, 0.2); /* Sombra ligera para el título */
+}
+
+/* Estilo para la lista de misiones */
+.mission-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Estilo para cada elemento de la misión con un toque oceánico */
+.mission-item {
+    padding: 12px;
+    margin-bottom: 10px;
+    background-color: rgba(255, 255, 255, 0.8); /* Fondo blanco semitransparente */
+    border-radius: 8px;
+    border: 1px solid #0096c7; /* Borde azul */
+    transition: background-color 0.3s, transform 0.2s;
+    color: #005f73; /* Azul oscuro para el texto */
+    font-family: 'Verdana', sans-serif;
+}
+
+.mission-item:hover {
+    background-color: rgba(255, 255, 255, 0.9); /* Fondo más claro al pasar el ratón */
+    transform: translateY(-3px); /* Efecto de elevación */
+    box-shadow: 0 4px 10px rgba(0, 150, 199, 0.3); /* Sombra más intensa */
+}
+
+
+/* Estilo para el contenedor de progreso */
+.progress-container {
+    width: 100%;
+    background-color: #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 8px;
+    height: 20px; /* Altura de la barra */
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0;
+    background-color: #00aaff;
+    transition: width 0.1s linear;
+}
+
+/* Estilo para la sección de recompensa */
+.reward {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.reward-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}
+
+.reward-name {
+    font-size: 14px;
+    color: #005f73;
+    font-weight: bold;
+}
+
+/* Estilo para el contenedor de estado */
+#status-list-container {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Indicador de estado */
+#status-indicator {
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Estilos de estado: verde para "Operacional" */
+.status.operational {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+/* Estilos de estado: rojo para "No disponible" */
+.status.unavailable {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Estilo para el contenedor de registro */
+#log-list-container {
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#log-list-container h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* Estilo para la lista de registros */
+#log-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#log-list li {
+    padding: 5px 0;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+    color: #555;
+}
+
+#log-list li:last-child {
+    border-bottom: none;
+}
+
+
 /* Estilos base para el nuevo contenedor */
 #promoted-list-container {
     flex: 1;

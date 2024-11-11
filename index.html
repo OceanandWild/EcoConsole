@@ -126,6 +126,62 @@
             <div class="list-container">
                 <div id="chat-container3" class="chat-container">
                     <h4>Animal AI (V1.0.5)</h4> 
+                    <!-- Contenedor de la lista de misiones con un estilo oceánico -->
+<!-- Contenedor de la lista de misiones con progreso -->
+<div id="missions-list-container" class="grid-item missions">
+    <h1>Misiones</h1>
+    <ul class="mission-list">
+        <li class="mission-item">
+            Misión 1: Mantente conectado por 5 minutos
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar-5"></div>
+            </div>
+            <div class="reward">
+                <img src="https://i.pinimg.com/736x/2b/a2/16/2ba216e6a3155a2e4472fd46958012a8.jpg" alt="EcoCréditos" class="reward-icon">
+                <span class="reward-name">10 EcoCréditos</span>
+            </div>
+        </li>
+        <li class="mission-item">
+            Misión 2: Mantente conectado por 15 minutos
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar-15"></div>
+            </div>
+            <div class="reward">
+                <img src="https://i.pinimg.com/736x/2b/a2/16/2ba216e6a3155a2e4472fd46958012a8.jpg" alt="EcoCréditos" class="reward-icon">
+                <span class="reward-name">30 EcoCréditos</span>
+            </div>
+        </li>
+        <li class="mission-item">
+            Misión 3: Mantente conectado por 30 minutos
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar-30"></div>
+            </div>
+            <div class="reward">
+                <img src="https://i.pinimg.com/736x/2b/a2/16/2ba216e6a3155a2e4472fd46958012a8.jpg" alt="EcoCréditos" class="reward-icon">
+                <span class="reward-name">50 EcoCréditos</span>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<!-- Contenedor principal para el estado del sistema -->
+<div id="status-list-container" class="grid-item status">
+    <h1>Animal AI Status</h1>
+    <div id="status-indicator" class="status operational">
+        <!-- Texto de estado que cambiará dinámicamente -->
+        <span id="status-text">Operacional</span>
+    </div>
+</div>
+
+<!-- Contenedor para el registro de errores o estado -->
+<div id="log-list-container" class="grid-item log">
+    <h2>Registro de Situación</h2>
+    <ul id="log-list">
+        <!-- Los registros de errores o actualizaciones de estado aparecerán aquí -->
+    </ul>
+</div>
+
+
                 </div>
                 <!-- Contenedor para las listas de comandos y rarezas -->
                 <div id="rarity-list-container" class="grid-item commands">
@@ -178,6 +234,7 @@
         </div>
     </div>
     
+
 
             </div>
             
