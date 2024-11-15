@@ -114,27 +114,7 @@ document.body.addEventListener('mouseleave', function () {
     
         
         
-       // Configuración de Firebase SDK
-                const firebaseConfig = {
-                    apiKey: "AIzaSyA1rURXpdT28sW1Sh898_TY3JLqHi4B7aQ",
-                    authDomain: "electron-7d7a1.firebaseapp.com",
-                    databaseURL: "https://electron-7d7a1-default-rtdb.firebaseio.com",
-                    projectId: "electron-7d7a1",
-                    storageBucket: "electron-7d7a1.appspot.com",
-                    messagingSenderId: "1002693339095",
-                    appId: "1:1002693339095:web:7904bdc813fd1e42c2cd92",
-                    measurementId: "G-4NHR0X7FE4"
-                };
-    
-                // Inicializa Firebase con la configuración
-                firebase.initializeApp(firebaseConfig);
-    
-                // Usa las funciones de autenticación, base de datos, etc.
-                const auth = firebase.auth();
-                const db = firebase.database();
-                const firestore = firebase.firestore();
-    
-    
+
         let isAwaitingInput = false;
         let currentCommand = null;
         let dolaresAnimal = 0;
@@ -1851,6 +1831,30 @@ document.head.insertAdjacentHTML("beforeend", `
 `);
 
 
+ // Función para actualizar el estado y mostrar la explicación del error
+ function updateStatus(isAvailable) {
+    const statusIndicator = document.getElementById('status-indicator');
+    const statusText = document.getElementById('status-text');
+    const errorExplanationContainer = document.getElementById('error-explanation-container');
+
+    if (isAvailable) {
+        statusIndicator.classList.remove('unavailable');
+        statusIndicator.classList.add('available');
+        statusText.textContent = "Operacional";
+        errorExplanationContainer.style.display = 'none'; // Ocultar explicación del error
+    } else {
+        statusIndicator.classList.remove('available');
+        statusIndicator.classList.add('unavailable');
+        statusText.textContent = "Animal AI no está disponible ahora mismo";
+        errorExplanationContainer.style.display = 'block'; // Mostrar explicación del error
+    }
+}
+
+// Ejemplo de uso: Actualizar el estado a "no disponible"
+updateStatus(true);
+
+
+
 // Crear el botón y el modal dinámicamente
 const ecoButton = document.createElement('button');
 ecoButton.id = 'eco-btn';
@@ -1896,31 +1900,109 @@ claimButton.id = 'claim-btn';
 claimButton.textContent = 'Reclamar 10 EcoCréditos';
 ecoModal.appendChild(claimButton);
 
-// Botones de navegación
-const prevButton2 = document.createElement('button');
-prevButton2.textContent = 'Página Anterior';
-ecoModal.appendChild(prevButton2);
 
-const nextButton2 = document.createElement('button');
-nextButton2.textContent = 'Página Siguiente';
-ecoModal.appendChild(nextButton2);
 
 // Agregar el modal al cuerpo del documento
 document.body.appendChild(ecoModal);
 
 // Variables para paginación
-const comandosPorPagina2 = 3; // Límite de comandos por página
+const comandosPorPagina2 = 100; // Límite de comandos por página
 let paginaActual2 = 0;
 
 // Lista de comandos con rarezas y costos
 const rectangulos = [
-    { name: '/lluvia-de-dolares', ecoCreditos: 10, className: 'Comun' },
+    { name: '/tiempo-en-ciudad', ecoCreditos: 10, className: 'Comun' },
+    { name: '/saldo', ecoCreditos: 10, className: 'Comun' },
     { name: '/comprar-moneda', ecoCreditos: 30, className: 'PocoComun' },
-    { name: '/comandos-existentes', ecoCreditos: 70, className: 'Raro' },
+    { name: '/comandos-existentes', ecoCreditos: 10, className: 'Comun' },
     { name: '/comando-epico', ecoCreditos: 100, className: 'Epico' },
     { name: '/comando-legendario', ecoCreditos: 150, className: 'Legendario' },
     { name: '/comando-mitico', ecoCreditos: 200, className: 'Mitico' },
+    { name: '/localizador', ecoCreditos: 30, className: 'PocoComun' },
+    { name: '/salvador-de-animales', ecoCreditos: 70, className: 'Raro' },
+    { name: '/fobias', ecoCreditos: 100, className: 'Epico' },
+    { name: '/eventos', ecoCreditos: 150, className: 'Legendario' },
+    { name: '/crear-cuenta-o-iniciar-sesion', ecoCreditos: 70, className: 'Raro' },
+    { name: '/desastres-naturales', ecoCreditos: 150, className: 'Legendario' },
+    { name: '/desactivar-localizador', ecoCreditos: 10, className: 'Comun' },
+    { name: '/reto-de-pistas', ecoCreditos: 200, className: 'Mitico' },
+    { name: '/actualizaciones', ecoCreditos: 30, className: 'PocoComun' },
+    { name: '/last-update', ecoCreditos: 200, className: 'Mitico' },
+    { name: '/resaltar-texto-infoanimalai', ecoCreditos: 10, className: 'Comun' },
+    { name: '/paquete-de-cartas', ecoCreditos: 30, className: 'PocoComun' },
+    { name: '/caza-megalodon', ecoCreditos: 70, className: 'Raro' },
+    { name: '/refugio-animales', ecoCreditos: 100, className: 'Epico' },
+    { name: '/mejorar-refugio', ecoCreditos: 150, className: 'Legendario' },
+    { name: '/eventos-mundiales', ecoCreditos: 100, className: 'Epico' },
+    { name: '/card-ship', ecoCreditos: 100, className: 'Epico' },
+    { name: '/salvar-a-la-naturaleza', ecoCreditos: 70, className: 'Raro' },
+    { name: '/movie-playtime', ecoCreditos: 70, className: 'Raro' },
+    { name: '/enfrentamientos', ecoCreditos: 10, className: 'Comun' },
+    { name: '/t-rex-friend', ecoCreditos: 100, className: 'Epico' },
+    { name: '/explora-biomas', ecoCreditos: 30, className: 'PocoComun' },
+    { name: '/conservacion', ecoCreditos: 70, className: 'Raro' },
+    { name: '/fenomenos-espaciales', ecoCreditos: 70, className: 'Raro' },
+    { name: '/supervivencia', ecoCreditos: 70, className: 'Raro' },
+    { name: '/lineas', ecoCreditos: 70, className: 'Raro' },
+    { name: '/generar-blog', ecoCreditos: 70, className: 'Raro' },
+    { name: '/PPOT', ecoCreditos: 10, className: 'Comun' },
+    { name: '/limpieza', ecoCreditos: 70, className: 'Raro' },
+    { name: '/update', ecoCreditos: 70, className: 'Raro' },
+    { name: '/proximo-comando', ecoCreditos: 70, className: 'Raro' },
+    { name: '/verificacion-final', ecoCreditos: 70, className: 'Raro' },
+    { name: '/pase-de-temporada', ecoCreditos: 70, className: 'Raro' },
+    { name: '/gatitos', ecoCreditos: 70, className: 'Raro' },
+    { name: '/reproductor-de-musica', ecoCreditos: 70, className: 'Raro' },
+    { name: '/animal-random', ecoCreditos: 70, className: 'Raro' },
+    { name: '/intercambio-de-moneda', ecoCreditos: 70, className: 'Raro' },
+    { name: '/sombra-asesina', ecoCreditos: 70, className: 'Raro' },
+    { name: '/generar-imagenes', ecoCreditos: 200, className: 'Mitico' },
+    { name: '/configuracion', ecoCreditos: 70, className: 'Raro' },
+    { name: '/acceder', ecoCreditos: 10, className: 'Comun' },
+    { name: '/unirse', ecoCreditos: 10, className: 'Comun' },
+    { name: '/usuarios', ecoCreditos: 10, className: 'Comun' },
+    { name: '/boss-battle', ecoCreditos: 70, className: 'Raro' },
+    { name: '/definiciones', ecoCreditos: 70, className: 'Raro' },
+    { name: '/frases-motivacionales', ecoCreditos: 30, className: 'PocoComun' },
+    { name: '/quiz-animal', ecoCreditos: 10, className: 'Comun' },
+    { name: '/leyenda-mitica', ecoCreditos: 10, className: 'Comun' },
+    { name: '/recompensa-diaria/semanal', ecoCreditos: 70, className: 'Raro' },
+    { name: '/patch-notes', ecoCreditos: 70, className: 'Raro' },
+    { name: '/tienda', ecoCreditos: 70, className: 'Raro' },
+    { name: '/proximo-lanzamiento', ecoCreditos: 70, className: 'Raro' },
+    { name: '/ultimo-lanzamiento', ecoCreditos: 70, className: 'Raro' },
+    { name: '/ver-documentacion', ecoCreditos: 70, className: 'Raro' },
+    { name: '/texto-advertencia', ecoCreditos: 70, className: 'Raro' },
+    { name: '/enviar-peticion', ecoCreditos: 70, className: 'Raro' },
+    { name: '/ADN', ecoCreditos: 150, className: 'Legendario' },
+    { name: '/seleccionar-modelo', ecoCreditos: 10, className: 'Comun' },
+    { name: '/chequeo-medico', ecoCreditos: 100, className: 'Epico' },
+    { name: '/lluvia-de-dolares', ecoCreditos: 200, className: 'Mitico' },
+    { name: '/intercambiar-adn', ecoCreditos: 70, className: 'Raro' },
+    { name: '/ataque-fantasma', ecoCreditos: 150, className: 'Legendario' },
+    { name: '/animal-ai-research', ecoCreditos: 100, className: 'Epico' },
+    { name: '/notificaciones', ecoCreditos: 10, className: 'Comun' },
+    { name: '/Cria-Calabazas', ecoCreditos: 150, className: 'Legendario' },
+    { name: '/Ectoplasma', ecoCreditos: 70, className: 'Raro' },
+    { name: '/Calabazas', ecoCreditos: 70, className: 'Raro' },
+    { name: '/Dulces', ecoCreditos: 70, className: 'Raro' },
+    { name: '/intercambiar-dulces', ecoCreditos: 100, className: 'Epico' },
+    { name: '/intercambiar-calabazas', ecoCreditos: 100, className: 'Epico' },
+    { name: '/intercambiar-ectoplasma', ecoCreditos: 100, className: 'Epico' },
+    { name: '/caceria-de-dulces', ecoCreditos: 150, className: 'Legendario' },
+    { name: '/minijuegos', ecoCreditos: 10, className: 'Comun' },
+    { name: '/leyenda-espiritu', ecoCreditos: 10, className: 'Comun' },
+    { name: '/horoscopo', ecoCreditos: 10, className: 'Comun' },
 ];
+
+const rarezasOrdenadas = ['Comun', 'PocoComun', 'Raro', 'Epico', 'Legendario', 'Mitico'];
+
+rectangulos.sort((a, b) => {
+    return rarezasOrdenadas.indexOf(a.className) - rarezasOrdenadas.indexOf(b.className);
+});
+
+console.log(rectangulos);
+
 
 let ecoCreditos = 0;
 let lastClaimTime = null;
@@ -1938,79 +2020,122 @@ function updateComandosDesbloqueadosDisplay() {
     comandosDesbloqueadosDisplay.textContent = `${comandosActuales}/${totalComandos} Comandos Desbloqueados`;
 }
 
-// Renderizar rectángulos de comandos
+let messageShown = false; // Variable para controlar si el mensaje ya fue mostrado
+
 function renderRectangles() {
     rectanglesContainer.innerHTML = ''; // Limpiar contenido previo
 
-    // Calcular índices de inicio y fin para la página actual
-    const availableCommands = rectangulos
-        .filter(rect => !comandosDesbloqueados[rect.name] && rect.ecoCreditos <= ecoCreditos); // Filtrar comandos disponibles
+    // Crear botón para ver todos los comandos
+    const viewAllButton = document.createElement('button');
+    viewAllButton.textContent = 'Ver todos los comandos disponibles';
+    viewAllButton.classList.add('view-all-button');
+    rectanglesContainer.appendChild(viewAllButton);
 
-    const startIndex = paginaActual2 * comandosPorPagina2;
-    const endIndex = startIndex + comandosPorPagina2;
+    // Contenedor para los comandos disponibles (oculto inicialmente)
+    const commandsContainer = document.createElement('div');
+    commandsContainer.classList.add('commands-container');
+    commandsContainer.style.display = 'none'; // Ocultar inicialmente
+    rectanglesContainer.appendChild(commandsContainer);
 
-    availableCommands.slice(startIndex, endIndex).forEach((rect, index) => {
-        const rectangle = document.createElement('div');
-        rectangle.classList.add('rectangulo', rect.className);
-        rectangle.dataset.index = startIndex + index; // Ajustar el índice según la página
+    // Texto de aviso para los usuarios
+    const noticeText = document.createElement('p');
+    noticeText.textContent = 'Los comandos se mostrarán de manera secuencial y se repetirán si hay más. ¡No te preocupes, todos estarán disponibles!';
+    noticeText.classList.add('notice-text');
+    noticeText.style.display = 'none'; // Ocultar inicialmente
+    rectanglesContainer.appendChild(noticeText);
 
-        // Mostrar el nombre y el costo
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = rect.name;
+    let currentIndex = 0;
+    const maxCommandsPerBatch = 5; // Número máximo de comandos por lote
+    let interval;
 
-        const costSpan = document.createElement('span');
-        costSpan.textContent = `Costo: ${rect.ecoCreditos} EcoCréditos`;
+    // Función para actualizar y mostrar el siguiente lote de comandos
+    function showNextBatch() {
+        commandsContainer.innerHTML = ''; // Limpiar comandos previos
+        const availableCommands = rectangulos
+            .filter(rect => !comandosDesbloqueados[rect.name] && Number(rect.ecoCreditos) <= Number(ecoCreditos)); // Filtrar comandos actualizados
 
-        rectangle.appendChild(nameSpan);
-        rectangle.appendChild(costSpan);
-        rectanglesContainer.appendChild(rectangle);
+        // Comprobar si hay comandos disponibles después de actualizar
+        if (availableCommands.length === 0) {
+            if (!messageShown) { // Solo mostrar el mensaje si no ha sido mostrado antes
+                typeMessage('No hay más comandos disponibles para desbloquear con los EcoCréditos actuales.');
+                messageShown = true; // Marcar que el mensaje ha sido mostrado
+            }
+            return;
+        } else {
+            messageShown = false; // Reiniciar la bandera si hay comandos disponibles
+        }
 
-        // Evento para desbloquear comando
-        rectangle.addEventListener('click', () => unlockCommand(rectangle, startIndex + index));
+        const batchEndIndex = Math.min(currentIndex + maxCommandsPerBatch, availableCommands.length);
+
+        for (let i = currentIndex; i < batchEndIndex; i++) {
+            const rect = availableCommands[i];
+            const rectangle = document.createElement('div');
+            rectangle.classList.add('rectangulo', rect.className);
+            rectangle.dataset.index = i;
+
+            // Mostrar el nombre y el costo
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = rect.name;
+
+            const costSpan = document.createElement('span');
+            costSpan.textContent = `| Costo: ${rect.ecoCreditos} EcoCréditos`;
+
+            rectangle.appendChild(nameSpan);
+            rectangle.appendChild(costSpan);
+            commandsContainer.appendChild(rectangle);
+
+            // Evento para desbloquear comando
+            rectangle.addEventListener('click', () => unlockCommand(rect, i));
+        }
+
+        currentIndex = (currentIndex + maxCommandsPerBatch) % availableCommands.length; // Avanzar el índice y repetir
+    }
+
+    // Evento para mostrar/ocultar los comandos y comenzar la secuencia
+    viewAllButton.addEventListener('click', () => {
+        if (commandsContainer.style.display === 'none') {
+            commandsContainer.style.display = 'block'; // Mostrar
+            noticeText.style.display = 'block'; // Mostrar aviso
+            viewAllButton.textContent = 'Ocultar comandos';
+
+            // Mostrar el primer lote de comandos y configurar el intervalo
+            showNextBatch();
+            interval = setInterval(showNextBatch, 10000); // Actualizar cada 10 segundos
+        } else {
+            commandsContainer.style.display = 'none'; // Ocultar
+            noticeText.style.display = 'none'; // Ocultar aviso
+            viewAllButton.textContent = 'Ver todos los comandos disponibles';
+            clearInterval(interval); // Detener la actualización automática
+        }
     });
-
-    // Deshabilitar botones según la página actual
-    prevButton2.disabled = paginaActual2 === 0;
-    nextButton2.disabled = endIndex >= availableCommands.length;
 }
 
+function unlockCommand(command, index) {
+    const ecoCreditosActuales = Number(ecoCreditos); // Asegurarse de que el valor de ecoCreditos sea un número
+    const costoComando = Number(command.ecoCreditos); // Asegurarse de que el costo también sea un número
 
-// Navegar a la página anterior
-prevButton2.addEventListener('click', () => {
-    if (paginaActual2 > 0) {
-        paginaActual2--;
-        renderRectangles();
-    }
-});
+    if (ecoCreditosActuales >= costoComando) { // Comparar si tienes suficientes EcoCréditos
+        if (!comandosDesbloqueados[command.name]) { // Verificar si el comando ya está desbloqueado
+            // Desbloquear el comando y actualizar la interfaz
+            comandosDesbloqueados[command.name] = true;
+            ecoCreditos -= costoComando; // Deducir los EcoCréditos
 
-// Navegar a la página siguiente
-nextButton2.addEventListener('click', () => {
-    if ((paginaActual2 + 1) * comandosPorPagina2 < rectangulos.length) {
-        paginaActual2++;
-        renderRectangles();
-    }
-});
+            // Actualizar la visualización de EcoCréditos
+            updateEcoCreditosDisplay();
+            updateComandosDesbloqueadosDisplay();
 
-function unlockCommand(rectangle, index) {
-    const command = rectangulos[index];
-    if (ecoCreditos >= command.ecoCreditos) {
-        ecoCreditos -= command.ecoCreditos; // Descontar EcoCréditos
-        updateEcoCreditosDisplay();
-        comandosDesbloqueados[command.name] = true; // Marcar como desbloqueado
+            // Renderizar los rectángulos para actualizar los comandos disponibles
+            renderRectangles();
 
-        // Mostrar animación de texto giratorio
-        showUnlockAnimation(command.name, command.className, command.ecoCreditos);
-
-        // Actualizar el display de comandos desbloqueados
-        updateComandosDesbloqueadosDisplay();
-
-        // Eliminar rectángulo tras la animación
-        rectangle.remove(); // Elimina el rectángulo después de desbloquear
-        mostrarMonedas();
+            typeMessage(`¡Comando ${command.name} desbloqueado exitosamente!`);
+        } else {
+            alert(`El comando ${command.name} ya está desbloqueado.`);
+        }
     } else {
-        alert("No tienes suficientes EcoCréditos para desbloquear este comando.");
+        alert(`No tienes suficientes EcoCréditos para desbloquear el comando ${command.name}.`);
     }
 }
+
 
 // Reclamar EcoCréditos
 claimButton.addEventListener('click', () => {
@@ -2027,18 +2152,19 @@ claimButton.addEventListener('click', () => {
     }
 });
 
+
 // Mostrar animación de desbloqueo
 function showUnlockAnimation(name, rarity, cost) {
     const modalContent = document.createElement('div');
     modalContent.classList.add('unlock-animation');
 
-    // Texto giratorio
+    // Texto animado con entrada
     const rotatingText = document.createElement('div');
     rotatingText.classList.add('rotating-text');
     rotatingText.textContent = name;
     modalContent.appendChild(rotatingText);
 
-    // Información de comando
+    // Información del comando con animación
     const infoDiv = document.createElement('div');
     infoDiv.classList.add('command-info');
     infoDiv.innerHTML = `
@@ -2050,9 +2176,15 @@ function showUnlockAnimation(name, rarity, cost) {
 
     ecoModal.appendChild(modalContent);
 
+    // Animación de entrada del modal (deslizar desde abajo)
+    modalContent.classList.add('slide-in');
+
+    // Eliminar el modal después de 5 segundos (más tiempo visible)
     setTimeout(() => {
-        modalContent.remove();
-    }, 3000); // Remover después de 3 segundos
+        modalContent.classList.remove('slide-in');
+        modalContent.classList.add('fade-out'); // Añadir fade-out al quitarlo
+        setTimeout(() => modalContent.remove(), 1000); // Esperar antes de eliminar
+    }, 5000); // Remover después de 5 segundos (en vez de 3 segundos)
 }
 
 // Cerrar modal al hacer clic fuera de él
@@ -2079,28 +2211,127 @@ closeButton.addEventListener('click', () => {
 // CSS para animación de texto giratorio y estilo del modal
 document.head.insertAdjacentHTML("beforeend", `
 <style>
+    /* Estilo para el modal de desbloqueo */
+    .unlock-animation {
+        position: absolute;
+        top: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.8);
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+        text-align: center;
+        opacity: 0;
+        animation: fadeIn 1s forwards, stayVisible 4s forwards; /* Animación de entrada rápida y permanencia extendida */
+    }
+
+    /* Animación para el texto giratorio */
     .rotating-text {
-        font-size: 1.5em;
-        animation: spin 2s infinite linear;
-        text-align: center;
-        margin-top: 10px;
+        font-size: 2em;
+        font-weight: bold;
+        color: #FFD700; /* Color dorado */
+        animation: spin 4s infinite linear, fadeTextIn 1s forwards; /* Combinación de rotación rápida y entrada de texto */
     }
+
+    /* Animación para la información del comando */
     .command-info p {
+        font-size: 1.2em;
+        color: white;
         margin: 5px 0;
-        text-align: center;
     }
+
+    /* Animación de rotación del texto */
     @keyframes spin {
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
     }
-        /* Estilo para el contenedor de comandos desbloqueados */
-    #comandos-desbloqueados-display {
-        font-size: 18px;
-        margin-bottom: 10px;
+
+    /* Animación para la entrada del texto */
+    @keyframes fadeTextIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Animación para la entrada del modal (deslizar desde abajo) */
+    @keyframes slideIn {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+    }
+
+    /* Animación de permanencia del modal */
+    @keyframes stayVisible {
+        from { opacity: 1; }
+        to { opacity: 1; }
+    }
+
+    /* Animación de desvanecimiento al eliminar */
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+
+    /* Aplicación de las animaciones */
+    .slide-in {
+        animation: slideIn 1s ease-out forwards; /* Deslizar hacia arriba rápido */
+    }
+
+    .fade-out {
+        animation: fadeOut 2s forwards; /* Desvanecimiento suave, más lento */
+    }
 </style>
+
+
 `);
+
+const ecoCreditDisplay = document.getElementById('eco-credit-display');
+const waterDropsContainer = document.getElementById('water-drops-container');
+
+
+// Función para actualizar el contador de EcoCréditos
+function updateEcoCreditsDisplay() {
+    ecoCreditDisplay.textContent = `EcoCréditos: ${ecoCreditos}`;
+}
+
+// Función para crear y agregar gotas de agua al contenedor
+function createWaterDrops() {
+    const totalDrops = 10;
+    waterDropsContainer.innerHTML = ''; // Limpiar cualquier contenido previo
+
+    for (let i = 0; i < totalDrops; i++) {
+        const waterDrop = document.createElement('span');
+        waterDrop.classList.add('water-drop');
+        waterDrop.textContent = '💧'; // Icono de gota de agua
+
+        // Posicionar las gotas aleatoriamente dentro del contenedor
+        const containerWidth = waterDropsContainer.clientWidth;
+        const containerHeight = waterDropsContainer.clientHeight;
+        const randomX = Math.random() * (containerWidth - 20); // Ajustar para evitar que salga del borde
+        const randomY = Math.random() * (containerHeight - 20);
+
+        waterDrop.style.position = 'absolute';
+        waterDrop.style.left = `${randomX}px`;
+        waterDrop.style.top = `${randomY}px`;
+
+        // Evento al hacer clic en la gota de agua
+        waterDrop.addEventListener('click', () => {
+            const ecoCreditosGanados = Math.floor(Math.random() * (19 - 7 + 1)) + 7; // Generar entre 7 y 19 EcoCréditos
+            ecoCreditos += ecoCreditosGanados;
+            updateEcoCreditsDisplay();
+            waterDrop.remove(); // Eliminar la gota después de hacer clic
+
+            // Verificar si todas las gotas han sido recolectadas
+            if (waterDropsContainer.children.length === 0) {
+                startCountdownTimer();
+            }
+        });
+
+        waterDropsContainer.appendChild(waterDrop);
+    }
+}
+
+// Llamar a la función para generar las gotas de agua
+createWaterDrops();
 
 
 
@@ -2125,6 +2356,8 @@ function startMissionTimer(duration, progressBarId, rewardAmount) {
 // Función para añadir EcoCréditos al saldo
 function addEcoCreditos(amount) {
     ecoCreditos += amount;
+    updateEcoCreditosDisplay();
+    mostrarMonedas();
     console.log(`EcoCréditos: ${ecoCreditos}`); // Muestra el saldo actualizado en la consola
 }
 
@@ -2132,6 +2365,46 @@ function addEcoCreditos(amount) {
 startMissionTimer(300, 'progress-bar-5', 10); // 5 minutos (300 segundos)
 startMissionTimer(900, 'progress-bar-15', 30); // 15 minutos (900 segundos)
 startMissionTimer(1800, 'progress-bar-30', 50); // 30 minutos (1800 segundos)
+
+
+
+// Función para bloquear el contenedor
+function bloquearContenedor(contenedorId) {
+    const contenedor = document.getElementById(contenedorId);
+
+    if (!contenedor) return; // Salir si no se encuentra el contenedor
+
+    // Crear una capa para el desenfoque
+    const blurLayer = document.createElement('div');
+    blurLayer.classList.add('blur-layer');
+
+    // Crear un mensaje de bloqueo
+    const mensajeBloqueo = document.createElement('div');
+    mensajeBloqueo.classList.add('mensaje-bloqueo');
+    mensajeBloqueo.innerHTML = '<span class="icono-bloqueo">🔒</span> Esta funcionalidad está bloqueada temporalmente';
+
+    // Añadir la capa y el mensaje al contenedor
+    contenedor.appendChild(blurLayer);
+    contenedor.appendChild(mensajeBloqueo);
+
+    // Asegurar que la capa de desenfoque y el mensaje se posicionen correctamente
+    blurLayer.style.position = 'absolute';
+    blurLayer.style.top = '0';
+    blurLayer.style.left = '0';
+    blurLayer.style.width = '100%';
+    blurLayer.style.height = '100%';
+    blurLayer.style.zIndex = '1'; // Capa desenfocada en un nivel inferior
+
+    mensajeBloqueo.style.position = 'absolute';
+    mensajeBloqueo.style.top = '50%';
+    mensajeBloqueo.style.left = '50%';
+    mensajeBloqueo.style.transform = 'translate(-50%, -50%)';
+    mensajeBloqueo.style.zIndex = '2'; // Mensaje de bloqueo en un nivel superior
+}
+
+// Llamar a la función para bloquear el contenedor
+bloquearContenedor('rarity-list-container');
+bloquearContenedor('command-list-container');
 
 
 const commands = {
@@ -2222,8 +2495,319 @@ const commands = {
     'caceria-de-dulces': iniciarCaceriaDeDulces,
     'minijuegos': handleMinijuegos,
     'crear-comando': promote,
+    'convertir-divisas': handleConvertirDivisasCommand,
+    'horoscopo': handleHoroscopoCommand,
+    'calculadora-de-tiempo': handleCalculadoraDeTiempoCommand,
+    'tiempo-en-ciudad': handleTiempoEnCiudadCommand,
 };
 
+
+
+function handleTiempoEnCiudadCommand() {
+    const chatLog = document.getElementById('chat-log'); // Asegúrate de que 'chat-log' esté definido en tu HTML
+
+    // Crear el contenedor
+    const div = document.createElement('div');
+    div.className = 'time-in-city-section';
+
+    // Crear el título
+    const title = document.createElement('h3');
+    title.textContent = 'Hora en Ciudad';
+    div.appendChild(title);
+
+    // Crear el input para el nombre de la ciudad
+    const inputCity = document.createElement('input');
+    inputCity.type = 'text';
+    inputCity.placeholder = 'Ingresa el nombre de la ciudad';
+    div.appendChild(inputCity);
+
+    // Crear el botón para obtener la hora
+    const btnGetTime = document.createElement('button');
+    btnGetTime.textContent = 'Mostrar Hora';
+    div.appendChild(btnGetTime);
+
+    // Mostrar el resultado
+    const timeResult = document.createElement('p');
+    timeResult.className = 'time-result';
+    div.appendChild(timeResult);
+
+    chatLog.appendChild(div); // Agregar el contenedor al chat
+
+    // Evento para obtener la hora y fecha de la ciudad
+    btnGetTime.addEventListener('click', function () {
+        const city = inputCity.value.trim();
+
+        if (!city) {
+            typeMessage("❌ Por favor ingresa el nombre de una ciudad.");
+            return;
+        }
+
+        fetch(`https://worldtimeapi.org/api/timezone`)
+            .then(response => response.json())
+            .then(timezones => {
+                const matchedTimezone = timezones.find(tz => tz.toLowerCase().includes(city.toLowerCase()));
+
+                if (matchedTimezone) {
+                    return fetch(`https://worldtimeapi.org/api/timezone/${matchedTimezone}`);
+                } else {
+                    throw new Error("❌ No se encontró una zona horaria que coincida con la ciudad.");
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const { datetime } = data;
+                const dateObj = new Date(datetime);
+                const timeString = dateObj.toLocaleTimeString();
+                const dateString = dateObj.toLocaleDateString();
+
+                timeResult.textContent = `Hora local: ${timeString}, Fecha: ${dateString}`;
+                typeMessage(`🕒 Hora actual en ${city}: ${timeString}, Fecha: ${dateString}`);
+            })
+            .catch(error => {
+                typeMessage(error.message);
+            });
+    });
+}
+
+function handleCalculadoraDeTiempoCommand() {
+    const chatLog = document.getElementById('chat-log'); // Asegúrate de que 'chat-log' esté definido en tu HTML
+
+    // Crear el contenedor
+    const div = document.createElement('div');
+    div.className = 'time-converter-section';
+
+    // Crear el título
+    const title = document.createElement('h3');
+    title.textContent = 'Calculadora de Tiempo';
+    div.appendChild(title);
+
+    // Crear el input para el número
+    const inputNumber = document.createElement('input');
+    inputNumber.type = 'number';
+    inputNumber.placeholder = 'Ingresa un número';
+    div.appendChild(inputNumber);
+
+    // Crear el selector de unidades de tiempo
+    const selectFromUnit = document.createElement('select');
+    const selectToUnit = document.createElement('select');
+    const units = ['Segundos', 'Minutos', 'Horas', 'Días', 'Semanas'];
+
+    units.forEach(unit => {
+        const optionFrom = document.createElement('option');
+        const optionTo = document.createElement('option');
+        optionFrom.value = unit;
+        optionFrom.textContent = unit;
+        optionTo.value = unit;
+        optionTo.textContent = unit;
+        selectFromUnit.appendChild(optionFrom);
+        selectToUnit.appendChild(optionTo);
+    });
+
+    div.appendChild(selectFromUnit);
+    div.appendChild(selectToUnit);
+
+    // Crear el botón para convertir
+    const btnConvert = document.createElement('button');
+    btnConvert.textContent = 'Convertir';
+    div.appendChild(btnConvert);
+
+    // Mostrar el resultado
+    const conversionResult = document.createElement('p');
+    conversionResult.className = 'conversion-result';
+    div.appendChild(conversionResult);
+
+    chatLog.appendChild(div); // Agregar el contenedor al chat
+
+    // Evento para realizar la conversión
+    btnConvert.addEventListener('click', function () {
+        const number = parseFloat(inputNumber.value);
+        const fromUnit = selectFromUnit.value;
+        const toUnit = selectToUnit.value;
+
+        if (isNaN(number)) {
+            typeMessage("❌ Por favor ingresa un número válido.");
+            return;
+        }
+
+        const conversion = convertTime(number, fromUnit, toUnit);
+        conversionResult.textContent = `Resultado: ${conversion}`;
+        typeMessage("⏳ Conversión completada con éxito.");
+    });
+}
+
+// Función para convertir tiempo entre diferentes unidades
+function convertTime(number, fromUnit, toUnit) {
+    const timeInSeconds = {
+        'Segundos': 1,
+        'Minutos': 60,
+        'Horas': 3600,
+        'Días': 86400,
+        'Semanas': 604800
+    };
+
+    // Convertir la unidad de origen a segundos
+    const seconds = number * timeInSeconds[fromUnit];
+
+    // Convertir los segundos a la unidad de destino
+    const result = seconds / timeInSeconds[toUnit];
+    return `${result.toFixed(2)} ${toUnit}`;
+}
+
+function handleHoroscopoCommand() {
+    const chatLog = document.getElementById('chat-log'); // Asegúrate de que 'chat-log' esté definido en tu HTML
+
+    // Crear el contenedor
+    const div = document.createElement('div');
+    div.className = 'horoscope-section';
+
+    // Crear el título
+    const title = document.createElement('h3');
+    title.textContent = 'Selecciona tu Signo Zodiacal';
+    div.appendChild(title);
+
+    // Crear el selector de signos zodiacales
+    const selectSign = document.createElement('select');
+    const signos = [
+        'Aries', 'Tauro', 'Géminis', 'Cáncer', 'Leo', 'Virgo',
+        'Libra', 'Escorpio', 'Sagitario', 'Capricornio', 'Acuario', 'Piscis'
+    ];
+    signos.forEach(signo => {
+        const option = document.createElement('option');
+        option.value = signo;
+        option.textContent = signo;
+        selectSign.appendChild(option);
+    });
+    div.appendChild(selectSign);
+
+    // Crear el botón para obtener el horóscopo
+    const btnGetHoroscope = document.createElement('button');
+    btnGetHoroscope.textContent = 'Ver Horóscopo';
+    div.appendChild(btnGetHoroscope);
+
+    // Mostrar el resultado
+    const horoscopeResult = document.createElement('p');
+    horoscopeResult.className = 'horoscope-result';
+    div.appendChild(horoscopeResult);
+
+    chatLog.appendChild(div); // Agregar el contenedor al chat
+
+    // Evento para mostrar el horóscopo
+    btnGetHoroscope.addEventListener('click', function () {
+        const selectedSign = selectSign.value;
+        const horoscope = getHoroscopeForSign(selectedSign);
+
+        // Mostrar el horóscopo y mensaje motivacional
+        horoscopeResult.textContent = `🌟 ${horoscope.text}\n📝 Consejo: ${horoscope.advice}\n💬 Motivación: ${horoscope.motivation}`;
+        typeMessage("🔮 Horóscopo obtenido con éxito.");
+    });
+}
+
+// Función para obtener el horóscopo basado en el signo
+function getHoroscopeForSign(sign) {
+    const horoscopes = {
+        'Aries': {
+            text: "Hoy es un día de energía positiva. Aprovecha tu impulso natural para tomar decisiones importantes.",
+            advice: "Mantente enfocado en tus objetivos y evita las distracciones.",
+            motivation: "El éxito está al alcance de aquellos que persisten."
+        },
+        'Tauro': {
+            text: "Es un buen momento para dedicar tiempo a tus seres queridos. Valora la estabilidad que tienes.",
+            advice: "No tengas miedo de expresar tus emociones.",
+            motivation: "La paciencia y la constancia siempre rinden frutos."
+        },
+        // Agrega más signos con mensajes similares...
+        'Cancer': {
+            text: "Hoy: La energía emocional está en su punto máximo para ti, Cáncer. Es un día perfecto para conectarte con tus sentimientos y reflexionar sobre lo que realmente deseas en tu vida. Puede que sientas una fuerte necesidad de estar cerca de tu hogar o de las personas que te brindan apoyo y amor. No dudes en expresar tus pensamientos más profundos, ya que tus seres queridos te escucharán con el corazón abierto. Es un buen momento para fortalecer lazos afectivos y dar espacio a la vulnerabilidad. Confía en tu intuición: te guiará por el camino correcto. Mañana: La jornada de mañana te traerá nuevas oportunidades para cuidar de ti mismo. Puede ser un día en el que necesites más tiempo para relajarte y reponer energías. Si te has estado sintiendo un poco agotado emocionalmente, aprovecha este día para recargar tus baterías. Las relaciones personales también se verán favorecidas mañana, especialmente aquellas donde hay un intercambio sincero de apoyo. Aprovecha para dar cariño a los demás, pero también recuerda cuidar de tus propios límites. La clave será el equilibrio.",
+            advice: "Escucha a tu intuición; te guiará hacia el camino correcto.",
+            motivation: "La inspiración te rodea si estás dispuesto a verla."
+        }
+    };
+    return horoscopes[sign] || {
+        text: "No se pudo encontrar el horóscopo.",
+        advice: "Inténtalo de nuevo más tarde.",
+        motivation: "La esperanza nunca se pierde."
+    };
+}
+
+function handleConvertirDivisasCommand() {
+    const chatLog = document.getElementById('chat-log'); // Asegúrate de que 'chat-log' esté definido en tu HTML
+
+    // Crear el contenedor
+    const div = document.createElement('div');
+    div.className = 'currency-converter';
+
+    // Crear el título
+    const title = document.createElement('h3');
+    title.textContent = 'Conversor de Divisas';
+    div.appendChild(title);
+
+    // Crear los elementos de entrada
+    const inputAmount = document.createElement('input');
+    inputAmount.type = 'number';
+    inputAmount.placeholder = 'Cantidad en tu moneda';
+    div.appendChild(inputAmount);
+
+    const selectFrom = document.createElement('select');
+    const fromCurrencies = ['USD', 'EUR', 'MXN'];
+    fromCurrencies.forEach(currency => {
+        const option = document.createElement('option');
+        option.value = currency;
+        option.textContent = currency;
+        selectFrom.appendChild(option);
+    });
+    div.appendChild(selectFrom);
+
+    const selectTo = document.createElement('select');
+    const toCurrencies = ['USD', 'EUR', 'MXN'];
+    toCurrencies.forEach(currency => {
+        const option = document.createElement('option');
+        option.value = currency;
+        option.textContent = currency;
+        selectTo.appendChild(option);
+    });
+    div.appendChild(selectTo);
+
+    // Crear el botón de conversión
+    const btnConvert = document.createElement('button');
+    btnConvert.textContent = 'Convertir';
+    div.appendChild(btnConvert);
+
+    // Mostrar el resultado
+    const result = document.createElement('p');
+    result.className = 'conversion-result';
+    div.appendChild(result);
+
+    chatLog.appendChild(div); // Agregar el contenedor al chat
+
+    // Evento de conversión
+    btnConvert.addEventListener('click', function () {
+        const amount = parseFloat(inputAmount.value);
+        const fromCurrency = selectFrom.value;
+        const toCurrency = selectTo.value;
+
+        if (isNaN(amount) || amount <= 0) {
+            typeMessage("❌ Por favor, ingresa una cantidad válida.");
+            return;
+        }
+
+        // Ejemplo de tasa de cambio, esto debería obtenerse desde una API en producción
+        const exchangeRates = {
+            'USD': { 'EUR': 0.85, 'MXN': 20.5 },
+            'EUR': { 'USD': 1.18, 'MXN': 24.1 },
+            'MXN': { 'USD': 0.049, 'EUR': 0.041 },
+        };
+
+        if (fromCurrency === toCurrency) {
+            result.textContent = `La cantidad es la misma: ${amount.toFixed(2)} ${toCurrency}`;
+        } else {
+            const rate = exchangeRates[fromCurrency][toCurrency];
+            const convertedAmount = amount * rate;
+            result.textContent = `Resultado: ${convertedAmount.toFixed(2)} ${toCurrency}`;
+        }
+
+        typeMessage("✅ Conversión realizada con éxito.");
+    });
+}
 
 
 function promote() {
@@ -3600,7 +4184,12 @@ const comandosConRarezas = [
     { nombre: "/caceria-de-dulces", rareza: "Legendario" },
     { nombre: "/minijuegos", rareza: "Común" },
     { nombre: "/crear-comandos", rareza: "Poco Común" },
+    { nombre: "/convertir-divisas", rareza: "Poco Común" },
+    { nombre: "/horoscopo", rareza: "Raro" },
+    { nombre: "/calculadora-de-tiempo", rareza: "Raro" },
+    { nombre: "/tiempo-en-ciudad", rareza: "Común" },
 ];
+
 
 
 // Colores por rareza
@@ -5514,6 +6103,17 @@ const usuarios = [
         fechaVerificacionAdmin: "", 
         baneado: false // Usuario baneado
     },
+    { 
+        nombreUsuario: "", 
+        contrasena: "", 
+        verificado: true, 
+        fechaVerificacion: "15/10/2024", 
+        verificacionEmpresa: false, 
+        fechaVerificacionEmpresa: "",
+        verificacionAdmin: false, 
+        fechaVerificacionAdmin: "", 
+        baneado: false // Usuario baneado
+    },
 ];
 
 
@@ -5901,7 +6501,7 @@ function cerrarModal(modal) {
 }
 
 // Variable de estado para comprobar la disponibilidad de Animal AI
-let animalAIDisponible = false; // Cambia esto a true o false según la lógica de tu aplicación
+let animalAIDisponible = true; // Cambia esto a true o false según la lógica de tu aplicación
 
 
 

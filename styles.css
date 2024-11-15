@@ -185,6 +185,7 @@ body2 {
 #command-list-container,
 #awk-list-container,
 #currency-list-container {  /* Se incluye currency-list-container */
+    position: relative; /* Necesario para posicionar elementos internos */
     flex: 1;
     margin: 0 10px;
     min-width: 300px;
@@ -196,8 +197,77 @@ body2 {
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Transición suave */
 }
 
+
+
+
+#water-drop-game-container {
+    position: relative; /* Necesario para posicionar elementos internos */
+    padding: 20px;
+    border: 2px solid #0077cc;
+    border-radius: 10px;
+    text-align: center;
+}
+#water-drops-container {
+    position: relative; /* Necesario para posicionar elementos internos */
+    width: 100%; /* O cualquier ancho que desees */
+    height: 400px; /* O cualquier altura que desees */
+    border: 1px solid #ddd; /* Opcional, para visualizar el contenedor */
+    overflow: hidden; /* Para asegurarse de que las gotas no se desborden */
+}
+
+/* Estilo para el contenedor bloqueado */
+.bloqueado {
+    position: relative;
+    filter: blur(4px); /* Aplica el desenfoque al contenido */
+    pointer-events: none; /* Desactiva la interacción con el contenido */
+}
+
+/* Capa desenfocada */
+.blur-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 1.0); /* Capa semitransparente */
+    z-index: 1; /* Colocar sobre el contenido */
+}
+
+/* Mensaje de bloqueo */
+.mensaje-bloqueo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8); /* Fondo oscuro */
+    color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    z-index: 2; /* Colocar sobre la capa desenfocada */
+}
+
+/* Estilo para el icono de bloqueo */
+.icono-bloqueo {
+    font-size: 24px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.water-drop {
+    font-size: 30px;
+    color: #00bfff;
+    margin: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.water-drop:hover {
+    transform: scale(1.2);
+}
+
 /* Estilo específico para el contenedor de misiones con un fondo oceánico */
 #missions-list-container {
+    position: relative; /* Necesario para posicionar elementos internos */
     flex: 1;
     margin: 0 10px;
     min-width: 300px;
@@ -2803,14 +2873,36 @@ input, textarea {
 
 /* Estilos para rectángulos de rarezas */
 .rectangulo {
-    padding: 15px;
-    border-radius: 8px;
-    color: #fff;
-    font-size: 18px;
+    width: 500px; /* Ajuste de ancho */
+    height: 50px; /* Ajuste de altura */
+    margin: 12px 0; /* Separación entre rectángulos */
+    border-radius: 15px; /* Bordes más redondeados */
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    font-size: 18px; /* Aumento del tamaño de la fuente */
+    font-weight: bold; /* Negrita para destacar el texto */
+    text-align: center;
+    color: #fff; /* Color de texto blanco */
+    background-color: #333; /* Color de fondo genérico, que cambiará según la rareza */
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.6); /* Sombra más intensa */
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
+    cursor: pointer; /* Cambia el cursor para indicar que es interactivo */
+    position: relative; /* Necesario para efectos de pseudo-elementos */
 }
+
+/* Efecto hover: aumenta el tamaño y cambia el color */
+.rectangulo:hover {
+    transform: scale(1.05); /* Agrandar ligeramente al pasar el mouse */
+    box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.8); /* Sombras más intensas */
+}
+
+/* Efectos de foco: se activan al hacer clic */
+.rectangulo:active {
+    transform: scale(0.98); /* Hace que el rectángulo se contraiga ligeramente */
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5); /* Sombras internas al hacer clic */
+}
+
 
 .Comun { background-color: #647770; }     /* Común */
 .PocoComun { background-color: #00f870; }   /* Poco común */

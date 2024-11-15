@@ -124,6 +124,17 @@
 
             
             <div class="list-container">
+                <!-- Contenedor principal del juego -->
+<div id="water-drop-game-container" class="grid-item game">
+    <h2>Juego de Gotas de Agua</h2>
+    <p id="eco-credit-display">EcoCréditos: 0</p>
+    <div id="water-drops-container" class="water-drops">
+        <!-- Las gotas de agua se generarán dinámicamente aquí -->
+    </div>
+</div>
+
+
+
                 <div id="chat-container3" class="chat-container">
                     <h4>Animal AI (V1.0.5)</h4> 
                     <!-- Contenedor de la lista de misiones con un estilo oceánico -->
@@ -173,13 +184,25 @@
     </div>
 </div>
 
+<!-- Contenedor para la explicación del error (solo se mostrará si el estado es "unavailable") -->
+<div id="error-explanation-container" class="grid-item error-explanation" style="display: none;">
+    <h2>Error</h2>
+    <p id="error-explanation-text">
+        Actualmente, Animal AI está experimentando problemas técnicos debido a interrupciones en el Camino Ecológico. 
+        Estamos trabajando para resolver estos problemas lo antes posible. Gracias por su paciencia.
+    </p>
+</div>
+
 <!-- Contenedor para el registro de errores o estado -->
 <div id="log-list-container" class="grid-item log">
     <h2>Registro de Situación</h2>
     <ul id="log-list">
         <!-- Los registros de errores o actualizaciones de estado aparecerán aquí -->
+        <li>Problema técnico detectado el 11/11/2024: Errores en el camino Ecologico, se encontraron errores con la divisa EcoCreditos y los comandos.</li>
     </ul>
 </div>
+
+
 
 
                 </div>
