@@ -130,10 +130,142 @@ document.body.addEventListener('mouseleave', function () {
     const modalContainer = document.getElementById('modalContainer');
     
     
+    // Declare modalFondo at a higher scope so it's accessible elsewhere
+let modalFondo;
 
+function mostrarModalNovedad(tituloNovedad, imagenUrl, descripcion, textoBoton, accionBoton) {
+    // Initialize modalFondo
+    modalFondo = document.createElement('div');
+    modalFondo.classList.add('modal-fondo');
 
+    // Crear el contenedor principal del modal
+    const modalContainer = document.createElement('div');
+    modalContainer.classList.add('modal-content');
 
+    // Crear el botón para cerrar el modal
+    const cerrarBtn = document.createElement('span');
+    cerrarBtn.classList.add('cerrar-btn');
+    cerrarBtn.innerHTML = '&times;';
+    cerrarBtn.addEventListener('click', () => {
+        // Eliminar el modal del DOM
+        document.body.removeChild(modalFondo);
+    });
+    modalContainer.appendChild(cerrarBtn);
 
+    // Resto del contenido del modal
+    // Crear el título "Novedad del Momento"
+    const tituloPrincipal = document.createElement('h3');
+    tituloPrincipal.textContent = 'NOVEDAD';
+    tituloPrincipal.classList.add('titulo-principal');
+    modalContainer.appendChild(tituloPrincipal);
+
+    // Crear el título de la presentación "Presentamos (tanto)"
+    const tituloNovedadElemento = document.createElement('h1');
+    tituloNovedadElemento.textContent = `Presentamos ${tituloNovedad}`;
+    tituloNovedadElemento.classList.add('titulo-novedad');
+    modalContainer.appendChild(tituloNovedadElemento);
+
+    // Crear la imagen ilustrativa
+    const imagenElemento = document.createElement('img');
+    imagenElemento.src = imagenUrl;
+    imagenElemento.alt = `Imagen de ${tituloNovedad}`;
+    imagenElemento.classList.add('imagen-novedad');
+    modalContainer.appendChild(imagenElemento);
+
+    // Crear la descripción breve
+    const descripcionElemento = document.createElement('p');
+    descripcionElemento.textContent = descripcion;
+    descripcionElemento.classList.add('descripcion-novedad');
+    modalContainer.appendChild(descripcionElemento);
+
+    // Crear el botón que realiza la acción
+    const botonElemento = document.createElement('button');
+    botonElemento.textContent = textoBoton;
+    botonElemento.classList.add('boton-novedad');
+    botonElemento.addEventListener('click', accionBoton);
+    modalContainer.appendChild(botonElemento);
+
+    // Agregar el contenedor al fondo del modal
+    modalFondo.appendChild(modalContainer);
+    document.body.appendChild(modalFondo);
+
+    // Estilos en JavaScript (puedes moverlos a un archivo CSS externo)
+    const estilos = `
+        .modal-fondo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* Fondo oscuro */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+        .cerrar-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+        }
+        .cerrar-btn:hover {
+            color: #000;
+        }
+        .titulo-principal {
+            font-size: 18px;
+            color: #007BFF; /* Azul brillante */
+            margin-bottom: 10px;
+        }
+        .titulo-novedad {
+            font-size: 28px;
+            color: #FF5733; /* Naranja vibrante */
+            margin-bottom: 20px;
+        }
+        .imagen-novedad {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        .descripcion-novedad {
+            font-size: 16px;
+            color: #555; /* Gris oscuro */
+            margin-bottom: 20px;
+        }
+        .boton-novedad {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #28A745; /* Verde brillante */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .boton-novedad:hover {
+            background-color: #218838;
+        }
+    `;
+
+    // Crear un estilo y agregarlo al head
+    const styleSheet = document.createElement("style");
+    styleSheet.type = "text/css";
+    styleSheet.innerText = estilos;
+    document.head.appendChild(styleSheet);
+}
+
+    
 // Variables para almacenar notificaciones y el contador
 let notifications = [];
 let systemNotifications = [];
@@ -1975,7 +2107,7 @@ const rectangulos = [
     { name: '/texto-advertencia', ecoCreditos: 70, className: 'Raro' },
     { name: '/enviar-peticion', ecoCreditos: 70, className: 'Raro' },
     { name: '/ADN', ecoCreditos: 150, className: 'Legendario' },
-    { name: '/seleccionar-modelo', ecoCreditos: 10, className: 'Comun' },
+    { name: '/seleccionar-modeloia', ecoCreditos: 10, className: 'Comun' },
     { name: '/chequeo-medico', ecoCreditos: 100, className: 'Epico' },
     { name: '/lluvia-de-dolares', ecoCreditos: 200, className: 'Mitico' },
     { name: '/intercambiar-adn', ecoCreditos: 70, className: 'Raro' },
@@ -1993,6 +2125,9 @@ const rectangulos = [
     { name: '/minijuegos', ecoCreditos: 10, className: 'Comun' },
     { name: '/leyenda-espiritu', ecoCreditos: 10, className: 'Comun' },
     { name: '/horoscopo', ecoCreditos: 10, className: 'Comun' },
+    { name: '/reproducir-video', ecoCreditos: 10, className: 'Comun' },
+    { name: '/explora-biomas-evento', ecoCreditos: 10, className: 'Comun' },
+    { name: '/comandos-recomendados', ecoCreditos: 10, className: 'Comun' },
 ];
 
 const rarezasOrdenadas = ['Comun', 'PocoComun', 'Raro', 'Epico', 'Legendario', 'Mitico'];
@@ -2333,7 +2468,20 @@ function createWaterDrops() {
 // Llamar a la función para generar las gotas de agua
 createWaterDrops();
 
+const restartButton = document.getElementById('missions-list-container');
 
+// Crear el botón de "Actualizar Misiones" usando createElement
+const actualizarMisionesBtn = document.createElement('button');
+actualizarMisionesBtn.id = 'actualizar-misiones-btn';
+actualizarMisionesBtn.textContent = 'Actualizar Misiones';
+actualizarMisionesBtn.disabled = true; // Botón deshabilitado inicialmente
+
+// Añadir el botón al cuerpo del documento
+restartButton.appendChild(actualizarMisionesBtn);
+
+// Variable global para almacenar los temporizadores activos
+let missionIntervals = [];
+let completedMissions = 0; // Contador para misiones completadas
 
 // Función para actualizar la barra de progreso y las misiones
 function startMissionTimer(duration, progressBarId, rewardAmount) {
@@ -2345,12 +2493,20 @@ function startMissionTimer(duration, progressBarId, rewardAmount) {
             progressBar.style.width = '100%'; // Completa la barra
             addEcoCreditos(rewardAmount); // Añade EcoCréditos al saldo
             alert(`¡Misión completada! Has ganado ${rewardAmount} EcoCréditos.`);
+            
+            completedMissions += 1; // Incrementa el contador de misiones completadas
+
+            // Habilitar el botón si todas las misiones están completas
+            if (completedMissions === 4) {
+                actualizarMisionesBtn.disabled = false; // Habilita el botón
+            }
         } else {
             timeLeft -= 1;
             const progressPercentage = ((duration - timeLeft) / duration) * 100;
             progressBar.style.width = `${progressPercentage}%`; // Actualiza la barra
         }
     }, 1000); // Actualiza cada segundo
+    missionIntervals.push(interval); // Guarda el intervalo en la lista
 }
 
 // Función para añadir EcoCréditos al saldo
@@ -2361,11 +2517,34 @@ function addEcoCreditos(amount) {
     console.log(`EcoCréditos: ${ecoCreditos}`); // Muestra el saldo actualizado en la consola
 }
 
-// Inicia los temporizadores de las misiones
+// Función para actualizar las misiones y reiniciar las barras de progreso
+function actualizarMisiones() {
+    // Deshabilitar el botón de nuevo
+    actualizarMisionesBtn.disabled = true;
+    completedMissions = 0; // Reinicia el contador de misiones completadas
+
+    // Detiene todos los temporizadores activos
+    missionIntervals.forEach(interval => clearInterval(interval));
+    missionIntervals = []; // Limpia la lista de temporizadores
+
+    // Reinicia las barras de progreso
+    document.getElementById('progress-bar-5').style.width = '0%';
+    document.getElementById('progress-bar-15').style.width = '0%';
+    document.getElementById('progress-bar-30').style.width = '0%';
+    document.getElementById('progress-bar-60').style.width = '0%';
+
+    // Reinicia los temporizadores de las misiones
+    startMissionTimer(300, 'progress-bar-5', 10); // 5 minutos (300 segundos)
+    startMissionTimer(900, 'progress-bar-15', 30); // 15 minutos (900 segundos)
+    startMissionTimer(1800, 'progress-bar-30', 50); // 30 minutos (1800 segundos)
+    startMissionTimer(3600, 'progress-bar-60', 100); // 1 hora (3600 segundos)
+}
+
+// Inicia los temporizadores de las misiones por primera vez
 startMissionTimer(300, 'progress-bar-5', 10); // 5 minutos (300 segundos)
 startMissionTimer(900, 'progress-bar-15', 30); // 15 minutos (900 segundos)
 startMissionTimer(1800, 'progress-bar-30', 50); // 30 minutos (1800 segundos)
-
+startMissionTimer(3600, 'progress-bar-60', 100); // 1 hora (3600 segundos)
 
 
 // Función para bloquear el contenedor
@@ -2403,8 +2582,7 @@ function bloquearContenedor(contenedorId) {
 }
 
 // Llamar a la función para bloquear el contenedor
-bloquearContenedor('rarity-list-container');
-bloquearContenedor('command-list-container');
+
 
 
 const commands = {
@@ -2499,7 +2677,67 @@ const commands = {
     'horoscopo': handleHoroscopoCommand,
     'calculadora-de-tiempo': handleCalculadoraDeTiempoCommand,
     'tiempo-en-ciudad': handleTiempoEnCiudadCommand,
+    'reproducir-video': seleccionarYReproducirVideo,
 };
+
+
+// Extraemos los nombres de los comandos de la lista 'rectangulos'
+const rectangulosComandos = rectangulos.map(item => item.name);
+
+// Extraemos los nombres de los comandos de la lista 'commands'
+const commandsComandos = Object.keys(commands);
+
+// Compara ambas listas y obtiene el comando faltante
+const faltantesEnRectangulos = commandsComandos.filter(command => !rectangulosComandos.includes(command));
+
+// Mostrar el único comando faltante, si existe
+if (faltantesEnRectangulos.length === 1) {
+  console.log(`Comando faltante en rectangulos: ${faltantesEnRectangulos[0]}`);
+} else {
+  console.log('No hay un único comando faltante o hay más de uno.');
+}
+
+
+
+
+// Función para seleccionar un archivo de video y reproducirlo
+function seleccionarYReproducirVideo() {
+    // Crear un input de tipo archivo para seleccionar un video
+    const inputArchivo = document.createElement('input');
+    inputArchivo.type = 'file';
+    inputArchivo.accept = 'video/*'; // Acepta solo archivos de video
+
+    // Crear un contenedor de chat
+    const chatLog = document.getElementById('chat-log'); // Asegúrate de tener un contenedor con id 'chat-log'
+
+
+    // Evento que se dispara cuando se selecciona un archivo
+    inputArchivo.addEventListener('change', (event) => {
+        const archivo = event.target.files[0];
+
+        if (archivo) {
+            // Muestra un mensaje indicando que el video será reproducido
+            typeMessage('¡Reproduciendo el video seleccionado!');
+
+            // Crear un elemento de video y establecer el archivo como fuente
+            const video = document.createElement('video');
+            video.controls = true;
+            video.src = URL.createObjectURL(archivo);
+
+            // Añadir el video al chat log
+            chatLog.appendChild(video);
+
+            // Reproducir el video automáticamente
+            video.play();
+        } else {
+            // Si no se selecciona ningún archivo
+            typeMessage('No se seleccionó ningún video.');
+        }
+    });
+
+    // Abrir el selector de archivos
+    inputArchivo.click();
+}
 
 
 
@@ -5213,139 +5451,79 @@ function ejecutarPatchNotes() {
 
 
 
+// Lista de comandos
 const listaComandos2 = [
-'saldo',
-'localizador',
-'desactivar-localizador',
-'salvador-de-animales',
-'fobias',
-'eventos',
-'reto-de-pistas',
-'inventario-de-tarjetas',
-'actualizaciones',
-'crear-cuenta-o-iniciar-sesion',
-'servidor',
-'desastres-naturales',
-'last-update',
-'resaltar-texto-infoanimalai',
-'paquete-de-cartas',
-'caza-megalodon',
-'refugio-animales',
-'mejorar-refugio',
-'lineas',
-'PPOT',
-'limpieza',
-'update',
-'proximo-comando',
-'verificacion-final',
-'pase-de-temporada',
-'comandos-existentes',
-'reproductor-de-musica',
-'animal-random',
-'mantenimiento',
-'proximos-comandos',
-'intercambiador-de-moneda',
-'sombra-asesina',
-'configuracion',
-'acceder',
-'unirse',
-'usuarios',
-'boss-battle',
-'comandos-recomendados',
-'generar-imagenes',
-'explora-biomas',
-'t-rex-friend',
-'definiciones',
-'frases-motivacionales',
-'quiz-animal',
-'leyenda-mitica',
-'recompensa-diaria/semanal',
-'patch-notes',
-'tienda',
-'proximo-lanzamiento',
-'ultimo-lanzamiento',
-'notificar-nuevopost',
-'enviar-post',
-'ver-documentacion',
-'texto-advertencia',
-'enviar-peticion',
-'seleccionar-modelo',
-'lluvia-de-dolares',
-'chequeo-medico',
-'ADN',
-'intercambiar-adn',
-'ataque-fantasma',
-'animal-ai-research',
-'notificaciones',
-'Cria-Calabazas',
-'Ectoplasma',
-    'Calabazas',
-    'Dulces',
-    'intercambiar-dulces',
-    'intercambiar-calabazas',
-    'intercambiar-ectoplasma',
-    'caceria-de-dulces',
-    'minijuegos',
-    'crear-comandos',
+    'saldo', 'localizador', 'desactivar-localizador', 'salvador-de-animales',
+    'fobias', 'eventos', 'reto-de-pistas', 'inventario-de-tarjetas',
+    'actualizaciones', 'crear-cuenta-o-iniciar-sesion', 'servidor',
+    'desastres-naturales', 'last-update', 'resaltar-texto-infoanimalai',
+    'paquete-de-cartas', 'caza-megalodon', 'refugio-animales', 'mejorar-refugio',
+    'lineas', 'PPOT', 'limpieza', 'update', 'proximo-comando',
+    'verificacion-final', 'pase-de-temporada', 'comandos-existentes',
+    'reproductor-de-musica', 'animal-random', 'mantenimiento', 'proximos-comandos',
+    'intercambiador-de-moneda', 'sombra-asesina', 'configuracion', 'acceder',
+    'unirse', 'usuarios', 'boss-battle', 'comandos-recomendados',
+    'generar-imagenes', 'explora-biomas', 't-rex-friend', 'definiciones',
+    'frases-motivacionales', 'quiz-animal', 'leyenda-mitica',
+    'recompensa-diaria/semanal', 'patch-notes', 'tienda', 'proximo-lanzamiento',
+    'ultimo-lanzamiento', 'notificar-nuevopost', 'enviar-post',
+    'ver-documentacion', 'texto-advertencia', 'enviar-peticion',
+    'seleccionar-modelo', 'lluvia-de-dolares', 'chequeo-medico', 'ADN',
+    'intercambiar-adn', 'ataque-fantasma', 'animal-ai-research', 'notificaciones',
+    'Cria-Calabazas', 'Ectoplasma', 'Calabazas', 'Dulces',
+    'intercambiar-dulces', 'intercambiar-calabazas', 'intercambiar-ectoplasma',
+    'caceria-de-dulces', 'minijuegos', 'crear-comandos'
 ];
 
-
-
-
-// Crear el contenedor para el input y el botón
+// Crear el contenedor principal
 const inputContainer = document.createElement('div');
 inputContainer.id = 'input-container';
-chatContainer.appendChild(inputContainer); // Ajusta esto según tu estructura
-
-// Crear el h1 para mostrar el resultado
-const inputText = document.createElement('h1');
-inputText.id = 'resultado-comando';
-inputContainer.appendChild(inputText); // Agregar el h1 al contenedor
+chatContainer3.appendChild(inputContainer); // Agregar el contenedor al cuerpo
 
 // Crear el campo de entrada
 const comandoInput = document.createElement('input');
 comandoInput.type = 'text';
 comandoInput.id = 'comando-input';
-comandoInput.placeholder = 'Escribe oceanandwild.com/comando/(el comando que quieres) para poder ejecutarlo';
-
-// Crear el botón
-const ejecutarComandoBtn = document.createElement('button');
-ejecutarComandoBtn.id = 'ejecutar-comando-btn';
-ejecutarComandoBtn.innerText = 'Ejecutar Comando';
-
-// Agregar el input y el botón al contenedor
+comandoInput.placeholder = 'Busca un comando...';
 inputContainer.appendChild(comandoInput);
-inputContainer.appendChild(ejecutarComandoBtn);
 
+// Crear el contenedor para los resultados de búsqueda
+const resultsContainer = document.createElement('div');
+resultsContainer.id = 'results-container';
+inputContainer.appendChild(resultsContainer);
 
-// Estilos en JavaScript (se podrían mover a un archivo CSS externo)
+// Estilos en JavaScript (puedes moverlo a un archivo CSS externo)
 const styles2 = `
     #input-container {
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin-top: 20px; /* Espacio superior */
+        margin-top: 20px;
     }
-
     #comando-input {
-        width: 300px; /* Ajusta el ancho como prefieras */
-        padding: 10px; /* Espaciado interno */
-        border-radius: 5px; /* Bordes redondeados */
-        border: 1px solid #ccc; /* Borde tenue */
-        margin-bottom: 10px; /* Espaciado inferior */
+        width: 300px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-bottom: 20px;
     }
-
-    #ejecutar-comando-btn {
-        padding: 10px 15px; /* Espaciado interno del botón */
-        border: none; /* Sin borde */
-        border-radius: 5px; /* Bordes redondeados */
-        background-color: #007BFF; /* Color de fondo del botón */
-        color: white; /* Color del texto del botón */
-        cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    #results-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
     }
-
-    #ejecutar-comando-btn:hover {
-        background-color: #0056b3; /* Color más oscuro al pasar el mouse */
+    .command-result {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        cursor: pointer;
+        width: 150px;
+        text-align: center;
+    }
+    .command-result:hover {
+        background-color: #e0e0e0;
     }
 `;
 
@@ -5353,29 +5531,43 @@ const styles2 = `
 const styleSheet = document.createElement("style");
 styleSheet.type = "text/css";
 styleSheet.innerText = styles2;
-document.body.appendChild(styleSheet);
+document.head.appendChild(styleSheet);
 
-// Función que se ejecuta al hacer clic en el botón
-ejecutarComandoBtn.addEventListener('click', function() {
-    const input = comandoInput.value.trim();
-    if (input.startsWith('oceanandwild.com/comando/')) {
-        const comandoBuscado = input.split('/comando/')[1];
-        
-        console.log(`Buscando el comando: ${comandoBuscado}`);
-        
-        // Verifica si el comando existe
-        if (listaComandos2.includes(comandoBuscado)) {
-            console.log(`Ejecutando: ${comandoBuscado}`);
-            // Ejecuta el comando correspondiente
-            commands[comandoBuscado](); // Llama a la función correspondiente
+// Función para buscar comandos y mostrar resultados
+comandoInput.addEventListener('input', function() {
+    const searchQuery = comandoInput.value.trim().toLowerCase();
+    resultsContainer.innerHTML = ''; // Limpiar resultados previos
 
-            // Actualiza el h1 con el resultado
-            inputText.innerText = `${input}`;
-        } else {
-            inputText.innerText = `Error: El comando "${comandoBuscado}" no existe.`;
+    if (searchQuery) {
+        const filteredCommands = listaComandos2.filter(command =>
+            command.toLowerCase().includes(searchQuery)
+        );
+
+        // Mostrar resultados filtrados
+        filteredCommands.forEach(command => {
+            const commandElement = document.createElement('div');
+            commandElement.classList.add('command-result');
+            commandElement.innerText = command;
+            resultsContainer.appendChild(commandElement);
+
+            // Agregar evento de clic para ejecutar el comando
+            commandElement.addEventListener('click', function() {
+                console.log(`Ejecutando: ${command}`);
+                
+                // Verificar si el comando existe y ejecutarlo
+                if (listaComandos2.includes(command)) {
+                    if (typeof commands[command] === 'function') {
+                        commands[command](); // Ejecutar la función correspondiente
+                    } else {
+                        console.error(`La función para el comando "${command}" no está definida.`);
+                    }
+                }
+            });
+        });
+
+        if (filteredCommands.length === 0) {
+            resultsContainer.innerHTML = '<p>No se encontraron comandos.</p>';
         }
-    } else {
-        inputText.innerText = 'Por favor, ingresa una URL válida en el formato "oceanandwild.com/comando/{nombre del comando}".';
     }
 });
 
@@ -6260,6 +6452,19 @@ function mostrarModalInicioSesion() {
     buttonAcceder.onclick = () => {
         verificarCredenciales(inputUsuario.value, inputContrasena.value);
         modal.style.display = 'none';
+       
+        // Ejemplo de uso de la función
+     mostrarModalNovedad(
+        "el Camino Ecologico",
+        "https://i.pinimg.com/736x/bb/38/20/bb3820b52ea08627177f006ba40c454f.jpg", // URL de la imagen ilustrativa
+        "Esta nueva funcion te permitira desbloquear comandos, muy pronto podras consultar la lista de las rarezas y los EcoCreditos para cada una.",
+        "Prueba el Camino Ecologico ahora",
+        function() {
+            document.body.removeChild(modalFondo); // Eliminar el modal del DOM
+            ecoModal.style.display = 'block';
+        }
+    );
+    
     };
 
     modalContent.appendChild(title);
@@ -6270,6 +6475,7 @@ function mostrarModalInicioSesion() {
     document.body.appendChild(modal);
 
     modal.style.display = 'block';
+     
 }
 
 function verificarCredenciales(nombreUsuario, contrasena) {

@@ -200,6 +200,11 @@ body2 {
 
 
 
+#resetButton {
+  opacity: 0.5; /* Reduce la opacidad */
+  pointer-events: none; /* Evita que se pueda hacer clic */
+}
+
 #water-drop-game-container {
     position: relative; /* Necesario para posicionar elementos internos */
     padding: 20px;
