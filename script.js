@@ -3363,6 +3363,30 @@ function showSuccessAnimation(modal, metodoPago, cantidad, callback) {
     // Ejecutar el callback después de mostrar la animación
     setTimeout(() => {
         callback(true);
+
+          // Obtener la fecha y hora actual
+          const fechaHora = new Date().toLocaleString();
+
+          // Crear el recibo
+          const recibo = document.createElement('div');
+          recibo.classList.add('recibo-item');
+  
+          // Detalles del recibo
+          const reciboFecha = document.createElement('p');
+          reciboFecha.textContent = `Fecha y Hora: ${fechaHora}`;
+          recibo.appendChild(reciboFecha);
+  
+          const reciboCosto = document.createElement('p');
+          reciboCosto.textContent = `Costo: $${cantidad}`;
+          recibo.appendChild(reciboCosto);
+  
+          const reciboMetodoPago = document.createElement('p');
+          reciboMetodoPago.textContent = `Método de Pago: ${metodoPago}`;
+          recibo.appendChild(reciboMetodoPago);
+  
+          // Añadir el recibo al contenedor
+          const reciboListContainer = document.getElementById('recibo-list-container');
+          reciboListContainer.appendChild(recibo);
     }, 3000);
 }
 
@@ -6455,13 +6479,12 @@ function mostrarModalInicioSesion() {
        
         // Ejemplo de uso de la función
      mostrarModalNovedad(
-        "el Camino Ecologico",
-        "https://i.pinimg.com/736x/bb/38/20/bb3820b52ea08627177f006ba40c454f.jpg", // URL de la imagen ilustrativa
-        "Esta nueva funcion te permitira desbloquear comandos, muy pronto podras consultar la lista de las rarezas y los EcoCreditos para cada una.",
-        "Prueba el Camino Ecologico ahora",
+        "Actualizar Misiones",
+        "https://i.pinimg.com/736x/7b/95/b1/7b95b15a4a6b6b168681a22df295522f.jpg", // URL de la imagen ilustrativa
+        "Con esto podras Actualizar tus misiones una vez completadas para poder ganar aun mas EcoCreditos.🤩",
+        "Actualiza las misiones y pruebalo.",
         function() {
             document.body.removeChild(modalFondo); // Eliminar el modal del DOM
-            ecoModal.style.display = 'block';
         }
     );
     

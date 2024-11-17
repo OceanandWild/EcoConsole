@@ -197,6 +197,85 @@ body2 {
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Transición suave */
 }
 
+/* Estilo básico para el contenedor de "Recibos" */
+#recibo-list-container {
+    background-color: #f8f8f8; /* Fondo gris claro */
+    padding: 20px; /* Espaciado interno */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    display: flex;
+    flex-direction: column; /* Apila los elementos verticalmente */
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  /* Estilo para el encabezado */
+  #recibo-list-container h3 {
+    font-size: 24px;
+    color: #333; /* Color de texto */
+    margin-bottom: 20px; /* Espacio debajo del título */
+  }
+  
+  /* Estilo de la lista de recibos (si es que la vas a agregar) */
+  #recibo-list-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+  
+  #recibo-list-container ul li {
+    background-color: #ffffff; /* Fondo blanco para los elementos de la lista */
+    margin-bottom: 10px; /* Espacio entre los items */
+    padding: 10px; /* Espaciado interno */
+    border: 1px solid #ddd; /* Borde sutil */
+    border-radius: 4px; /* Bordes redondeados */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Estilo para el texto de los recibos */
+  #recibo-list-container ul li span {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  /* Estilo para el botón de acciones (si es necesario) */
+  #recibo-list-container ul li button {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #007bff; /* Azul para los botones */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  #recibo-list-container ul li button:hover {
+    background-color: #0056b3; /* Color más oscuro cuando se pasa el ratón */
+  }
+
+  .recibo-item {
+    background-color: #f4f4f4;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.recibo-item p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.recibo-item p:first-child {
+    font-weight: bold;
+}
+
 
 
 
