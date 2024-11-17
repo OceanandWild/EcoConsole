@@ -161,7 +161,7 @@ function mostrarModalNovedad(tituloNovedad, imagenUrl, descripcion, textoBoton, 
 
     // Crear el título de la presentación "Presentamos (tanto)"
     const tituloNovedadElemento = document.createElement('h1');
-    tituloNovedadElemento.textContent = `Presentamos ${tituloNovedad}`;
+    tituloNovedadElemento.textContent = `Presentamos: ${tituloNovedad}`;
     tituloNovedadElemento.classList.add('titulo-novedad');
     modalContainer.appendChild(tituloNovedadElemento);
 
@@ -2047,7 +2047,6 @@ const rectangulos = [
     { name: '/saldo', ecoCreditos: 10, className: 'Comun' },
     { name: '/comprar-moneda', ecoCreditos: 30, className: 'PocoComun' },
     { name: '/comandos-existentes', ecoCreditos: 10, className: 'Comun' },
-    { name: '/comando-epico', ecoCreditos: 100, className: 'Epico' },
     { name: '/comando-legendario', ecoCreditos: 150, className: 'Legendario' },
     { name: '/comando-mitico', ecoCreditos: 200, className: 'Mitico' },
     { name: '/localizador', ecoCreditos: 30, className: 'PocoComun' },
@@ -2128,6 +2127,7 @@ const rectangulos = [
     { name: '/reproducir-video', ecoCreditos: 10, className: 'Comun' },
     { name: '/explora-biomas-evento', ecoCreditos: 10, className: 'Comun' },
     { name: '/comandos-recomendados', ecoCreditos: 10, className: 'Comun' },
+    { name: '/crear-comandos', ecoCreditos: 10, className: 'Comun' },
 ];
 
 const rarezasOrdenadas = ['Comun', 'PocoComun', 'Raro', 'Epico', 'Legendario', 'Mitico'];
@@ -4464,6 +4464,18 @@ const coloresRarezas = {
     'Mítico': 'red'         // Rojo
 };
 
+// Función para agregar un nuevo comando con su rareza
+function agregarComando(nombre, rareza) {
+    // Verificar que el comando no exista ya en la lista
+    if (!comandosConRarezas.some(comando => comando.nombre === nombre)) {
+        comandosConRarezas.push({ nombre, rareza });
+        crearListaRarezas(); // Actualizar la lista de rarezas en la interfaz
+        console.log(`Comando "${nombre}" agregado exitosamente con rareza "${rareza}".`);
+    } else {
+        console.log(`El comando "${nombre}" ya existe en la lista.`);
+    }
+}
+
 // Función para contar cuántos comandos hay por rareza
 function contarComandosPorRareza() {
     const conteo = {
@@ -4485,6 +4497,9 @@ function contarComandosPorRareza() {
 // Crear los elementos dinámicamente
 function crearListaRarezas() {
     const contenedor = document.getElementById('rarity-list-container');
+    
+    // Limpiar el contenedor antes de agregar la nueva lista
+    contenedor.innerHTML = ''; 
 
     const conteo = contarComandosPorRareza();
 
@@ -4522,6 +4537,7 @@ function crearListaRarezas() {
 
 // Llamar a la función al cargar el script
 crearListaRarezas();
+
 
 function setupInstalacionDocumentacion() {  
     console.log("DOM completamente cargado");
@@ -5496,7 +5512,8 @@ const listaComandos2 = [
     'intercambiar-adn', 'ataque-fantasma', 'animal-ai-research', 'notificaciones',
     'Cria-Calabazas', 'Ectoplasma', 'Calabazas', 'Dulces',
     'intercambiar-dulces', 'intercambiar-calabazas', 'intercambiar-ectoplasma',
-    'caceria-de-dulces', 'minijuegos', 'crear-comandos'
+    'caceria-de-dulces', 'minijuegos', 'crear-comando', 'tiempo-en-ciudad', 'reproducir-video', 'calculadora-de-tiempo',
+    'convertir-divisas', 'horoscopo', 
 ];
 
 // Crear el contenedor principal
@@ -5581,7 +5598,13 @@ comandoInput.addEventListener('input', function() {
                 // Verificar si el comando existe y ejecutarlo
                 if (listaComandos2.includes(command)) {
                     if (typeof commands[command] === 'function') {
+                        // Verificar si el comando está desbloqueado en el Camino Ecológico
+    if (!comandosDesbloqueados[command]) {
+        typeMessage(`El comando "${command}" no está desbloqueado en el Camino Ecológico. Desbloquéalo antes de ejecutarlo.`);
+        return; // Terminar la ejecución si el comando no está desbloqueado
+    }
                         commands[command](); // Ejecutar la función correspondiente
+
                     } else {
                         console.error(`La función para el comando "${command}" no está definida.`);
                     }
@@ -6479,16 +6502,20 @@ function mostrarModalInicioSesion() {
        
         // Ejemplo de uso de la función
      mostrarModalNovedad(
-        "Actualizar Misiones",
-        "https://i.pinimg.com/736x/7b/95/b1/7b95b15a4a6b6b168681a22df295522f.jpg", // URL de la imagen ilustrativa
-        "Con esto podras Actualizar tus misiones una vez completadas para poder ganar aun mas EcoCreditos.🤩",
-        "Actualiza las misiones y pruebalo.",
+        "Recibos",
+        "https://i.pinimg.com/736x/cf/28/d5/cf28d52948d42315243f9f8e00568e0f.jpg", // URL de la imagen ilustrativa
+        "Ahora con esta funcion podras tener recibos de tus transacciones con Animal Pay Transaction",
+        "Haz una transaccion y obten un recibo.",
         function() {
             document.body.removeChild(modalFondo); // Eliminar el modal del DOM
-        }
+            animalPayTransaction(0, (success) => {
+                if (success) {
+                    typeMessage("Felicidades por tu primer recibo.")
+                }
+            }
+    )}
     );
-    
-    };
+};
 
     modalContent.appendChild(title);
     modalContent.appendChild(inputUsuario);
@@ -9816,6 +9843,8 @@ function handleUltraFuncionalidad() {
         { nombre: "/caceria-de-dulces", estado: "juego" },
         { nombre: "/minijuegos", estado: "juego" },
         { nombre: "/crear-comandos", estado: "de-pago" },
+        { nombre: "/reproducir-video", estado: "verde" },
+        { nombre: "/horoscopo", estado: "funcionalverde" },
     ];
     
     
@@ -9923,17 +9952,7 @@ function handleUltraFuncionalidad() {
     
     // Inicializar la lista mostrando la primera página
     mostrarComandos(paginaActual);
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
         function mostrarConteoPorEstado() {
             
             estadoConteoDiv.innerHTML = `
