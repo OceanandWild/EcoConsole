@@ -1,4 +1,0 @@
-node_modules
-out
-# Ignora el archivo .env
-.env
