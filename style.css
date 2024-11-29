@@ -1,0 +1,60 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background-image: url('https://i.pinimg.com/736x/a2/fe/74/a2fe74584a7140c0a817d5af559cf630.jpg'); /* Imagen de fondo */
+    background-size: cover; /* Hace que la imagen cubra toda la pantalla */
+    background-position: center; /* Centra la imagen */
+    background-attachment: fixed; /* Hace que la imagen no se mueva al hacer scroll */
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.terminal {
+    background-color: rgba(34, 34, 34, 0.8); /* Fondo oscuro para la terminal */
+    border-radius: 10px;
+    width: 80%;
+    max-width: 800px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    height: 70vh;
+}
+
+.output {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.input {
+    background: transparent;
+    border: none;
+    color: #00ff00; /* Verde brillante */
+    font-size: 16px;
+    outline: none;
+    width: 100%;
+}
+
+.input::placeholder {
+    color: #66ff66; /* Verde claro para el texto del placeholder */
+}
+
+input:focus {
+    border: none;
+    outline: none;
+}
+
+.error {
+    color: red; /* Color rojo para errores */
+    font-weight: bold; /* Hacer el texto en negrita para mayor énfasis */
+}
